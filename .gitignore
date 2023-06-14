@@ -2,3 +2,5 @@
 Lectures
 __pycache__
 run pytest from here 
+tests/__pycache__
+python_solutions/__pycache__
