@@ -1,0 +1,4 @@
+.pytest_cache
+Lectures
+__pycache__
+run pytest from here 
