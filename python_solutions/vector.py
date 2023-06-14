@@ -1,16 +1,16 @@
-class Vector: # self-expanding array
-
+class Vector:  # self-expanding array
     # define a vector by defining its starting capacity
-    # (and elements in list-like form  if necessary)
-    def __init__(self, elements = None, size = 0, capacity = 1):
+    # (and elements in list-like form if necessary)
+    def __init__(self, elements=None, size=0, capacity=1):
 
         if capacity < size:
-            raise NotImplementedError('Capacity of array cannot be less than its size')
+            raise NotImplementedError('Capacity of array cannot be' +
+                                      'less than its size')
 
         if capacity <= 0 or size < 0:
             raise NotImplementedError('Impossible memory allocation')
 
-        if elements != None:
+        if elements is not None:
             if len(elements) != 0:
                 self.size = len(elements)
                 self.capacity = self.size * 2
@@ -26,7 +26,7 @@ class Vector: # self-expanding array
 
     # using self.size instead of length will still cover
     # usual cases, but for explained above it is manually
-    # corrected to recognize vector's size as expected 
+    # corrected to recognize vector's size as expected
     # inside __init__
     def __len__(self):
         return self.size
@@ -38,7 +38,7 @@ class Vector: # self-expanding array
         if abs(i) >= self.size and (i != 0 and self.size == 0):
             raise IndexError('list index out of range')
 
-        # handle negative indexes            
+        # handle negative indexes
         if i < 0:
             i = self.size + i
 
@@ -49,7 +49,6 @@ class Vector: # self-expanding array
         # some memory work
         if self.size + 1 >= self.capacity:
             self.increaseCapacity()
-        
 
     def __getitem__(self, i):
 
@@ -86,14 +85,12 @@ class Vector: # self-expanding array
         self.size -= 1
         if self.size != 0:
             del self.elements[i]
-            
 
     def append(self, x):
         if self.size + 1 >= self.capacity:
             self.increaseCapacity()
         self.elements[self.size] = x
         self.size += 1
-        
 
     def insert(self, x, i):
 
@@ -129,12 +126,13 @@ class Vector: # self-expanding array
             self.elements[i + 1], buff = buff, self.elements[i + 1]
             self.size += 1
             return None
- 
+
         # move all other items and append the last
         for j in range(i+1, self.size):
             self.elements[j], buff = buff, self.elements[j]
         self.elements[self.size] = buff
         self.size += 1
+
 
 class CyclicVector(Vector):
     pass
