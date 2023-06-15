@@ -148,6 +148,9 @@ class Deck(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
             self.head = self.head.prev_node
             self.size += 1
 
+# TODO rewrite functions to use Node instead of DoubleNode
+# and accordingly rewrite tests
+
 
 class CyclicLinkedList(LinkedList):
 
