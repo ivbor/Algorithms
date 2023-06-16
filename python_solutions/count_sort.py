@@ -1,7 +1,9 @@
 def count_sort(a):
     """
-        only for whole numbers (or derived from them basic rational) with little range o(n + k),
-        where n - size of the array, k - difference between lowest and biggest number
+        only for whole numbers (or derived from them basic rational)
+        with little range o(n + k),
+        where n - size of the array,
+        k - difference between lowest and biggest number
     """
     n = len(a)
     min_a = min(a)

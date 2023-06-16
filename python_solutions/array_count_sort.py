@@ -1,8 +1,8 @@
-def array_count_sort(a, key = 0, position=False):
+def array_count_sort(a, key=0, position=False):
     """
         for 2-dim arrays, consisting of whole numbers
         algo sorts 1-dim arrays inside 2-dim array
-        ret for return new array instead of current array
+        key is always int and shows by which index to sort
         time to work - O(n) or O(k) - depends on what's bigger
         n - array length,
         k - difference between biggest and lowest value
@@ -11,9 +11,8 @@ def array_count_sort(a, key = 0, position=False):
     # in order to do that let's first introduce
     # dim's sizes
     n = len(a)
-    m = max([len(i) for i in a])
 
-    # let's find min amd max among the values with index == key
+    # let's find min and max among the values with index == key
     # where len of row is not enough - change value to 0
     a_i_key_s = [0 if len(a[i]) <= key else a[i][key] for i in range(n)]
     min_a = min(a_i_key_s)
@@ -39,7 +38,7 @@ def array_count_sort(a, key = 0, position=False):
         for i in reversed(range(len(indexes))):
             if len(indexes[i]) == 0:
                 del indexes[i]
-                i+=1
+                i += 1
 
     # calculate new index for each row
     p = []
