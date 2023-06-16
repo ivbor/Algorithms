@@ -1,6 +1,6 @@
-.pytest_cache
+**/.pytest_cache
 Lectures
 __pycache__
-run pytest from here
-tests/__pycache__
-python_solutions/__pycache__
+**/__pycache__
+**/__pycache__
+pyrightconfig.json
