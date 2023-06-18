@@ -17,7 +17,6 @@ def test_node_can_take_and_print_data():
 def test_node_can_store_next_node():
     next_node = Nodes.Node('next')
     node = Nodes.Node('&', next_node)
-    print(next_node.__class__.__name__)
     assert next(node) == next_node
 
 

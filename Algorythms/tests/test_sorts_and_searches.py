@@ -1,7 +1,11 @@
+# import better view function for 2dim arrays
+import time
 from Algorythms.python_solutions.matrix_view import matrix_view_2dim
+# import some helpers for creating arrays and time checking
 from Algorythms.python_solutions.speed_analysis \
     import make_random_whole_1_dim_array, make_random_whole_2_dim_array, \
     speed_analysis, make_random_1_dim_array
+# import sorting algorythms
 from Algorythms.python_solutions.array_count_sort import array_count_sort
 from Algorythms.python_solutions.count_sort import count_sort
 from Algorythms.python_solutions.insert_sort import insert_sort
@@ -9,31 +13,26 @@ from Algorythms.python_solutions.merge_sort import merge_sort
 from Algorythms.python_solutions.quick_sort import quick_sort
 from Algorythms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
+# import searching algorythms
+from Algorythms.python_solutions.bin_search import bin_search
+from Algorythms.python_solutions.real_bin_search import real_bin_search
+from Algorythms.python_solutions.ternary_search_extremum \
+    import tern_search_max, tern_search_min
+# import searching for bounds
+from Algorythms.python_solutions.bounds import lower_bound, upper_bound
+# and for split find test
+from Algorythms.python_solutions.split_find import split_find
+# import math for calculations
 import math
-
-
-def func(x):
-    return math.sqrt(36-4*x*x)*x
 
 
 def test_sort_speed_analysis(test_size_range=(10, 100),
                              num_range=(-10, 10)):
     '''
         Function for sorts speed testing
-        can create 2dim arrays using speed_analysis module
-        can change number of dimensions in array to sort,
-        restriction for fractions inside array and
-        how big array to sort would be
-        All of these can be changed by:
+        Parameters:
 
-        dim: number of dimensions, currently available only 1 or 2
-        if more is necessary - write an additional function
-        to the module mentioned before
-
-        whole: whether numbers in array are only whole (True) or
-        fractions are allowed (False)
-
-        test_size: exact number of elements in the array
+        test_size_range: range of number of elements inside array
 
         num_range: tuple with the first number being start of the range
         of elements generation and the second - the end of this range
@@ -43,7 +42,8 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
     # and create n-dim arrays using for
 
     # make a list of 1dim array and 2dim array
-    one_dim_array = make_random_1_dim_array()
+    one_dim_array = make_random_1_dim_array(
+            elts_range=num_range, size_of_1_dim_range=test_size_range)
     whole_one_dim_array = make_random_whole_1_dim_array(
             elts_range=num_range, size_of_1_dim_range=test_size_range)
     whole_two_dim_array = make_random_whole_2_dim_array(
@@ -88,9 +88,9 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
 
             a[2].copy() if i[0] in (
                 'array_count_sort',
-                'two_dim_array_count_sort') \
+                'two_dim_array_count_sort')
 
-            else a[1].copy() if i[0] == 'count_sort' \
+            else a[1].copy() if i[0] == 'count_sort'
 
             else a[0].copy(),
 
@@ -107,3 +107,169 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
         # and print times:
         print(f'{i[0]:25}: {developed_time:.10f}, \
               sorted: {built_in_time:.10f}\n')
+
+
+# if in array searched value is absent
+# .index() throws ValueError
+# this wrapper handles exception so that
+# absence of the element can be handled
+# by speed_analysis function
+
+
+def index_search(a):
+    try:
+        return a.index(3)
+    except ValueError:
+        return 'No'
+
+
+def test_bin_search_speed_analysis(
+        test_size_range=(10, 100),
+        num_range=(-10, 10)):
+    '''
+        Function to test the speed of search
+        Parameters:
+
+        test_size_range: range of number of elements inside array
+
+        num_range: tuple with the first number being start of the range
+        of elements generation and the second - the end of this range
+    '''
+
+    # make sorted array
+    a = make_random_1_dim_array(
+            elts_range=num_range,
+            size_of_1_dim_range=test_size_range)
+    # a.append(3)
+    a = sorted(a)
+
+    # find an element inside it using developed functions while registering
+    # time spent
+    built_in_time, built_in = speed_analysis(
+        index_search, a, {})
+
+    developed_no_rec_time, developed_no_rec = speed_analysis(
+        lambda x: bin_search(x, 3), a, {})
+
+    developed_rec_time, developed_rec = speed_analysis(
+        lambda x: bin_search(x, 3, True), a, {})
+
+    assert (type(built_in) == int) == developed_no_rec, print(a)
+    assert developed_no_rec == developed_rec, print(a)
+    print('Without desired element')
+    print(f'developed_no_rec: {developed_no_rec_time:.10f}, \
+            developed_rec: {developed_rec_time:.10f}, \
+            index: {built_in_time:.10f}\n')
+
+    a = make_random_1_dim_array(
+            elts_range=num_range,
+            size_of_1_dim_range=test_size_range)
+    a.append(3)  # manually append desired element
+    a = sorted(a)
+
+    built_in_time, built_in = speed_analysis(
+        index_search, a, {})
+
+    developed_no_rec_time, developed_no_rec = speed_analysis(
+        lambda x: bin_search(x, 3), a, {})
+
+    developed_rec_time, developed_rec = speed_analysis(
+        lambda x: bin_search(x, 3, True), a, {})
+
+    # and print times:
+    print('With desired element')
+    print(f'developed_no_rec: {developed_no_rec_time:.10f}, \
+            developed_rec: {developed_rec_time:.10f}, \
+            index: {built_in_time:.10f}\n')
+
+
+def func(x):
+    return math.sqrt(36-4*x*x)*x
+
+
+def test_real_bin_search():
+    st = time.time()
+    res = real_bin_search(func, -6, -2, 2)
+    et = time.time()
+    # func(-6) = -1.070
+    assert abs(res + 1.07) <= 5*10**(-4), res
+    print(f'real_bin_search_time: {(et-st):.10f}')
+
+
+def test_min_max_tern_search():
+    st = time.time()
+    res = tern_search_min(func, -3, 0)
+    et = time.time()
+    # min there is -2.121
+    assert abs(res + 2.121) <= 5*10**(-4), res
+    print(f'tern_search_min_time, one min: {(et-st):.10f}')
+
+    st = time.time()
+    res = tern_search_min(func, 0, 3)
+    et = time.time()
+    # min there is 0 or 3
+    assert (abs(res) <= 5*10**(-4) or abs(res - 3) <= 5*10**(-4)), res
+    print(f'tern_search_min_time, two mins: {(et-st):.10f}')
+
+    st = time.time()
+    res = tern_search_max(func, -3, 0)
+    et = time.time()
+    # max there is 0 or -3
+    assert (abs(res) <= 5*10**(-4) or abs(res + 3) <= 5*10**(-4)), res
+    print(f'tern_search_max_time, two maxes: {(et-st):.10f}')
+
+    st = time.time()
+    res = tern_search_max(func, 0, 3)
+    et = time.time()
+    # max there is 2.121
+    assert abs(res - 2.121) <= 5*10**(-4), res
+    print(f'tern_search_max_time, one max: {(et-st):.10f}')
+
+
+def test_bounds():
+    a = make_random_whole_1_dim_array()
+    a = sorted(a)
+
+    st = time.time()
+    built_in = a.index(3) if 3 in a else False
+    et = time.time()
+    built_in_time = et - st
+
+    st = time.time()
+    developed = lower_bound(a, 3) if 3 in a else False
+    et = time.time()
+    developed_time = et - st
+
+    assert built_in == developed, (built_in, developed)
+    print('lower bound')
+    print(f'built_in_time: {built_in_time:.10f}, \
+           developed_time: {developed_time:.10f}')
+
+    st = time.time()
+    built_in = a.index(4) - 1 if 4 in a else False
+    et = time.time()
+    built_in_time = et - st
+
+    st = time.time()
+    developed = upper_bound(a, 3) if 4 in a else False
+    et = time.time()
+    developed_time = et - st
+
+    assert built_in == developed, (built_in, developed)
+    print('upper bound')
+    print(f'built_in_time: {built_in_time:.10f}, \
+           developed_time: {developed_time:.10f}')
+
+
+def test_split_search():
+    a = make_random_whole_1_dim_array(elts_range=(-10, 10))
+    b = a.copy()
+    a = sorted(a)
+
+    st = time.time()
+    developed = split_find(b, 36)
+    et = time.time()
+    developed_time = et - st
+
+    assert a[36] == developed, (a[36], developed)
+    print(f'split search time: {developed_time:.10f}')

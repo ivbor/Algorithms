@@ -1,6 +1,4 @@
-import math
-
-def tern_search_min(func, start, end, eps = 1e-6):
+def tern_search_min(func, start, end, eps=1e-6):
     '''
         ternary search for min, if func has many mins
         this search will find only one of them
@@ -20,14 +18,14 @@ def tern_search_min(func, start, end, eps = 1e-6):
     while (abs(r-l) >= eps):
         m_l = l + (r - l)/3
         m_r = l + 2*(r - l)/3
-        print(m_l, m_r)
         if func(m_r) < func(m_l):
             l = m_l
         else:
             r = m_r
     return (m_l + m_r)/2
 
-def tern_search_max(func, start, end, eps = 1e-6):
+
+def tern_search_max(func, start, end, eps=1e-6):
     '''
         ternary search for max, if func has many maxes
         this search will find only one of them
