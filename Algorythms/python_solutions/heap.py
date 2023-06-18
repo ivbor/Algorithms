@@ -1,21 +1,28 @@
+from Algorythms.python_solutions.vector import Vector
+
+
 def swap(a, x, y):
     b = a[x]
     a[x] = a[y]
     a[y] = b
 
 # test heap_sort
-class Heap(Vector): # binary tree with min in parents and elts > min in children in each node
 
-    # all we need is to rewrite insert and link append to insert (their functionality will be the same)
+
+class Heap(Vector):
+    # binary tree with min in parents and elts > min in children in each node
+
+    # all we need is to rewrite insert and link append to insert (their
+    # functionality will be the same)
     def append(self, x):
         self.insert(x)
 
-    def h_heap(self):
+    def high(self):
         size = self.size
         high = 0
         while (int(size) != 0):
             size //= 2
-            high +=1
+            high += 1
         return high
 
     def insert(self, x):
@@ -53,7 +60,9 @@ class Heap(Vector): # binary tree with min in parents and elts > min in children
     def erase(self):
         return self.remove_min()
 
-# erase slips (determine reason and think about format print for trees inside array)
+# erase slips (determine reason and think about format print for trees
+# inside array)
+
 
 def sift_up(a, i):
     while i > 0:
@@ -62,6 +71,7 @@ def sift_up(a, i):
             i = int((i-1)/2)
         else:
             break
+
 
 def sift_down(a, i, size):
     while True:

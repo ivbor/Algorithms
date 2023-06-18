@@ -32,8 +32,7 @@ class DoubleNode(Nodes.Node):
         return self.prev_node
 
 
-class Stack:
-    # (LIFO) based on not implemented DoubleLinkedList  <(out)-(in)> Stack |
+class Stack:  # (LIFO)   <(out)-(in)> Stack |
 
     def __init__(self):
 
@@ -148,9 +147,6 @@ class Deck(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
             self.head = self.head.prev_node
             self.size += 1
 
-# TODO rewrite functions to use Node instead of DoubleNode
-# and accordingly rewrite tests
-
 
 class CyclicLinkedList(LinkedList):
 
@@ -178,9 +174,10 @@ class CyclicLinkedList(LinkedList):
                 break
         return ret
 
+    def append(self, x):
+        raise NotImplementedError('Append for CyclicLinkedList is not defined')
+
     def insert(self, x, i):
-        if i < 0:
-            return None
         # for the first element
         if self.size == 0:
             newNode = DoubleNode(x, None, None)
@@ -191,20 +188,23 @@ class CyclicLinkedList(LinkedList):
             self.tail.next_node = self.head
             self.tail.prev_node = self.head
             self.size += 1
-        # insert in the head = append
+        # insert in the head or tail
         elif i == 0:
             newNode = DoubleNode(x, self.tail, self.head)
             self.head.prev_node = newNode
             self.tail.next_node = newNode
             self.head = newNode
             self.size += 1
-        # insert in the tail = append
         elif i == self.size:
             newNode = DoubleNode(x, self.tail, self.head)
             self.head.prev_node = newNode
             self.tail.next_node = newNode
             self.tail = newNode
             self.size += 1
+        elif i < 0:
+            self.insert(x, self.size + i)
+        elif i >= self.size:
+            raise IndexError('CyclicLinkedList index out of range')
         # otherwise - dig for i-th element
         else:
             cur = self.head  # i=0
@@ -220,34 +220,46 @@ class CyclicLinkedList(LinkedList):
             self.size += 1
 
     def erase(self, i):
-        if i < 0:
-            return None
+        if i / self.size > 1:
+            raise IndexError('CyclicLinkedList index out if range')
         # for the last element
         if self.size == 1:
             del self.head
             del self.tail
             self.head = None
             self.tail = None
+            self.size -= 1
         # if head is to erase
-        elif i % self.size == 0:
-            cur = self.head
-            cur = cur.next_node
+        elif i == 0:
+            cur = self.head.next_node
             cur.prev_node = self.tail
             cur.prev_node.next_node = cur
             del self.head
             self.head = cur
+            self.size -= 1
         # if tail is to erase
-        elif i % self.size == self.size - 1:
-            cur = self.tail
-            cur = cur.prev_node
+        elif i == self.size:
+            cur = self.tail.prev_node
             cur.next_node = self.head
             cur.next_node.prev_node = cur
             del self.tail
             self.tail = cur
+            self.size -= 1
+        elif i < 0:
+            self.erase(self.size + i)
         # otherwise - dig for i-th element
         else:
-            cur = self.head  # i=0
+            cur = self.head
             j = 0
             while j < i:
                 cur = cur.next_node
                 j += 1
+            # and do erasing
+            cur.next_node.prev_node = cur.prev_node
+            cur.prev_node.next_node = cur.next_node
+            del cur
+            self.size -= 1
+
+    def update(self, x, i):
+        self.erase(i)
+        self.insert(x, i)

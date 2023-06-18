@@ -1,6 +1,6 @@
 from Algorythms.python_solutions import Nodes
 from Algorythms.python_solutions.DoubleNodes import CyclicLinkedList
-
+import pytest
 
 def test_can_create_node():
     node = Nodes.Node()
@@ -225,7 +225,34 @@ def test_ll_in():
 def test_cll():
     cll = CyclicLinkedList()
     # test init, list_all, erase,
-    # insert, update, remove append
+    # insert, update
     # use iter in structure
     # for i in self: ... break
-    pass
+    # test insert, list_all,
+    # update and erase for 1 element
+    assert cll.size == 0
+    cll.insert(12, 12)
+    assert str(cll) == str([12]), cll.list_all()
+    assert cll.size == 1, cll.size
+    cll.update(None, 1)
+    assert cll.size == 1, cll.size
+    assert str(cll) == str([None]), cll.list_all()
+    cll.erase(1)
+    assert str(cll) == str([]), cll.list_all()
+    assert cll.size == 0, cll.size
+    # test everything for many elements
+    for i in range(10):
+        cll.insert(str(i), i)
+    assert str(cll) == str([str(i) for i in range(10)])
+    assert cll.size == 10
+    for i in enumerate(cll):
+        if i[0] == cll.size:
+            break
+        cll.update(None, i[0])
+    assert cll.list_all() == [None for i in range(10)]
+    for i in enumerate(cll):
+        if i[0] == 10:
+            break
+        cll.erase(9-i[0])
+    assert cll.size == 0
+    assert str(cll) == str([])

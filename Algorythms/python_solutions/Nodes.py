@@ -89,6 +89,8 @@ class LinkedList:
 
         if x in self.list_all():
             return True
+        else:
+            return False
 
     # works fine if launched O(1) times
     def __iter__(self):
@@ -104,7 +106,7 @@ class LinkedList:
 
             # protection from Type error
             if isinstance(cur.next_node, Node):
-                cur = cur.next_node
+                cur = next(cur)
 
             # if the end is reached
             else:
@@ -113,10 +115,10 @@ class LinkedList:
     # can't use iter there due to
     # calculative inefficiency
     def __repr__(self):
-        self.list_all()
+        return str(self)
 
     # repr restrictions apply here too
-    # instead of calling everytime iter
+    # instead of calling every time iter
     # better write list_all() method to
     # write everything to the memory once
     # and then use it where necessary
