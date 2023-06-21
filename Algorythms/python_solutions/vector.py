@@ -132,7 +132,3 @@ class Vector:  # self-expanding array
             self.elements[j], buff = buff, self.elements[j]
         self.elements[self.size] = buff
         self.size += 1
-
-
-class CyclicVector(Vector):
-    pass

@@ -1,17 +1,18 @@
-import pytest
 from Algorythms.python_solutions import vector
 
+
 def test_can_create_vector_and_len_exists():
-    vec = vector.Vector(size = 0, capacity = 1)
+    vec = vector.Vector(size=0, capacity=1)
     assert len(vec) == 0, len(vec)
 
-    vec = vector.Vector(capacity = 4)
+    vec = vector.Vector(capacity=4)
     assert len(vec) == 0, len(vec)
 
     vec = vector.Vector([1, 2, 3, 4])
     assert len(vec) == 4, len(vec)
     assert vec.size == len(vec), vec.size
     assert vec.capacity == 8, vec.capacity
+
 
 def test_set_and_get_item():
     vec = vector.Vector()
@@ -28,6 +29,7 @@ def test_set_and_get_item():
     vec[-1] = 30
     assert vec[1] == 30, vec[1]
 
+
 def test_insertion():
     vec = vector.Vector()
     vec.insert(2, 0)
@@ -40,6 +42,7 @@ def test_insertion():
     assert len(vec) == 6, len(vec)
     assert vec[-1] == 2, vec[-1]
     assert vec[-2] == 2, vec[-2]
+
 
 def test_erase():
     vec = vector.Vector()

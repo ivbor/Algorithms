@@ -1,4 +1,15 @@
 from Algorythms.python_solutions.vector import Vector
+import subprocess
+
+# neither os.get_terminal_size() nor shutil give right terminal size
+# hence, have to write this function
+
+
+def get_terminal_width():
+    out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)
+    out = out.communicate()[0]
+    cols = out.split(b'\n')[0]
+    return int(cols)
 
 
 def swap(a, x, y):
@@ -14,10 +25,16 @@ class Heap(Vector):
 
     # all we need is to rewrite insert and link append to insert (their
     # functionality will be the same)
+    def __init__(self, elements=None, size=0, capacity=1):
+        super().__init__(size=size, capacity=capacity)
+        if elements is not None:
+            for i in elements:
+                self.insert(i)
+
     def append(self, x):
         self.insert(x)
 
-    def high(self):
+    def height(self):
         size = self.size
         high = 0
         while (int(size) != 0):
@@ -56,6 +73,35 @@ class Heap(Vector):
         sift_down(self.elements, i, self.size)
 
         return _return
+
+    def __repr__(self) -> str:
+        # TODO fix indents and spaces
+        # width = get_terminal_width()
+        # since information in trees can be both little and huge
+        # it is mandatory to standardize amount of signs in each number
+        # will use 8-sign standard plus spaces (x * 9)
+        # and as tree grows it will increase in size from left to right
+        #                                   1
+        #                1            2           3
+        #       1      2   3       4     5     6     7
+        # 1 -> 2 3 -> 4 5 6 7 -> 8  9  10 11 12 13 14 15 -> ...
+        res_str = ''
+        elt_number = 0
+        cur_str = 0
+        while (cur_str < self.height() + 1):
+            # 2**cur_str - amount of numbers in current str
+            indent = ' ' * int(0.5 * 2 ** (self.height() - cur_str - 1))
+            str_w_nums = ''
+            for i in range(2**cur_str):
+                if elt_number < self.size:
+                    str_w_nums += f'{self.elements[elt_number]:8.2f}' if \
+                        self.elements[elt_number] is not None else ' '
+                    str_w_nums += indent * 4
+                    elt_number += 1
+            str_w_nums += '\n\n'
+            res_str += (indent + str_w_nums)
+            cur_str += 1
+        return res_str
 
     def erase(self):
         return self.remove_min()
