@@ -1,4 +1,5 @@
-class Vector:  # self-expanding array
+class Vector:
+    # self-expanding array
     # define a vector by defining its starting capacity
     # (and elements in list-like form if necessary)
     def __init__(self, elements=None, size=0, capacity=1):
@@ -31,6 +32,12 @@ class Vector:  # self-expanding array
     def __len__(self):
         return self.size
 
+    def __contains__(self, x):
+        if x in self.elements:
+            return True
+        else:
+            return False
+
     def __setitem__(self, i, x):
 
         # handle wrong indexes and prevent from error
@@ -61,6 +68,9 @@ class Vector:  # self-expanding array
             return self.elements[self.size + i]
         return self.elements[i]
 
+    def __delitem__(self, i):
+        del self.elements[i]
+
     def copy_to_new_vector(self):
         newVector = [None for i in range(self.capacity)]
         for i in range(self.size):
@@ -84,7 +94,7 @@ class Vector:  # self-expanding array
             raise IndexError('list index out of range')
         self.size -= 1
         if self.size != 0:
-            del self.elements[i]
+            del self[i]
 
     def append(self, x):
         if self.size + 1 >= self.capacity:

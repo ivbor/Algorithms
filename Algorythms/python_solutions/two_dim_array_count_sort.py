@@ -1,3 +1,4 @@
+from re import I
 from Algorythms.python_solutions.array_count_sort import array_count_sort
 
 
@@ -25,8 +26,10 @@ def two_dim_array_count_sort(a, keys='all'):
         # use helper to ease complexity of code
         two_dim_array_count_sort_list(a, keys)
 
-    if isinstance(keys, int):
+    elif isinstance(keys, int):
         a = array_count_sort(a, key=keys)
+    else:
+        raise TypeError('Cannot parse keys')
     return a
 
 
@@ -43,6 +46,10 @@ def two_dim_array_count_sort_list(a, keys):
         # after first launch update list of p_sets
         new_p_set_list = list()
 
+        # TODO debug: trouble is either here with incorrect p_sets
+        if i == 2:
+            print('p_set_list= ', p_set_list)
+
         # need to sort only entries with the same key digits
         # (or all entries only on the first launch)
         for k in p_set_list:
@@ -50,6 +57,10 @@ def two_dim_array_count_sort_list(a, keys):
             # if there comes only one entry with the same digit -
             # doesn't need to be sorted further
             if len(k) >= 2:
+
+                # TODO debug: here with incorrect k-entries handling
+                if i == 2:
+                    print('k= ', k)
 
                 # sort entries with the same key digits,
                 # take position of their new rows
@@ -59,17 +70,28 @@ def two_dim_array_count_sort_list(a, keys):
                     array_count_sort(a[k[0]:(k[-1] + 1)],
                                      key=i, position=True)
 
+                # TODO debug: or here with incorrect sort (unlikely)
+                if i == 2:
+                    print(a[k[0]:(k[-1] + 1)])
+                    print(p)
+
                 # based on new entries' places (p array)
                 # make a list where lists in p array
                 # are unpacked and indexes of unpacked
                 # elements are marked by the same values
                 ind_uniq_rows = list()
                 for o in range(len(p)):
+                    # TODO maybe remove next line since positions
+                    # and what's inside are always lists
                     if isinstance(p[o], list):
                         for j in range(len(p[o])):
                             ind_uniq_rows.append(o + k[0])
                     else:
                         ind_uniq_rows.append(o + k[0])
+
+                # TODO debug:
+                if i == 2:
+                    print(ind_uniq_rows)
 
                 # using list with unpacked lists and
                 # elements from them marked
@@ -94,6 +116,8 @@ def two_dim_array_count_sort_list(a, keys):
                         new_p_set_list.append(p_set)
                         p_set = list()
 
+                if i == 2:
+                    print(p_set)
         # put new p_sets list with collected p_sets
         # to the place of old p_set list
         # to be sorted by the next index

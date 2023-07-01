@@ -34,6 +34,14 @@ class Heap(Vector):
     def append(self, x):
         self.insert(x)
 
+    def get_children(self, i):
+        if self.size > 2 * i + 2:
+            return (self.elements[2*i+1], self.elements[2*i+2])
+        elif self.size > 2 * i + 1:
+            return self.elements[2 * i + 1]
+        else:
+            return None
+
     def height(self):
         size = self.size
         high = 0
@@ -75,39 +83,27 @@ class Heap(Vector):
         return _return
 
     def __repr__(self) -> str:
-        # TODO fix indents and spaces
-        # width = get_terminal_width()
-        # since information in trees can be both little and huge
-        # it is mandatory to standardize amount of signs in each number
-        # will use 8-sign standard plus spaces (x * 9)
-        # and as tree grows it will increase in size from left to right
-        #                                   1
-        #                1            2           3
-        #       1      2   3       4     5     6     7
-        # 1 -> 2 3 -> 4 5 6 7 -> 8  9  10 11 12 13 14 15 -> ...
         res_str = ''
         elt_number = 0
         cur_str = 0
         while (cur_str < self.height() + 1):
             # 2**cur_str - amount of numbers in current str
-            indent = ' ' * int(0.5 * 2 ** (self.height() - cur_str - 1))
             str_w_nums = ''
             for i in range(2**cur_str):
                 if elt_number < self.size:
-                    str_w_nums += f'{self.elements[elt_number]:8.2f}' if \
-                        self.elements[elt_number] is not None else ' '
-                    str_w_nums += indent * 4
+                    str_w_nums += (f'({elt_number + 1})' +
+                                   f'{self.elements[elt_number]:8.2e}') if \
+                                    self.elements[elt_number] is not None \
+                                    else ' '
+                    str_w_nums += ' '
                     elt_number += 1
             str_w_nums += '\n\n'
-            res_str += (indent + str_w_nums)
+            res_str += str_w_nums
             cur_str += 1
         return res_str
 
     def erase(self):
         return self.remove_min()
-
-# erase slips (determine reason and think about format print for trees
-# inside array)
 
 
 def sift_up(a, i):
@@ -144,7 +140,9 @@ def heap_sort(a):
     h = Heap()
     for i in range(len(a)):
         h.insert(a[i])
-    for i in range(len(a)):
+    b = a.copy()
+    for i in range(len(b)):
         h.capacity = h.size
         h.copy_to_new_vector()
-        a[i] = h.erase()
+        b[i] = h.erase()
+    return b

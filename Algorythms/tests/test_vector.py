@@ -17,16 +17,19 @@ def test_can_create_vector_and_len_exists():
 def test_set_and_get_item():
     vec = vector.Vector()
     vec[0] = 0
-    assert vec.size == 1, vec.size
+    assert len(vec) == 1, vec.size
     assert vec[0] == 0, vec[0]
     assert vec.capacity == 2, vec.capacity
 
     vec = vector.Vector()
     vec[0] = 10
+    assert len(vec) == 1
     vec[1] = 20
+    assert len(vec) == 2
     assert vec[0] == 10, vec[0]
     assert vec[1] == 20, vec[1]
     vec[-1] = 30
+    assert len(vec) == 3
     assert vec[1] == 30, vec[1]
 
 
@@ -42,6 +45,8 @@ def test_insertion():
     assert len(vec) == 6, len(vec)
     assert vec[-1] == 2, vec[-1]
     assert vec[-2] == 2, vec[-2]
+    vec.insert(3, 3)
+    assert len(vec) == 7
 
 
 def test_erase():
