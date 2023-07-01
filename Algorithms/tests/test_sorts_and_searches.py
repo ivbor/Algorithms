@@ -1,27 +1,27 @@
 # import better view function for 2dim arrays
 import time
-from Algorythms.python_solutions.matrix_view import matrix_view_2dim
+from Algorithms.python_solutions.matrix_view import matrix_view_2dim
 # import some helpers for creating arrays and time checking
-from Algorythms.python_solutions.speed_analysis \
+from Algorithms.python_solutions.speed_analysis \
     import make_random_whole_1_dim_array, make_random_whole_2_dim_array, \
     speed_analysis, make_random_1_dim_array
 # import sorting algorythms
-from Algorythms.python_solutions.array_count_sort import array_count_sort
-from Algorythms.python_solutions.count_sort import count_sort
-from Algorythms.python_solutions.insert_sort import insert_sort
-from Algorythms.python_solutions.merge_sort import merge_sort
-from Algorythms.python_solutions.quick_sort import quick_sort
-from Algorythms.python_solutions.two_dim_array_count_sort \
+from Algorithms.python_solutions.array_count_sort import array_count_sort
+from Algorithms.python_solutions.count_sort import count_sort
+from Algorithms.python_solutions.insert_sort import insert_sort
+from Algorithms.python_solutions.merge_sort import merge_sort
+from Algorithms.python_solutions.quick_sort import quick_sort
+from Algorithms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
 # import searching algorythms
-from Algorythms.python_solutions.bin_search import bin_search
-from Algorythms.python_solutions.real_bin_search import real_bin_search
-from Algorythms.python_solutions.ternary_search_extremum \
+from Algorithms.python_solutions.bin_search import bin_search
+from Algorithms.python_solutions.real_bin_search import real_bin_search
+from Algorithms.python_solutions.ternary_search_extremum \
     import tern_search_max, tern_search_min
 # import searching for bounds
-from Algorythms.python_solutions.bounds import lower_bound, upper_bound
+from Algorithms.python_solutions.bounds import lower_bound, upper_bound
 # and for split find test
-from Algorythms.python_solutions.split_find import split_find
+from Algorithms.python_solutions.split_find import split_find
 # import math for calculations
 import math
 

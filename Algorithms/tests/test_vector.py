@@ -1,4 +1,4 @@
-from Algorythms.python_solutions import vector
+from Algorithms.python_solutions import vector
 
 
 def test_can_create_vector_and_len_exists():

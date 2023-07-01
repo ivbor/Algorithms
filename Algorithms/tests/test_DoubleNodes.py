@@ -1,4 +1,5 @@
-from Algorythms.python_solutions.DoubleNodes import Stack, Queue, Deck, DoubleNode, prev
+from Algorithms.python_solutions.DoubleNodes import Stack, Queue, Deck, DoubleNode, prev
+
 
 def test_doublenode():
     dn_0 = DoubleNode(3)
@@ -7,9 +8,10 @@ def test_doublenode():
     assert prev(dn_1) == dn_0, (prev(dn_1), dn_0)
     assert next(dn_1) == dn_2, (next(dn_1), dn_2)
     assert str(dn_0) == '3', str(dn_0)
-    dn_0 = DoubleNode(prev_node = dn_1, next_node = dn_2)
+    dn_0 = DoubleNode(prev_node=dn_1, next_node=dn_2)
     assert str(dn_0) == 'None', str(dn_0)
-   
+
+
 def test_stack():
     st = Stack()
     st.push(None)
@@ -20,7 +22,7 @@ def test_stack():
     assert st.back() == 'None', st.back()
     assert st.front() is None, st.front()
     assert st.pop() == 'None', st.back()
-    assert type(st.back()) == list, type(st.back())
+    assert isinstance(st.back(), list), type(st.back())
     assert st.front() is None, st.front()
     assert len(st.back()) == 4, len(st.back())
     while len(st) != 1:
@@ -30,10 +32,11 @@ def test_stack():
     st.pop()
     assert len(st) == 0, len(st)
 
+
 def test_queue():
     q = Queue()
     # check only pop, push, back and front
-    # because other methods are defined 
+    # because other methods are defined
     # and checked in Stack
     q.push(None)
     assert q.size == 1, q.size
@@ -50,6 +53,7 @@ def test_queue():
     assert q.front() == q.back(), (q.front(), q.back())
     assert q.front() == 'None', q.front()
 
+
 def test_deck():
     d = Deck()
     d.push_front(None)
@@ -58,12 +62,9 @@ def test_deck():
     d.push_back(4)
     d.push_front([None, 'None', 4, []])
     d.push_back('None')
-    assert type(d.front()) == list, d.front()
+    assert isinstance(d.front(), list), d.front()
     assert d.back() == 'None', d.back()
     d.pop_front()
     assert d.front() is None, d.front()
     d.pop_back()
     assert d.back() == 4, d.back()
-
-
-    

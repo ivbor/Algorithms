@@ -9,7 +9,7 @@
 # 2^n on low W
 
 
-from Algorythms.python_solutions.vector import Vector
+from Algorithms.python_solutions.vector import Vector
 import random
 
 # generate list of prime numbers

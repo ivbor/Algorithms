@@ -1,4 +1,4 @@
-from Algorythms.python_solutions.Lesson5 import HashTable
+from Algorithms.python_solutions.Lesson5 import HashTable
 import pytest
 import random
 

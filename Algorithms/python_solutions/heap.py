@@ -1,4 +1,4 @@
-from Algorythms.python_solutions.vector import Vector
+from Algorithms.python_solutions.vector import Vector
 import subprocess
 
 # neither os.get_terminal_size() nor shutil give right terminal size

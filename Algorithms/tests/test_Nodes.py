@@ -1,6 +1,7 @@
-from Algorythms.python_solutions import Nodes
-from Algorythms.python_solutions.DoubleNodes import CyclicLinkedList
+from Algorithms.python_solutions import Nodes
+from Algorithms.python_solutions.DoubleNodes import CyclicLinkedList
 import pytest
+
 
 def test_can_create_node():
     node = Nodes.Node()

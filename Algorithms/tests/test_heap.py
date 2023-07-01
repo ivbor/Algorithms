@@ -1,4 +1,4 @@
-from Algorythms.python_solutions.heap import Heap, heap_sort
+from Algorithms.python_solutions.heap import Heap, heap_sort
 import random
 import time
 

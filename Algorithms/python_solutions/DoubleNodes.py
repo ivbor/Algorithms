@@ -1,5 +1,5 @@
-from Algorythms.python_solutions import Nodes
-from Algorythms.python_solutions.Nodes import LinkedList
+from Algorithms.python_solutions import Nodes
+from Algorithms.python_solutions.Nodes import LinkedList
 
 # import this too if you want to have the same syntax
 # for prev as for built-in next():
