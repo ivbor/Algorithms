@@ -1,22 +1,23 @@
-def count_sort(a):
+def count_sort(array):
     """
         only for whole numbers (or derived from them basic rational)
-        with little range o(n + k),
+        with little range
+        requires o(n + k) time, where
         where n - size of the array,
         k - difference between lowest and biggest number
     """
-    n = len(a)
-    min_a = min(a)
-    max_a = max(a)
-    cnt = [0 for i in range(max_a+1-min_a)]
-    for i in range(n):
-        cnt[a[i]-min_a] += 1
+    lenght_of_array = len(array)
+    min_of_array = min(array)
+    max_of_array = max(array)
+    array_of_counters = [0 for _ in range(max_of_array + 1 - min_of_array)]
+    for i in range(lenght_of_array):
+        array_of_counters[array[i] - min_of_array] += 1
 
     i = 0
-    b = a.copy()
-    for j in range(max_a+1-min_a):
-        while (cnt[j] > 0):
-            b[i] = j + min_a
+    new_array = array.copy()
+    for j in range(max_of_array + 1 - min_of_array):
+        while (array_of_counters[j] > 0):
+            new_array[i] = j + min_of_array
             i += 1
-            cnt[j] -= 1
-    return b
+            array_of_counters[j] -= 1
+    return new_array

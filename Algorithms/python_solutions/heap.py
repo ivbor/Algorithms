@@ -12,19 +12,17 @@ def get_terminal_width():
     return int(cols)
 
 
-def swap(a, x, y):
-    b = a[x]
-    a[x] = a[y]
-    a[y] = b
-
-# test heap_sort
+def swap(array, x, y):
+    b = array[x]
+    array[x] = array[y]
+    array[y] = b
 
 
 class Heap(Vector):
-    # binary tree with min in parents and elts > min in children in each node
+    '''
+        binary tree with min in parents and elts > min in children in each node
+    '''
 
-    # all we need is to rewrite insert and link append to insert (their
-    # functionality will be the same)
     def __init__(self, elements=None, size=0, capacity=1):
         super().__init__(size=size, capacity=capacity)
         if elements is not None:
@@ -59,7 +57,6 @@ class Heap(Vector):
         self.elements[i] = x
         self.size += 1
 
-        # sift up
         sift_up(self.elements, i)
 
     # all we need is to rewrite erase to remove min
@@ -77,30 +74,32 @@ class Heap(Vector):
         self.size -= 1
         i = 0
 
-        # sift down
         sift_down(self.elements, i, self.size)
 
         return _return
 
     def __repr__(self) -> str:
-        res_str = ''
-        elt_number = 0
-        cur_str = 0
-        while (cur_str < self.height() + 1):
+        string_to_print = ''
+        index_of_element_to_print = 0
+        current_height = 0
+        while (current_height < self.height() + 1):
+
             # 2**cur_str - amount of numbers in current str
-            str_w_nums = ''
-            for i in range(2**cur_str):
-                if elt_number < self.size:
-                    str_w_nums += (f'({elt_number + 1})' +
-                                   f'{self.elements[elt_number]:8.2e}') if \
-                                    self.elements[elt_number] is not None \
-                                    else ' '
-                    str_w_nums += ' '
-                    elt_number += 1
-            str_w_nums += '\n\n'
-            res_str += str_w_nums
-            cur_str += 1
-        return res_str
+            string_on_current_height = ''
+            for _ in range(2**current_height):
+                if index_of_element_to_print < self.size:
+                    string_on_current_height += \
+                        (f'({index_of_element_to_print + 1})' +
+                         f'{self.elements[index_of_element_to_print]:8.2e}') \
+                        if \
+                        self.elements[index_of_element_to_print] is not None \
+                        else ' '
+                    string_on_current_height += ' '
+                    index_of_element_to_print += 1
+            string_on_current_height += '\n\n'
+            string_to_print += string_on_current_height
+            current_height += 1
+        return string_to_print
 
     def erase(self):
         return self.remove_min()
@@ -135,14 +134,14 @@ def sift_down(a, i, size):
             break
 
 
-def heap_sort(a):
+def heap_sort(array):
 
-    h = Heap()
-    for i in range(len(a)):
-        h.insert(a[i])
-    b = a.copy()
-    for i in range(len(b)):
-        h.capacity = h.size
-        h.copy_to_new_vector()
-        b[i] = h.erase()
-    return b
+    heap = Heap()
+    for i in range(len(array)):
+        heap.insert(array[i])
+    new_array = array.copy()
+    for i in range(len(new_array)):
+        heap.capacity = heap.size
+        heap.copy_to_new_vector()
+        new_array[i] = heap.erase()
+    return new_array

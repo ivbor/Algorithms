@@ -1,46 +1,63 @@
-def merge(a, b):
+def merge(array_one, array_two):
     """
+    """
+    length_array_one = len(array_one)
+    length_array_two = len(array_two)
+    index_for_array_one = 0
+    index_for_array_two = 0
+    merged_array = \
+        [0 for _ in range(len(array_one) + len(array_two))]
+
+    # end for both is not reached
+    while (index_for_array_one + index_for_array_two <
+           length_array_one + length_array_two):
+
+        # move forward in the array one if
+
+        # end for the second is reached or
+        # we can (end for the first is not reached)
+        # and need to move forward inside array one
+        # (i-th element from the first
+        # less than j-th element from the second)
+        if (index_for_array_two == length_array_two or
+           (index_for_array_one < length_array_one and
+                array_one[index_for_array_one] <
+                array_two[index_for_array_two])):
+
+            # append to c an element from the first
+            merged_array[index_for_array_one + index_for_array_two] = \
+                array_one[index_for_array_one]
+            index_for_array_one += 1
+
+        # end for the first is reached but not for the second
+        # or bpth ends are not reached and element from array two
+        # less than element from array one
+        else:
+
+            # append to c an element from the second
+            merged_array[index_for_array_one + index_for_array_two] = \
+                array_two[index_for_array_two]
+            index_for_array_two += 1
+    del array_one
+    del array_two
+    return merged_array
+
+
+def merge_sort(array):
+    '''
         Divide and conquer
         Divide on 2 parts
         Sort them using recursive func
         Merge them into one
         o(nlogn)
-    """
-    n = len(a)
-    m = len(b)
-    i = 0
-    j = 0
-    c = [0 for i in range(len(a) + len(b))]
-    while (i + j < n + m): #end for both is not reached
-        if (j==m or (i < n and a[i] < b[j])): #end for the second is reached or (end for the first is not reached and i-th element from the first less than j-th element from the second)
-            c[i+j] = a[i] # add to c an element from the first
-            #print('c[i+j]=',c[i+j])
-            #print('i+j=',i+j)
-            i+=1 # continue movement on the first
-        else: # end for the first is reached but not for the second
-            c[i+j] = b[j] # add to c an element from the second
-            #print('c[i+j]=',c[i+j])
-            #print('i+j=',i+j)
-            j+=1 # continue movement on the second
-    del a
-    del b
-    return c
-
-
-def _merge_sort(a):
-    n = len(a)
-    #print(n)
-    if (n == 1):
-        return a
-    #if (n == 0):
-    #    raise RecursionError
-    l = a[:round(n/2)]
-    #print('l=',l)
-    r = a[round(n/2):n]
-    #print('r=',r)
-    l = _merge_sort(l)
-    r = _merge_sort(r)
-    return merge(l, r)
-
-def merge_sort(a):
-    return _merge_sort(a)
+    '''
+    length_array = len(array)
+    if (length_array == 1):
+        return array
+    left_part_of_array = array[:round(length_array / 2)]
+    # print('l=',l)
+    right_part_of_array = array[round(length_array / 2):length_array]
+    # print('r=',r)
+    left_part_of_array = merge_sort(left_part_of_array)
+    right_part_of_array = merge_sort(right_part_of_array)
+    return merge(left_part_of_array, right_part_of_array)

@@ -1,5 +1,5 @@
-from Algorithms.python_solutions import Nodes
-from Algorithms.python_solutions.Nodes import LinkedList
+from Algorithms.python_solutions.Node import Node
+from Algorithms.python_solutions.LinkedList import LinkedList
 
 # import this too if you want to have the same syntax
 # for prev as for built-in next():
@@ -10,7 +10,7 @@ def prev(obj):
     return obj.prev()
 
 
-class DoubleNode(Nodes.Node):
+class DoubleNode(Node):
 
     '''
         Two-ways Node
@@ -19,9 +19,14 @@ class DoubleNode(Nodes.Node):
     '''
 
     def __init__(self, data=None, prev_node=None, next_node=None):
-        super().__init__(data, next_node)
 
         # DoubleNodes can only be connected with DoubleNodes or Nones
+        if next_node.__class__.__name__ == \
+                self.__class__.__name__ or next_node is None:
+            super().__init__(data, next_node)
+        else:
+            raise TypeError('Wrong type of next_node')
+
         if (prev_node.__class__.__name__ == self.__class__.__name__)\
            or (prev_node is None):
             self.prev_node = prev_node
@@ -40,16 +45,16 @@ class Stack:  # (LIFO)   <(out)-(in)> Stack |
         self.tail = None
         self.size = 0
 
-    def push(self, x):
+    def push(self, value):
         # for the first element
         if self.size == 0:
-            newNode = DoubleNode(x, None, None)
+            newNode = DoubleNode(value, None, None)
             self.head = newNode
             self.tail = self.head
             self.size += 1
         # for other elements
         else:
-            newNode = DoubleNode(x, self.tail, None)
+            newNode = DoubleNode(value, self.tail, None)
             self.tail.next_node = newNode
             self.tail = self.tail.next_node
             self.size += 1
@@ -89,16 +94,16 @@ class Stack:  # (LIFO)   <(out)-(in)> Stack |
 
 class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
 
-    def push(self, x):
+    def push(self, value):
         # for the first element
         if self.size == 0:
-            newNode = DoubleNode(x, None, None)
+            newNode = DoubleNode(value, None, None)
             self.head = newNode
             self.tail = self.head
             self.size += 1
         # for other elements
         else:
-            newNode = DoubleNode(x, self.tail, None)
+            newNode = DoubleNode(value, self.tail, None)
             self.tail.next_node = newNode
             self.tail = self.tail.next_node
             self.size += 1
@@ -119,11 +124,11 @@ class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
         return _return
 
 
-class Deck(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
+class Deque(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
 
     # push from Queue
-    def push_back(self, x):
-        Queue.push(self, x)
+    def push_back(self, value):
+        Queue.push(self, value)
 
     # pop from Queue
     def pop_front(self):
@@ -133,16 +138,16 @@ class Deck(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
     def pop_back(self):
         Stack.pop(self)
 
-    def push_front(self, x):
+    def push_front(self, value):
         # for the first element
         if self.size == 0:
-            newNode = DoubleNode(x, None, None)
+            newNode = DoubleNode(value, None, None)
             self.head = newNode
             self.tail = self.head
             self.size += 1
         # for other elements
         else:
-            newNode = DoubleNode(x, None, self.head)
+            newNode = DoubleNode(value, None, self.head)
             self.head.prev_node = newNode
             self.head = self.head.prev_node
             self.size += 1
@@ -174,10 +179,7 @@ class CyclicLinkedList(LinkedList):
                 break
         return ret
 
-    def append(self, x):
-        raise NotImplementedError('Append for CyclicLinkedList is not defined')
-
-    def insert(self, x, i):
+    def insert(self, i, x):
         # for the first element
         if self.size == 0:
             newNode = DoubleNode(x, None, None)
@@ -260,6 +262,6 @@ class CyclicLinkedList(LinkedList):
             del cur
             self.size -= 1
 
-    def update(self, x, i):
+    def update(self, i, x):
         self.erase(i)
-        self.insert(x, i)
+        self.insert(i, x)

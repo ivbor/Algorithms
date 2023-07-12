@@ -1,13 +1,15 @@
-from two_dim_array_count_sort import two_dim_array_count_sort
+from Algorithms.python_solutions.two_dim_array_count_sort \
+    import two_dim_array_count_sort
 
-def to_m_based(a, m, array = True):
+
+def to_m_based(number, base, array=True):
     m_based = []
-    whole = a
-    remain = 0
+    whole = number
+    remainder = 0
     while whole != 0:
-        remain = whole % m
-        whole = whole // m
-        m_based.append(remain)
+        remainder = whole % base
+        whole = whole // base
+        m_based.append(remainder)
     m_based = [i for i in reversed(m_based)]
     if array:
         return m_based
@@ -15,45 +17,48 @@ def to_m_based(a, m, array = True):
         m_based = restore_to_nums(m_based)
         return m_based
 
-def restore_to_nums(a):
-    a_i = 0
-    for p, k in enumerate(a):
-        a_i += pow(10, (len(a) - p - 1)) * k
-    return a_i
 
-# for whole numbers (0 <= a[i] < m^k), helps with lots of small (meaning power) numbers
-def digit_sort(a, m = 10):
+def restore_to_nums(array):
+    number = 0
+    for power, multiplier in enumerate(array):
+        number += pow(10, (len(array) - power - 1)) * multiplier
+    return number
 
-    # extend on negative numbers (- m^k < a[i] < m^k)
-    min_a = min(a)
-    if min_a < 0:
-        a = [i - min_a for i in a]
+
+def digit_sort(array, base=10):
+    '''
+        for whole numbers (0 <= array[i] < base^k),
+        helps with lots of small (meaning power) numbers
+    '''
+    # extend on negative numbers (- base^k < array[i] < base^k)
+    min_of_array = min(array)
+    if min_of_array < 0:
+        array = [i - min_of_array for i in array]
 
     # translate any numeration to the m-based
-    a = [to_m_based(i, m) for i in a]
+    array = [to_m_based(i, base, array=True) for i in array]
+    print(array)
 
     # translate array to 2-dim array, where k is number of digits,
-    # add 0 before numbers where less than k digits
-    k = max([len(i) for i in a])
-    for i, p in enumerate(a):
-        if len(p) < k:
-            p = [j for j in reversed(p)]
-            while len(p) < k:
-                p.append(0)
-            a[i] = [j for j in reversed(p)]
+    # add 0 before numbers where less than k digits so that
+    # new 2dim list would be rectangular matrix
+    max_length_of_a_i = max([len(i) for i in array])
+    for i, m_based_number in enumerate(array):
+        if len(m_based_number) < max_length_of_a_i:
+            m_based_number = [j for j in reversed(m_based_number)]
+            while len(m_based_number) < max_length_of_a_i:
+                m_based_number.append(0)
+            array[i] = [j for j in reversed(m_based_number)]
+    print(array)
 
     # use written above func to sort 2-dim arrays
-    a = two_dim_array_count_sort(a)
+    array = two_dim_array_count_sort(array)
 
     # restore numbers from arrays
-    a = [restore_to_nums(i) for i in a]
+    array = [restore_to_nums(i) for i in array]
 
     # extend on negative numbers
-    if min_a < 0:
-        a = [i + min_a for i in a]
+    if min_of_array < 0:
+        array = [i + min_of_array for i in array]
 
-    return a
-
-
-
-
+    return array

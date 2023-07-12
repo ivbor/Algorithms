@@ -42,7 +42,7 @@ class Vector:
 
         # handle wrong indexes and prevent from error
         # raised because of null size
-        if abs(i) >= self.size and (i != 0 and self.size == 0):
+        if abs(i) >= self.capacity and (i != 0 and self.size == 0):
             raise IndexError('list index out of range')
 
         # handle negative indexes
@@ -60,7 +60,7 @@ class Vector:
     def __getitem__(self, i):
 
         # handle wrong indexes
-        if abs(i) >= self.size:
+        if abs(i) >= self.capacity:
             raise IndexError('list index out of range')
 
         # handle negative indexes

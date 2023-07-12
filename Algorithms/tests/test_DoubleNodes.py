@@ -1,4 +1,4 @@
-from Algorithms.python_solutions.DoubleNodes import Stack, Queue, Deck, DoubleNode, prev
+from Algorithms.python_solutions.DoubleNodes import Stack, Queue, Deque, DoubleNode, prev
 
 
 def test_doublenode():
@@ -55,7 +55,7 @@ def test_queue():
 
 
 def test_deck():
-    d = Deck()
+    d = Deque()
     d.push_front(None)
     assert d.size == 1, q.size
     assert d.front() is None, q.front()
