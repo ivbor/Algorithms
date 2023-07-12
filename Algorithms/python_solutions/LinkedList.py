@@ -1,50 +1,18 @@
-class Node:
-
-    '''
-        Simple one-way Node
-        Can store data in self.data
-        Can store next node in self.next_node
-        Works next() for next node
-        Works print() (and str()) for self.data
-    '''
-
-    def __init__(self, data=None, next_node=None):
-        self.data = data
-
-        # Nodes can only be connected with nodes or Nones
-        if (next_node.__class__.__name__ == self.__class__.__name__)\
-           or (next_node is None):
-            self.next_node = next_node
-        else:
-            raise TypeError('Wrong type of next node')
-
-    def __str__(self):
-        return str(self.data)
-
-    def __next__(self):
-        return self.next_node
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __eq__(self, other):
-        return self is other
+from Algorithms.python_solutions.Node import Node
 
 
 class LinkedList:
-
     '''
         Linked List class, connects one-way nodes
         Can be initiated by head or by head and tail
 
+        makes possible creation not only from
+        absence of nodes, but from chain of
+        any length, provided head and tail
+
+        automatically checks, if there is
+        a connection between head and tail
     '''
-
-    # makes possible creation not only from
-    # absence of nodes, but from chain of
-    # any length, provided head and tail
-
-    # automatically checks, if there is
-    # a connection between head and tail
 
     def __init__(self, head=None, tail=None):
 
@@ -92,7 +60,6 @@ class LinkedList:
         else:
             return False
 
-    # works fine if launched O(1) times
     def __iter__(self):
 
         cur = self.head
@@ -112,16 +79,6 @@ class LinkedList:
             else:
                 break
 
-    # can't use iter there due to
-    # calculative inefficiency
-    def __repr__(self):
-        return str(self)
-
-    # repr restrictions apply here too
-    # instead of calling every time iter
-    # better write list_all() method to
-    # write everything to the memory once
-    # and then use it where necessary
     def list_all(self):
         ret = list()
         for i in self:
@@ -130,6 +87,9 @@ class LinkedList:
 
     def __str__(self):
         return str(self.list_all())
+
+    def __repr__(self):
+        return str(self)
 
     def append(self, x):
 
@@ -146,21 +106,28 @@ class LinkedList:
             self.tail = newNode
             self.size += 1
 
-    # x for value, i for index
-    def insert(self, x, i):
+    def search(self, i):
+        previous = self.head
+        current = previous.next_node
+        index_of_current_element = 1
+        while index_of_current_element < i:
+            previous = current
+            current = previous.next_node
+            index_of_current_element += 1
+        return (previous, current)
+
+    def insert(self, i, x):
 
         # for the first element
         if not isinstance(self.head, Node):
             newNode = Node(x, None)
             self.head = newNode
             self.tail = self.head
-            self.size += 1
         # insert in the head
         elif i == 0:
             newNode = Node(x, None)
             newNode.next_node = self.head
             self.head = newNode
-            self.size += 1
         # append using insert
         elif i == self.size + 1:
             self.append(x)
@@ -173,19 +140,13 @@ class LinkedList:
                              ' numbers')
         # otherwise - dig for i-th element
         else:
-            prev = self.head
-            cur = prev.next_node
-            j = 1
-            while j < i:
-                prev = cur
-                cur = prev.next_node
-                j += 1
-            # list[i] = prev
-            # list[i+1] = cur
+            previous, current = self.search(i)
+
+            # insert i-th element
             newNode = Node(x, None)
-            prev.next_node = newNode
-            newNode.next_node = cur
-            self.size += 1
+            previous.next_node = newNode
+            newNode.next_node = current
+        self.size += 1
 
     def erase(self, i):
 
@@ -218,29 +179,23 @@ class LinkedList:
 
         # otherwise - dig for i-th element
         else:
-            prev = self.head
-            cur = prev.next_node
-            j = 1
-            while j < i:
-                prev = cur
-                cur = prev.next_node
-                j += 1
+            previous, current = self.search(i)
 
             # delete i-th element
-            buff = cur.next_node
-            del cur
-            prev.next_node = buff
+            buff = current.next_node
+            del current
+            previous.next_node = buff
 
             # if i-th element is tail - reassign tail
             if i == self.size - 1:
-                self.tail = prev
+                self.tail = previous
         self.size -= 1
 
-    def update(self, x, i):
+    def update(self, i, x):
 
         if i < 0:
             raise IndexError('Indexing is' +
                              ' only possible with non-negative' +
                              ' numbers')
         self.erase(i)
-        self.insert(x, i)
+        self.insert(i, x)
