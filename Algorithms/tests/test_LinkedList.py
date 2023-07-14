@@ -1,3 +1,4 @@
+from _pytest.compat import assert_never
 from Algorithms.python_solutions.LinkedList import LinkedList
 from Algorithms.python_solutions.Node import Node
 import pytest
@@ -36,6 +37,25 @@ def ll_with_node():
     return ll
 
 
+@pytest.fixture()
+def ll_with_same_head_and_tail():
+    node = Node(1)
+    ll = LinkedList(head=node, tail=node)
+    return ll
+
+
+def test_size_ll_with_1_node_initialized_differently(
+        ll_with_same_head_and_tail):
+    assert ll_with_same_head_and_tail.size == 1, \
+        'size is wrong when head and tail of ll are same'
+
+
+def test_head_and_tail_in_ll_with_1_node(
+        ll_with_same_head_and_tail):
+    assert ll_with_same_head_and_tail.head == \
+        ll_with_same_head_and_tail.tail
+
+
 def test_one_node_ll_has_size(ll_with_node):
     assert ll_with_node.size == 1, 'size attribute defined incorrectly'
 
@@ -48,12 +68,8 @@ def test_size1_ll_has_equal_head_and_tail(ll_with_node):
 def test_can_initialize_ll_from_chain_of_nodes_using_head():
     node2 = Node(4)
     node1 = Node(4, node2)
-    try:
-        ll = LinkedList(node1)
-    except BaseException:
-        raise NotImplementedError(
-            'LinkedList initialization using chains \
-            from the head is implemented incorrectly')
+    assert isinstance(LinkedList(node1), LinkedList), \
+        'll was not initialized but should'
 
 
 @pytest.fixture()
@@ -84,12 +100,7 @@ def test_ll_from_chain_of_nodes_using_tail_leads_to_blank_ll():
     node2 = Node(4)
     node1 = Node(4, node2)
     node3 = Node(31, node1)
-    try:
-        LinkedList(tail=node3)
-    except BaseException:
-        raise NotImplementedError(
-            'LinkedList initialization using chains \
-            from the tail is implemented incorrectly')
+    assert str(LinkedList(tail=node3)) == str(LinkedList())
 
 
 @pytest.fixture()
@@ -145,6 +156,7 @@ def test_insertion_of_the_first_element_in_ll_works():
             in ll works incorrectly'
     assert ll.size == 1, 'wrong size after insertion'
 
+
 def test_insertion_in_the_head_in_ll_works():
     ll = LinkedList()
     ll.insert(5, 1)
@@ -153,14 +165,17 @@ def test_insertion_in_the_head_in_ll_works():
         assert i == j, 'insertion in the head in ll works wrong'
     assert ll.size == 2, 'wrong size after insertion'
 
+
 def test_append_by_insertion_in_ll_works():
     ll = LinkedList()
-    ll.insert(5, 1)
+    other_ll = LinkedList()
+    ll.insert(ll.size + 1, 1)
     ll.insert(0, 0)
-    ll.insert(2, 2)
-    for j, i in enumerate(ll):
-        assert i == j, 'append by insertion in ll works wrong'
-    assert ll.size == 3, 'wrong size after insertion'
+    ll.insert(ll.size + 1, 2)
+    for i in ll:
+        other_ll.append(i)
+    assert str(ll) == str(other_ll), 'append using insertion works wrong'
+
 
 def test_actual_insertion_in_ll_works():
     ll = LinkedList()
@@ -199,6 +214,13 @@ def test_delete_the_last_element_in_ll_works(ll_for_erase):
     assert ll_for_erase.size == 4, 'wrong size after deletion'
 
 
+def test_delete_only_element_in_ll(ll_with_node):
+    ll_with_node.erase(0)
+    ll = LinkedList()
+    assert str(ll_with_node) == str(ll), 'deletion of the last \
+        element should lead to the blank ll but does not'
+
+
 def test_delete_i_th_element_in_ll_works(ll_for_erase):
     ll_for_erase.erase(1)
     ctr = 0
@@ -228,12 +250,29 @@ def test_update(ll_for_erase):
             assert i == 0, 'update works wrong in the ll'
 
 
+def test_neg_index_in_update_never_works(ll_for_erase):
+    with pytest.raises(Exception):
+        ll_for_erase.update(-1, 3)
+
+
 def test_ll_stores_nones(ll_for_erase):
     ll_for_erase.update(1, None)
     assert ll_for_erase.list_all()[1] is None, \
         'll cannot store nones but should'
 
 
-def test_ll_in(ll_for_erase):
-    ll_for_erase.update(1, None)
-    assert 2 in ll_for_erase, ll_for_erase.list_all()
+def test_ll_contains(ll_for_erase):
+    assert not (10 in ll_for_erase), '__contains__ shows the presence \
+        of absent element'
+    assert 2 in ll_for_erase, '__contains__ shows absence of present \
+        number'
+
+
+def test_ll_repr(ll_for_erase):
+    assert ll_for_erase.__repr__() == str(ll_for_erase), \
+        '__repr__ works wrong for ll'
+
+
+def test_indexing_with_neg_numbers_inside_insert(ll_for_erase):
+    with pytest.raises(Exception):
+        ll_for_erase.insert(-1, -1)

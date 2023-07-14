@@ -53,7 +53,7 @@ class LinkedList:
             self.tail = self.head
             self.size = 0
 
-    def contains(self, x):
+    def __contains__(self, x):
 
         if x in self.list_all():
             return True

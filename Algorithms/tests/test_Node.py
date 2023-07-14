@@ -52,12 +52,9 @@ def test_raises_error_when_next_node_is_not_node_or_none(node):
 
 
 def test_raises_error_when_initialized_with_wrong_next_node():
-    try:
+    with pytest.raises(Exception):
         next_node = 12
         Node(4, next_node)
-        assert False, 'TypeError should be thrown and catched'
-    except TypeError:
-        pass
 
 
 def test_eq_for_node(node_with_data):
