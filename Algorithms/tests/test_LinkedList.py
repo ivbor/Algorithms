@@ -30,6 +30,16 @@ def test_no_nodes_tail_of_ll_exists(blank_ll):
         'head attribute is absent or defined incorrectly'
 
 
+def test_can_not_modify_tail_manually(blank_ll):
+    with pytest.raises(Exception):
+        blank_ll.tail = 12
+
+
+def test_can_not_modify_size_manually(blank_ll):
+    with pytest.raises(Exception):
+        blank_ll.size = 100
+
+
 @pytest.fixture()
 def ll_with_node():
     node = Node(4)

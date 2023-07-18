@@ -17,7 +17,7 @@ class LinkedList:
     def __init__(self, head=None, tail=None):
 
         # save the head if exists
-        self.head = head
+        self._head = head
 
         # check a connection between head and tail
         # if they both are mentioned
@@ -29,13 +29,13 @@ class LinkedList:
             if head != tail:
 
                 # if not - dump first node,
-                node = self.head
+                node = self._head
 
                 # get ready to move tail,
-                self.tail = self.head
+                self._tail = self._head
 
                 # and increase size to 1
-                self.size = 1
+                self._size = 1
 
                 # move tail until the end of the
                 # chain is reached
@@ -43,15 +43,46 @@ class LinkedList:
                     if next(node) is not None:
                         node = next(node)
                     else:
-                        self.tail = node
+                        self._tail = node
                         break
-                    self.size += 1
+                    self._size += 1
             else:
-                self.size = 1
-                self.tail = self.head
+                self._size = 1
+                self._tail = self._head
         else:
-            self.tail = self.head
-            self.size = 0
+            self._tail = self._head
+            self._size = 0
+
+    @property
+    def head(self):
+        return self._head
+
+    @head.setter
+    def head(self, head):
+        self._head = head
+        if self._size == 0:
+            self._size += 1
+            self._tail = self._head
+
+    @property
+    def tail(self):
+        return self._tail
+
+    @tail.setter
+    def tail(self, tail):
+        raise NotImplementedError('assigning tail is only possible' +
+                                  ' through insert or initialization' +
+                                  '\n' +
+                                  f'use {self.__name__}.insert({tail})')
+
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        raise NotImplementedError('can not set size, ' +
+                                  'it is calculated automatically')
 
     def __contains__(self, x):
 
@@ -62,7 +93,7 @@ class LinkedList:
 
     def __iter__(self):
 
-        cur = self.head
+        cur = self._head
         while True:
 
             # protection from Attr error
@@ -94,20 +125,20 @@ class LinkedList:
     def append(self, x):
 
         # for the first element
-        if self.size == 0:
+        if self._size == 0:
             newNode = Node(x, None)
-            self.head = newNode
-            self.tail = self.head
-            self.size += 1
+            self._head = newNode
+            self._tail = self._head
+            self._size += 1
         # for other elements
         else:
             newNode = Node(x, None)
-            self.tail.next_node = newNode
-            self.tail = newNode
-            self.size += 1
+            self._tail.next_node = newNode
+            self._tail = newNode
+            self._size += 1
 
     def search(self, i):
-        previous = self.head
+        previous = self._head
         current = previous.next_node
         index_of_current_element = 1
         while index_of_current_element < i:
@@ -119,17 +150,17 @@ class LinkedList:
     def insert(self, i, x):
 
         # for the first element
-        if not isinstance(self.head, Node):
+        if not isinstance(self._head, Node):
             newNode = Node(x, None)
-            self.head = newNode
-            self.tail = self.head
+            self._head = newNode
+            self._tail = self._head
         # insert in the head
         elif i == 0:
             newNode = Node(x, None)
-            newNode.next_node = self.head
-            self.head = newNode
+            newNode.next_node = self._head
+            self._head = newNode
         # append using insert
-        elif i == self.size + 1:
+        elif i == self._size + 1:
             self.append(x)
         # throw index error, insertion
         # with negative indexing is
@@ -146,7 +177,7 @@ class LinkedList:
             newNode = Node(x, None)
             previous.next_node = newNode
             newNode.next_node = current
-        self.size += 1
+        self._size += 1
 
     def erase(self, i):
 
@@ -154,28 +185,28 @@ class LinkedList:
         if i == 0:
 
             # if the list has only one Node
-            if self.size == 1:
-                del self.head
-                self.head = None
-                del self.tail
-                self.tail = None
+            if self._size == 1:
+                del self._head
+                self._head = None
+                del self._tail
+                self._tail = None
             else:
-                buff = self.head.next_node
-                del self.head
-                self.head = buff
+                buff = self._head.next_node
+                del self._head
+                self._head = buff
 
         # if index is negative and
         # to get to i one does not
         # have to go multiple (2 or more)
         # times to the tail,
         # no more than once
-        elif i < 0 and abs(i) < self.size:
+        elif i < 0 and abs(i) < self._size:
 
             # in this case we prevent
             # users from abusing
             # negative indexes
             # but generally allow them
-            self.erase(self.size + i)
+            self.erase(self._size + i)
 
         # otherwise - dig for i-th element
         else:
@@ -187,9 +218,9 @@ class LinkedList:
             previous.next_node = buff
 
             # if i-th element is tail - reassign tail
-            if i == self.size - 1:
-                self.tail = previous
-        self.size -= 1
+            if i == self._size - 1:
+                self._tail = previous
+        self._size -= 1
 
     def update(self, i, x):
 
@@ -197,5 +228,5 @@ class LinkedList:
             raise IndexError('Indexing is' +
                              ' only possible with non-negative' +
                              ' numbers')
-        self.erase(i)
-        self.insert(i, x)
+        previous, current = self.search(i)
+        current.data = x

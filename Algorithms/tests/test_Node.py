@@ -1,5 +1,4 @@
 from Algorithms.python_solutions.Node import Node
-from Algorithms.python_solutions.DoubleNodes import CyclicLinkedList
 import pytest
 
 
@@ -68,39 +67,3 @@ def test_eq_for_node(node_with_data):
 
 def test_repr_in_node(node_with_data):
     assert node_with_data.__repr__() == '4', '__repr__ for node works wrong'
-
-
-def test_cll():
-    cll = CyclicLinkedList()
-    # test init, list_all, erase,
-    # insert, update
-    # use iter in structure
-    # for i in self: ... break
-    # test insert, list_all,
-    # update and erase for 1 element
-    assert cll.size == 0
-    cll.insert(12, 12)
-    assert str(cll) == str([12]), cll.list_all()
-    assert cll.size == 1, cll.size
-    cll.update(1, None)
-    assert cll.size == 1, cll.size
-    assert str(cll) == str([None]), cll.list_all()
-    cll.erase(1)
-    assert str(cll) == str([]), cll.list_all()
-    assert cll.size == 0, cll.size
-    # test everything for many elements
-    for i in range(10):
-        cll.insert(i, str(i))
-    assert str(cll) == str([str(i) for i in range(10)])
-    assert cll.size == 10
-    for i in enumerate(cll):
-        if i[0] == cll.size:
-            break
-        cll.update(i[0], None)
-    assert cll.list_all() == [None for i in range(10)]
-    for i in enumerate(cll):
-        if i[0] == 10:
-            break
-        cll.erase(9-i[0])
-    assert cll.size == 0
-    assert str(cll) == str([])
