@@ -24,7 +24,8 @@ def array_count_sort(array, key=0, position=False):
 
     # all empty places will be filled
     # with values < min_a in order to
-    # place them to the top
+    # place strings with them higher than
+    # those without empty places
     array_i_key = [min_array_key - 1
                    if len(array[i]) <= key else array[i][key]
                    for i in range(len_of_array)]

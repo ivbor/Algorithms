@@ -1,6 +1,5 @@
 # import better view function for 2dim arrays
 import time
-from Algorithms.python_solutions.matrix_view import Matrix2dim
 # import some helpers for creating arrays and time checking
 from Algorithms.python_solutions.speed_analysis \
     import make_random_whole_1_dim_array, make_random_whole_2_dim_array, \
@@ -50,8 +49,8 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
     whole_two_dim_array = make_random_whole_2_dim_array(
             elts_range=num_range, size_of_1_dim_range=test_size_range,
             size_of_2_dim_range=test_size_range)
-    a = [one_dim_array, whole_one_dim_array,
-         whole_two_dim_array]
+    arrays = [one_dim_array, whole_one_dim_array,
+              whole_two_dim_array]
 
     # make dict with sorts and functions
     sorts = {'array_count_sort': array_count_sort,
@@ -72,13 +71,13 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
             i[1],
 
             # choose array to sort (2dim for 2dim sorts, 1dim respectively)
-            a[2].copy() if i[0] in (
+            arrays[2].copy() if i[0] in (
                 'array_count_sort',
                 'two_dim_array_count_sort') \
 
-            else a[1].copy() if i[0] in ['count_sort', 'digit_sort'] \
+            else arrays[1].copy() if i[0] in ['count_sort', 'digit_sort'] \
 
-            else a[0].copy(),
+            else arrays[0].copy(),
 
             # no need for params here
             params={} if i[0] != 'digit_sort' else {'base': 16})
@@ -88,17 +87,18 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
 
             sorted,
 
-            a[2].copy() if i[0] in (
+            arrays[2].copy() if i[0] in (
                 'array_count_sort',
                 'two_dim_array_count_sort')
 
-            else a[1].copy() if i[0] in ['count_sort', 'digit_sort']
+            else arrays[1].copy() if i[0] in ['count_sort', 'digit_sort']
 
-            else a[0].copy(),
+            else arrays[0].copy(),
 
-            # since sorted sorts by all indexes by default, which written
-            # array_count_sort does not, change parameter from default
-            # to special lambda
+            # since sorted does sorts by all indexes by default, which written
+            # array_count_sort does not, change parameter from default inside
+            # sorted to special lambda-defined key making it perform the
+            # same sort as array_count_sort
             {} if i[0] != 'array_count_sort' else {'key': lambda a: a[0]})
 
         # and compare result

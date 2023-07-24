@@ -59,7 +59,10 @@ class Heap(Vector):
 
         sift_up(self.elements, i)
 
-    # all we need is to rewrite erase to remove min
+    def __iter__(self):
+        for i in self.elements[:self.size]:
+            yield i
+
     def remove_min(self):
 
         if self.size <= self.capacity / 4:

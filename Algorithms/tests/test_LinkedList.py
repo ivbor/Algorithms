@@ -1,4 +1,3 @@
-from _pytest.compat import assert_never
 from Algorithms.python_solutions.LinkedList import LinkedList
 from Algorithms.python_solutions.Node import Node
 import pytest
@@ -233,13 +232,8 @@ def test_delete_only_element_in_ll(ll_with_node):
 
 def test_delete_i_th_element_in_ll_works(ll_for_erase):
     ll_for_erase.erase(1)
-    ctr = 0
-    for i in ll_for_erase:
-        if i == 1:
-            ctr += 1
-        if i == 3:
-            ctr += 1
-    assert ctr == 1, 'deletion of the i-th element works wrong'
+    assert 1 not in ll_for_erase.list_all(), \
+        'deletion of the i-th element works wrong'
 
 
 def test_neg_indexes_in_erase_in_ll_work(ll_for_erase):

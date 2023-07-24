@@ -1,11 +1,10 @@
 # hash for nums and for strings (with open addresses and with chains)
 # Bloom filter
 # Cuckoo hashing
-# hashlib, get familiar with hashes: YMMV, FNV, SuperFastHash
 
 # Dynamic programming (backpack problem) from Lesson 6: O(n*W) instead of
 # 2^n on low W
-
+import hashlib
 from collections import deque
 from typing import Any, NamedTuple
 from Algorithms.python_solutions.vector import Vector
@@ -63,109 +62,128 @@ def gen_prime(stop=30):  # 31 is a nice start as a capacity
             return i
 
 
-class HashTable():
+def poly_hash(x):
+    return sum([ord(character) ** power
+                for power, character in
+                enumerate(str.__repr__(str(x)).lstrip("'"), 1)])
 
-    def __init__(self, capacity=30, resolving='closed', load_factor_thr=0.6):
+
+class HashTable_closed():
+
+    def __init__(self, capacity=30, hashfunc='poly'):
         '''
-            Supports closed chains and linear probing type of
-            open addressing
+            Usual hashtable using closed chains as method of
+            resolving collisions
+
+            Args:
+                capacity - initial length
+                load_factor_thr - load factor threshold
+                when the size of the hashtable divided by capacity
+                reaches this threshold hashtable will resize and rehash
+                hashfunc - function used for hashing, may be callable
+                or one of the following: poly for polynomial hash,
+                md5, sha1
         '''
-        self.resolving_method = resolving
-        self.capacity = gen_prime(capacity)
-        self._pairs = Vector(capacity=self.capacity)
-        self.size = 0
-        self.load_factor_thr = load_factor_thr
+        self._capacity = gen_prime(capacity)
+        self._pairs = Vector(elements=[deque()
+                                       for _ in range(self._capacity)])
+        # since vector by itself has Nones inside by default
+        # have to cut the slice of it so that no Nones would be
+        # left inside vector
+        self._pairs = self._pairs.elements[:self._capacity]
+        self._size = 0
+        self._max_deque_len = self._capacity // 2
+        self._hashfunc = hashfunc
 
     def get_hash(self, x):
-        # polynomial hash
-        h = sum([ord(character) ** power
-                 for power, character in
-                 enumerate(str.__repr__(str(x)).lstrip("'"), 1)]) \
-                 % self.capacity
-        return h
+        if self._hashfunc == 'poly':
+            # polynomial hash
+            return poly_hash(x) % self._capacity
+        elif self._hashfunc == 'md5':
+            return int(hashlib.md5(x.encode()).hexdigest(), 16) \
+                % self._capacity
+        elif self._hashfunc == 'sha1':
+            return int(hashlib.sha1(x.encode()).hexdigest(), 16) \
+                % self._capacity
+        elif callable(self._hashfunc):
+            return self._hashfunc(x)
 
     @property
     def pairs(self):
         ret = self._pairs.elements.copy()
         return ret
 
-    def probe(self, key):
-        index = self.get_hash(key)
-        for _ in range(self.capacity):
-            yield index, self._pairs[index]
-            index = (index + 1) % self.capacity
+    @pairs.setter
+    def pairs(self, pair):
+        raise NotImplementedError('cannot set value to protected property' +
+                                  'to append or set value use ' +
+                                  'traditional setitem method: ' +
+                                  f'{self.__name__}[{pair[0]}] = {pair[1]}')
 
-    def __setitem__(self, i, x):
-        # case by resolving method
-        if self.size / self.capacity > self.load_factor_thr:
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        raise NotImplementedError('cannot set value to protected property')
+
+    @property
+    def capacity(self):
+        return self._capacity
+
+    @capacity.setter
+    def capacity(self, capacity):
+        raise NotImplementedError('cannot set value to protected property')
+
+    def __len__(self):
+        return self._size
+
+    def __setitem__(self, key, x):
+        hashed_key = self.get_hash(key)
+        while self._pairs[hashed_key] is None:
             self.increase_size()
-        if self.resolving_method == 'closed':
-            i_hashed = self.get_hash(i)
-            self.closed_setitem(i_hashed, i, x)
-        elif self.resolving_method == 'linear':
-            for index, pair in self.probe(i):
-                if pair is None or pair.key == i:
-                    self._pairs[index] = Pair(i, x)
-                    self.size += 1
-                    break
-
-    # dict-like pattern: each element in elements is a pair of
-    # key and value
-    def closed_setitem(self, i, key, x):
-        if self._pairs[i] is None:
-            # no collision
-            self._pairs[i] = Pair(key, x)
-            self.size += 1
-        elif self._pairs[i] is not None and type(self._pairs[i]) != deque:
-            # resolve collision with creating deque
-            first_in_deque = self._pairs[i].value
-            del self._pairs[i]
-            self._pairs[i] = deque()
-            self._pairs[i].append(Pair(key, first_in_deque))
-            self._pairs[i].append(Pair(key, x))
-        else:
-            # when deque already exists
-            self._pairs[i].append(Pair(key, x))
+        self._pairs[hashed_key].append(Pair(key, x))
+        self._size += 1
+        if len(self._pairs[hashed_key]) > self._max_deque_len:
+            self.increase_size()
 
     def __getitem__(self, i):
-        # case by resolving method
-        if self.resolving_method == 'closed':
-            return self.closed_getitem(i)
-        elif self.resolving_method == 'linear':
-            for _, pair in self.probe(i):
-                if pair is None:
-                    raise KeyError(i)
-                if pair.key == i:
-                    return pair.value
-            raise KeyError(i)
-
-    def closed_getitem(self, i):
-        deque_or_pair_or_none = self._pairs[self.get_hash(i)]
-        if deque_or_pair_or_none is None:
-            raise KeyError(i)
-        elif type(deque_or_pair_or_none) == deque:
-            for pair in [pair for pair in deque_or_pair_or_none]:
-                if pair[0] == i:
-                    return pair[1]
-        else:
-            return deque_or_pair_or_none.value
+        for pair in [pair for pair in self._pairs[self.get_hash(i)]]:
+            key = pair[0]
+            value = pair[1]
+            if key == i:
+                return value
+        raise KeyError('no value for corresponding key present')
 
     def increase_size(self):
-        # in order to make amortized time to work
-        self.capacity = gen_prime(self.capacity * 2)
-        self.resize_and_rehash()
+        # in order to make amortized time to work capacity will be
+        # increased to double immediately, instead of + 1 for example
+        old_capacity = self._capacity
+        self._capacity = gen_prime(self._capacity * 2)
+        for len_deque in range(5):
+            print('len_deque ', len_deque)
+            print(sum([len(self._pairs[i]) == len_deque
+                       for i in range(old_capacity)]))
+        self.resize_and_rehash(old_capacity)
 
-    def resize_and_rehash(self):
-        newVector = [None for i in range(self.capacity)]
-        for i in range(self.size):
-            newVector[self.get_hash(i)] = self._pairs[i]
+    def resize_and_rehash(self, old_capacity):
+        newVector = Vector(capacity=self._capacity,
+                           elements=[deque() for _ in range(self._capacity)])
+        for i in range(old_capacity):
+            for pair in self._pairs[i]:
+                key = pair[0]
+                value = pair[1]
+                newVector[self.get_hash(key)].append(
+                    Pair(key=key, value=value))
         del self._pairs
         self._pairs = newVector
         del newVector
 
     def decrease_size(self):
-        self.capacity //= 2
-        self.resize_and_rehash()
+        old_capacity = self._capacity
+        self._capacity //= 2
+        self.resize_and_rehash(old_capacity)
 
     def __delitem__(self):
         pass

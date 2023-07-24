@@ -15,6 +15,9 @@ class Vector:
             if len(elements) != 0:
                 self.size = len(elements)
                 self.capacity = self.size * 2
+                self.elements = elements
+                for i in range(self.size):
+                    self.elements.append(None)
         else:
             self.size = size
             self.capacity = capacity

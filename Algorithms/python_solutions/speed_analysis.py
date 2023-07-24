@@ -2,6 +2,23 @@ import time
 import random
 
 
+def timeit(func, times=10):
+    '''
+        to time a func many (or not) times
+    '''
+    def inner(*args, **kwargs):
+        times_list = []
+        for _ in range(times):
+            st = time.time()
+            func(*args, **kwargs)
+            et = time.time()
+            times_list.append(et-st)
+        return f'Average: {sum(times_list)/times: 5.0f} ' + \
+               f'Min: {min(times_list): 5.0f}' + \
+               f'Max: {max(times_list): 5.0f}'
+    return inner
+
+
 def speed_analysis(func, array, params, tests_num=10, check=True):
     '''
         Main function to register time to sort
@@ -38,3 +55,11 @@ def make_random_1_dim_array(
         elts_range=(-100, 100), size_of_1_dim_range=(100, 1000)):
     return [random.uniform(*elts_range)
             for i in range(random.randint(*size_of_1_dim_range))]
+
+
+@timeit
+def make_it():
+    make_random_1_dim_array()
+
+
+print(make_it())
