@@ -37,7 +37,6 @@ def digit_sort(array, base=10):
 
     # translate any numeration to the m-based
     array = [to_m_based(i, base, array=True) for i in array]
-    print(array)
 
     # translate array to 2-dim array, where k is number of digits,
     # add 0 before numbers where less than k digits so that
@@ -49,7 +48,6 @@ def digit_sort(array, base=10):
             while len(m_based_number) < max_length_of_a_i:
                 m_based_number.append(0)
             array[i] = [j for j in reversed(m_based_number)]
-    print(array)
 
     # use written above func to sort 2-dim arrays
     array = two_dim_array_count_sort(array)
