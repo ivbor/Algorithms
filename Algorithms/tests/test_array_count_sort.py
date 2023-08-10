@@ -2,6 +2,13 @@ import random
 from Algorithms.python_solutions.array_count_sort import array_count_sort
 
 
+def test_array_count_sort_case_one_elt_with_huge_variation():
+    array_with_1_dim = [[random.randint(-10000, 10000) for _ in range(100)]]
+    assert array_count_sort(array_with_1_dim) == \
+        sorted(array_with_1_dim), \
+        'optimization works wrong'
+
+
 def test_array_count_sort_case_one_elt_in_2_dim():
     array_with_1_dim = [[random.randint(-100, 100)]
                         for _ in range(100)]
@@ -50,11 +57,11 @@ def test_array_count_sort_case_many_elts_with_key_and_positions():
                          for i in range(100)]
                         for _ in range(100)]
     positions = list()
+    positions_calculated = list()
     sorted_array = sorted(array_with_2_dim, key=lambda x: x[9])
     for i in range(len(array_with_2_dim)):
         positions.append(array_with_2_dim.index(sorted_array[i]))
     result = array_count_sort(array_with_2_dim, key=9, position=True)
-    positions_calculated = list()
     for i in result[1]:
         positions_calculated.extend(i)
     assert result[0] == sorted_array, \
