@@ -61,9 +61,9 @@ def bin_search(array, value_to_search, no_recursion=False):
         # introduce left and right edge values
         # make them slightly over real edges
         # so that while will not freak out
-        left_edge = -1
-        right_edge = len(array)
-        while left_edge < right_edge - 1:
+        left_edge = 0
+        right_edge = len(array) - 1
+        while left_edge < right_edge:
 
             # calculate the middle point
             middle = int((left_edge + right_edge) / 2)
@@ -77,9 +77,15 @@ def bin_search(array, value_to_search, no_recursion=False):
             else:
                 left_edge = middle
 
+            # not to forget to make an exit point
+            # for value not found situation
+            if left_edge + 1 == right_edge:
+                break
+
         # we can return either position
         # or boolean, if value_to_search is in array
-        return value_to_search == array[right_edge]
+        return (value_to_search == array[right_edge] or
+                value_to_search == array[left_edge])
 
     # here is the launch of helper function
     # which is needed because bin_search
