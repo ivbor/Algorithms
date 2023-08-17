@@ -140,13 +140,15 @@ class HashTable_closed():
         return self._size
 
     def __setitem__(self, key, x):
+        # update by delete and reset
+        del self[key]
         hashed_key = self.get_hash(key)
         while self._pairs[hashed_key] is None:
-            self.increase_size()
+            self.increase_capacity()
         self._pairs[hashed_key].append(Pair(key, x))
         self._size += 1
         if len(self._pairs[hashed_key]) > self._max_deque_len:
-            self.increase_size()
+            self.increase_capacity()
 
     def __getitem__(self, i):
         for pair in [pair for pair in self._pairs[self.get_hash(i)]]:
@@ -156,7 +158,7 @@ class HashTable_closed():
                 return value
         raise KeyError('no value for corresponding key present')
 
-    def increase_size(self):
+    def increase_capacity(self):
         # in order to make amortized time to work capacity will be
         # increased to double immediately, instead of + 1 for example
         old_capacity = self._capacity
@@ -165,9 +167,9 @@ class HashTable_closed():
             print('len_deque ', len_deque)
             print(sum([len(self._pairs[i]) == len_deque
                        for i in range(old_capacity)]))
-        self.resize_and_rehash(old_capacity)
+        self.recapacitate_and_rehash(old_capacity)
 
-    def resize_and_rehash(self, old_capacity):
+    def recapacitate_and_rehash(self, old_capacity):
         newVector = Vector(capacity=self._capacity,
                            elements=[deque() for _ in range(self._capacity)])
         for i in range(old_capacity):
@@ -180,10 +182,38 @@ class HashTable_closed():
         self._pairs = newVector
         del newVector
 
-    def decrease_size(self):
+    def decrease_capacity(self):
         old_capacity = self._capacity
         self._capacity //= 2
-        self.resize_and_rehash(old_capacity)
+        self.recapacitate_and_rehash(old_capacity)
 
-    def __delitem__(self):
-        pass
+    def search(self, key):
+        hashed_key = self.get_hash(key)
+        for index, pair in enumerate(
+                [pair for pair in self._pairs[hashed_key]]):
+            key_of_pair = pair[0]
+            if key == key_of_pair:
+                return index
+        return False
+
+    def __delitem__(self, key):
+        hashed_key = self.get_hash(key)
+        index = self.search(key)
+        if str(index) != 'False':
+            del self._pairs[hashed_key][index]
+            self._size -= 1
+            if self._size <= self._capacity * 3:
+                self.decrease_capacity()
+
+    def to_dict(self):
+        result = dict()
+        for i in self._pairs:
+            for j in i:
+                result[j.key] = j.value
+        return result
+
+    def __contains__(self, key):
+        if str(self.search(key)) == 'False':
+            return False
+        else:
+            return True

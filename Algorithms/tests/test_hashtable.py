@@ -62,3 +62,51 @@ def test_cannot_set_size_and_capacity_for_ht_after_init(ht):
         ht.size = 9
     with pytest.raises(Exception):
         ht.capacity = 9
+
+
+@pytest.fixture()
+def ht_with_samples(ht):
+    ht[True] = 0
+    ht['believe'] = 1
+    ht[32] = 18
+    return ht
+
+
+def test_deletion_in_ht(ht_with_samples):
+    del ht_with_samples[32]
+    del ht_with_samples[0]
+    assert ht_with_samples.size == 2, 'deletion works wrong'
+    assert ht_with_samples[True] == 0, 'first element was lost during deletion'
+    assert ht_with_samples['believe'] == 1, 'second element was lost during deletion'
+
+
+def test_update_in_ht(ht_with_samples):
+    ht_with_samples[32] = 2
+    assert ht_with_samples[32] == 2, 'update works wrong'
+    assert ht_with_samples.size == 3, 'update damages size'
+    assert (ht_with_samples[True] == 0 and ht_with_samples['believe'] ==
+            1), 'update damages other ht elements'
+
+
+def test_to_dict(ht_with_samples):
+    dict_from_ht = ht_with_samples.to_dict()
+    assert len(dict_from_ht) == len(
+        ht_with_samples), 'size of dict from ht is wrong'
+    assert (dict_from_ht[True] == 0 and
+            dict_from_ht[32] == 18 and
+            dict_from_ht['believe'] == 1), \
+        'transformation to dict does not save elements'
+
+
+def test_search_in_ht(ht_with_samples):
+    assert isinstance(ht_with_samples.search(True), int), \
+        'search in ht considers absent actually present elements'
+    assert ht_with_samples.search(18) == False, \
+        'search in ht considers present actually absent elements'
+
+
+def test_contains_in_ht(ht_with_samples):
+    assert (True in ht_with_samples) == True, \
+        'ht considers absent actually present elements'
+    assert (18 in ht_with_samples) == False, \
+        'ht considers present actually absent elements'
