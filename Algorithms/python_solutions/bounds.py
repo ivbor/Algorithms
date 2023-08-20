@@ -1,14 +1,29 @@
-# helper function for recursive
-# lower_bound
-
 def _lower_bound(array, left_edge, right_edge, value_to_search):
     '''
-        function-helper
-        since lower_bound works on the cut
-        we use recursion with cutting
-        the previous cut by 2
-        l parameter for left edge
-        r for right accordingly
+        This is lower bound search helper.
+
+        Lower bound search works on the cut,
+        so edges of the cut inside the array have to be provided.
+        Array has to be sorted already, time and complexity equal
+        to the binary search with recursion.
+
+        Parameters
+        ----------
+        array: list[int]
+            one-dimensional array consisting of whole numbers
+        left_edge: int
+            index inside the array meaning left edge of indexes
+            inside array (itself included) where search will be performed
+        right_edge: int
+            index inside the array meaning right edge of indexes
+            inside array (itself included) where search will be performed
+        value_to_search: int
+            value to be searched among the given indexes slice inside array
+
+        Returns
+        -------
+        int
+            index there the lower bound with required value is located
     '''
 
     # determine the position of the middle element

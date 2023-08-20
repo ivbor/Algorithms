@@ -1,11 +1,27 @@
 def _bin_search(array, left_edge, right_edge, value_to_search):
     '''
-        function-helper
-        since bin_search works on the cut
-        we use recursion with cutting
-        the previous cut by 2
-        l parameter for left edge
-        r for right accordingly
+        This is the binary search with recursion implementation helper.
+
+        Binary search with recursion works on the cut,
+        so edges of the cut inside the array have to be provided.
+
+        Parameters
+        ----------
+        array: list[int]
+            one-dimensional array consisting of whole numbers
+        left_edge: int
+            index inside the array meaning left edge of indexes
+            inside array (itself included) where search will be performed
+        right_edge: int
+            index inside the array meaning right edge of indexes
+            inside array (itself included) where search will be performed
+        value_to_search: int
+            value to be searched among the given indexes slice inside array
+
+        Returns
+        -------
+        bool
+            whether searched value is inside the array
     '''
 
     # once the cut has the length of 1
@@ -42,17 +58,33 @@ def _bin_search(array, left_edge, right_edge, value_to_search):
         return _bin_search(array, middle, right_edge, value_to_search)
 
 
-def bin_search(array, value_to_search, no_recursion=False):
+def bin_search(array: list[int], value_to_search: int, no_recursion=False):
     '''
-        this is binary search function
-        works only for already sorted arrays
-        consisting of only whole numbers
-        for log2(n) time
+        This function performs a binary search inside sorted array
+        consisting of whole numbers.
+        Time to work: O(log2 of the size of the array) - best case
 
-        there are 2 options available -
-        with recursion or without
-        switch is made by changing
-        no_recursion option
+        Parameters
+        ----------
+        array: list[int]
+            one-dimensional array consisting of whole numbers
+        value_to_search: int
+            value to be searched inside the array
+        no_recursion: bool
+            since binary search in general has two implementations,
+            with or without recursion, this is the switcher between them
+
+            the no_recursion implementation requires exactly 3 variables
+            which makes it very space efficient (O(1) to be exact),
+            however time takes damage up to O(size of array)
+
+            the recursion implementation requires space up to O(log2 of
+            the size of the array), and time cuts up to the same value
+
+        Returns
+        -------
+        bool
+            whether searched value is inside the array
     '''
 
     # this is no recursion realization
