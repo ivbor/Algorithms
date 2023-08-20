@@ -1,5 +1,5 @@
 from Algorithms.python_solutions.hashtable \
-    import HashTable_closed, gen_primes
+    import HashTable_closed, gen_primes, HashTable_open
 import random
 import pytest
 
@@ -57,6 +57,14 @@ def test_ht_handles_collisions(ht):
         'collisions are handled ineffectively or wrong'
 
 
+def test_stress_ht_closed(ht):
+    for i in range(100000):
+        ht[chr(i)] = chr(i)
+    for i in range(100000):
+        assert ht[chr(i)] == chr(i), \
+            'ht_open does not stand stress test'
+
+
 def test_cannot_set_size_and_capacity_for_ht_after_init(ht):
     with pytest.raises(Exception):
         ht.size = 9
@@ -77,7 +85,8 @@ def test_deletion_in_ht(ht_with_samples):
     del ht_with_samples[0]
     assert ht_with_samples.size == 2, 'deletion works wrong'
     assert ht_with_samples[True] == 0, 'first element was lost during deletion'
-    assert ht_with_samples['believe'] == 1, 'second element was lost during deletion'
+    assert ht_with_samples['believe'] == 1, \
+        'second element was lost during deletion'
 
 
 def test_update_in_ht(ht_with_samples):
@@ -101,12 +110,49 @@ def test_to_dict(ht_with_samples):
 def test_search_in_ht(ht_with_samples):
     assert isinstance(ht_with_samples.search(True), int), \
         'search in ht considers absent actually present elements'
-    assert ht_with_samples.search(18) == False, \
+    assert ht_with_samples.search(18) is False, \
         'search in ht considers present actually absent elements'
 
 
 def test_contains_in_ht(ht_with_samples):
-    assert (True in ht_with_samples) == True, \
+    assert (True in ht_with_samples) is True, \
         'ht considers absent actually present elements'
-    assert (18 in ht_with_samples) == False, \
+    assert (18 in ht_with_samples) is False, \
         'ht considers present actually absent elements'
+
+
+def test_from_dict(ht_with_samples):
+    dict1 = {True: 0, 'believe': 1, 32: 18}
+    ht = HashTable_closed.from_dict(dict1)
+    assert ht == ht_with_samples, \
+        'from dict method works wrong'
+
+
+def test_can_create_ht_open():
+    ht = HashTable_open()
+    assert isinstance(ht, HashTable_open)
+
+
+@pytest.fixture()
+def ht_open():
+    ht = HashTable_open()
+    return ht
+
+
+def test_setitem_and_getitem_in_ht(ht_open):
+    ht_open[True] = 0
+    ht_open['believe'] = 1
+    ht_open[32] = 18
+    assert (ht_open[True] == 0 and ht_open['believe'] == 1
+            and ht_open[32] == 18), \
+        'setitem or getitem work wrong'
+
+
+# TODO replace to the separated file with stress tests
+def test_stress_ht_open(ht_open):
+    for i in range(10000):
+        ht_open[chr(i)] = chr(i)
+    for i in range(10000):
+        assert ht_open[chr(i)] == chr(i), \
+            'ht_open does not stand stress test'
+    assert ht_open.size == 10000, 'size calculates wrong'

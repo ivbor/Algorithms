@@ -1,6 +1,4 @@
-# hash for nums and for strings (with open addresses and with chains)
 # Bloom filter
-# Cuckoo hashing
 
 # Dynamic programming (backpack problem) from Lesson 6: O(n*W) instead of
 # 2^n on low W
@@ -70,19 +68,13 @@ def poly_hash(x):
 
 class HashTable_closed():
 
-    def __init__(self, capacity=30, hashfunc='poly'):
+    def __init__(self, capacity=30, hashfunc='md5'):
         '''
             Usual hashtable using closed chains as method of
             resolving collisions
 
             Args:
                 capacity - initial length
-                load_factor_thr - load factor threshold
-                when the size of the hashtable divided by capacity
-                reaches this threshold hashtable will resize and rehash
-                hashfunc - function used for hashing, may be callable
-                or one of the following: poly for polynomial hash,
-                md5, sha1
         '''
         self._capacity = gen_prime(capacity)
         self._pairs = Vector(elements=[deque()
@@ -100,10 +92,10 @@ class HashTable_closed():
             # polynomial hash
             return poly_hash(x) % self._capacity
         elif self._hashfunc == 'md5':
-            return int(hashlib.md5(x.encode()).hexdigest(), 16) \
+            return int(hashlib.md5(x.__repr__().encode()).hexdigest(), 16) \
                 % self._capacity
         elif self._hashfunc == 'sha1':
-            return int(hashlib.sha1(x.encode()).hexdigest(), 16) \
+            return int(hashlib.sha1(x.__repr__().encode()).hexdigest(), 16) \
                 % self._capacity
         elif callable(self._hashfunc):
             return self._hashfunc(x)
@@ -141,17 +133,21 @@ class HashTable_closed():
 
     def __setitem__(self, key, x):
         # update by delete and reset
-        del self[key]
         hashed_key = self.get_hash(key)
         while self._pairs[hashed_key] is None:
             self.increase_capacity()
+        index = self.search(key)
+        if not (str(index) == 'False'):
+            del self._pairs[hashed_key][index]
+            self._size -= 1
         self._pairs[hashed_key].append(Pair(key, x))
         self._size += 1
         if len(self._pairs[hashed_key]) > self._max_deque_len:
             self.increase_capacity()
 
     def __getitem__(self, i):
-        for pair in [pair for pair in self._pairs[self.get_hash(i)]]:
+        hashed_key = self.get_hash(i)
+        for pair in [pair for pair in self._pairs[hashed_key]]:
             key = pair[0]
             value = pair[1]
             if key == i:
@@ -163,10 +159,6 @@ class HashTable_closed():
         # increased to double immediately, instead of + 1 for example
         old_capacity = self._capacity
         self._capacity = gen_prime(self._capacity * 2)
-        for len_deque in range(5):
-            print('len_deque ', len_deque)
-            print(sum([len(self._pairs[i]) == len_deque
-                       for i in range(old_capacity)]))
         self.recapacitate_and_rehash(old_capacity)
 
     def recapacitate_and_rehash(self, old_capacity):
@@ -202,7 +194,7 @@ class HashTable_closed():
         if str(index) != 'False':
             del self._pairs[hashed_key][index]
             self._size -= 1
-            if self._size <= self._capacity * 3:
+            if len(self._pairs[hashed_key]) < 1:
                 self.decrease_capacity()
 
     def to_dict(self):
@@ -217,3 +209,147 @@ class HashTable_closed():
             return False
         else:
             return True
+
+    @classmethod
+    def from_dict(cls, dictionary):
+        result = HashTable_closed(capacity=len(dictionary))
+        for key, value in dictionary.items():
+            result[key] = value
+        return result
+
+    def __str__(self):
+        return dict.__str__(self.to_dict())
+
+    def __repr__(self):
+        return dict.__repr__(self.to_dict())
+
+    def __eq__(self, other):
+        return dict.__eq__(self.to_dict(), other.to_dict())
+
+
+class HashTable_open(HashTable_closed):
+
+    def __init__(self, capacity=30, hashfuncs=['md5', 'sha1']):
+        '''
+            Usual hashtable using double hashing as method of
+            resolving collisions
+
+            load_factor_thr - load factor threshold
+            when the size of the hashtable divided by capacity
+            reaches this threshold hashtable will resize and rehash
+            hashfunc - function used for hashing, may be callable
+            or one of the following: poly for polynomial hash,
+            md5, sha1
+
+            also uses cuckoo hashing with double hashing
+        '''
+        # full capacity - capacity of all tables
+        self._capacity = gen_prime(capacity)
+        # capacity - of one table to be filled with indexes
+        # being hashes of one hashfunc
+        # number of such tables equals to the number of hashfunctions
+        # hence capacity of one table can be calculated by the following:
+        self._hashfuncs = hashfuncs
+        self._one_table_capacity = self.one_table_capacity()
+        # create those tables
+        self._elements = []
+        for _ in hashfuncs:
+            self._elements.append([
+                    None for _ in range(self.one_table_capacity())])
+        self._size = 0
+
+    def one_table_capacity(self):
+        return self._capacity // len(self._hashfuncs)
+
+    def get_hashes(self, key):
+        for i in self._hashfuncs:
+            self._hashfunc = i
+            yield super().get_hash(key) % self.one_table_capacity()
+
+    def current_hashed_key(self, key, table_index):
+        gen = self.get_hashes(key)
+        for index, hashed_key in enumerate(gen):
+            if index == table_index:
+                return hashed_key
+
+    @property
+    def elements(self):
+        ret = self.elements.copy()
+        return ret
+
+    @elements.setter
+    def elements(self, pair):
+        raise NotImplementedError('cannot set value to protected property' +
+                                  'to append or set value use ' +
+                                  'traditional setitem method: ' +
+                                  f'{self.__name__}[{pair[0]}] = {pair[1]}')
+
+    def __setitem__(self, key, value):
+        # memorize parameter key as starting one
+        starting_key = key
+        # fix the index of current table if
+        # Cuckoo hashing will start to work
+        index = 0
+        while True:
+            # multiple hashing
+            for table_index, hashed_key in enumerate(self.get_hashes(key)):
+                if self._elements[table_index][hashed_key] is None:
+                    self._elements[table_index][hashed_key] = Pair(key, value)
+                    self._size += 1
+                    return
+                if self._elements[table_index][hashed_key].key == key:
+                    # update method's functionality
+                    self._elements[table_index][hashed_key] = Pair(key, value)
+                    return
+            # Cuckoo hashing
+            # (displacing pairs from occupied places to possible free)
+            hashed_key = self.current_hashed_key(key, index)
+            old_key = self._elements[index][hashed_key].key
+            old_value = self._elements[index][hashed_key].value
+            self._elements[index][hashed_key] = Pair(key, value)
+            # check if Cuckoo leads to looping
+            if old_key == starting_key:
+                # if it does - change the table
+                # to check other loops for free places
+                index += 1
+            # if all tables are busy - increase capacity
+            if index == len(self._hashfuncs):
+                super().increase_capacity()
+            key = old_key
+            value = old_value
+
+    def __delitem__(self, key):
+        table_index, hashed_key = self.search(key)
+        del self._elements[table_index][hashed_key]
+
+    def __getitem__(self, key):
+        result = self.search(key)
+        if result is False:
+            raise ValueError('no value for corresponding key found')
+        table_index, hashed_key = result
+        return self._elements[table_index][hashed_key].value
+
+    def search(self, key):
+        for table_index, hashed_key in enumerate(self.get_hashes(key)):
+            if self._elements[table_index][hashed_key].key == key:
+                return table_index, hashed_key
+        return False
+
+    def recapacitate_and_rehash(self, old_capacity):
+        old_elements = self._elements
+        self._elements = []
+        self._size = 0
+        for _ in self._hashfuncs:
+            self._elements.append([
+                    None for _ in range(self.one_table_capacity())])
+        old_elements[0].extend(old_elements[1])
+        for pair in [pair for pair in old_elements[0] if pair is not None]:
+            self[pair[0]] = pair[1]
+
+    def to_dict(self):
+        dict_res = dict()
+        for pair in [pair for pair in self._elements[0] if pair is not None]:
+            dict_res[pair[0]] = pair[1]
+        for pair in [pair for pair in self._elements[1] if pair is not None]:
+            dict_res[pair[0]] = pair[1]
+        return dict_res
