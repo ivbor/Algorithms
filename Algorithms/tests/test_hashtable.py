@@ -57,6 +57,8 @@ def test_ht_handles_collisions(ht):
         'collisions are handled ineffectively or wrong'
 
 
+
+# TODO replace to the separated file with stress tests
 def test_stress_ht_closed(ht):
     for i in range(100000):
         ht[chr(i)] = chr(i)
@@ -150,9 +152,9 @@ def test_setitem_and_getitem_in_ht(ht_open):
 
 # TODO replace to the separated file with stress tests
 def test_stress_ht_open(ht_open):
-    for i in range(10000):
+    for i in range(100000):
         ht_open[chr(i)] = chr(i)
-    for i in range(10000):
+    for i in range(100000):
         assert ht_open[chr(i)] == chr(i), \
             'ht_open does not stand stress test'
-    assert ht_open.size == 10000, 'size calculates wrong'
+    assert ht_open.size == 100000, 'size calculates wrong'
