@@ -1,10 +1,5 @@
-# Bloom filter
-
-# Dynamic programming (backpack problem) from Lesson 6: O(n*W) instead of
-# 2^n on low W
 import hashlib
 import logging
-import pytest
 from collections import deque
 from typing import Any, NamedTuple
 from Algorithms.python_solutions.vector import Vector
@@ -314,7 +309,6 @@ class HashTable_open(HashTable_closed):
                 if self._elements[table_index][hashed_key] is None:
                     self._elements[table_index][hashed_key] = Pair(key, value)
                     self._size += 1
-                    # pytest.set_trace()
                     logging.debug(
                         f'index: {hashed_key} in table {table_index} busy ' +
                         f'with key: {self._elements[table_index][hashed_key].key}')
