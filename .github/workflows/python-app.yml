@@ -36,7 +36,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run tests with coverage
       run: |
-        cd ./Algorithms && coverage run
+        coverage run
     - name: Check tests coverage
       run: |
-        cd ./Algorithms && coverage report -m
+        coverage report -m
