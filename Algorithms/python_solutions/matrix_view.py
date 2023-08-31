@@ -1,8 +1,8 @@
 class Matrix2dim:
 
     def __init__(self, data) -> None:
-        if type(data) == list and len(data) > 0:
-            if type(data[0]) == list:
+        if isinstance(data, list) and len(data) > 0:
+            if isinstance(data[0], list):
                 self.data = data
 
     def __repr__(self, indexes=False) -> None:
