@@ -1,6 +1,7 @@
 from Algorithms.python_solutions.DoubleNode import DoubleNode
 from Algorithms.python_solutions.Stack import Stack
 
+
 class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
 
     def push(self, value):
