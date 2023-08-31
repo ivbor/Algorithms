@@ -5,3 +5,8 @@ __pycache__
 **/__pycache__
 **/__pycache__
 pyrightconfig.json
+bin*
+lib*
+lib64*
+include/*
+pyvenv.cfg
