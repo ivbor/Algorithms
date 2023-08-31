@@ -227,7 +227,8 @@ def test_min_max_tern_search():
 
 
 def test_bounds():
-    a = make_random_whole_1_dim_array()
+    a = make_random_whole_1_dim_array(
+        size_of_1_dim_range=(1000, 2000))
     a = sorted(a)
 
     st = time.time()
