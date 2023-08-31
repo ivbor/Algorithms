@@ -3,6 +3,8 @@
 # Dynamic programming (backpack problem) from Lesson 6: O(n*W) instead of
 # 2^n on low W
 import hashlib
+import logging
+import pytest
 from collections import deque
 from typing import Any, NamedTuple
 from Algorithms.python_solutions.vector import Vector
@@ -66,6 +68,15 @@ def poly_hash(x):
                 enumerate(str.__repr__(str(x)).lstrip("'"), 1)])
 
 
+class PairsVector(Vector):
+
+    def __setitem__(self, key, value):
+        raise NotImplementedError(
+            'can only store elements inside ' +
+            'hashtable with closed chaining ' +
+            f'using HashTable_closed_name[{key}] = {value}')
+
+
 class HashTable_closed():
 
     def __init__(self, capacity=30, hashfunc='md5'):
@@ -77,12 +88,12 @@ class HashTable_closed():
                 capacity - initial length
         '''
         self._capacity = gen_prime(capacity)
-        self._pairs = Vector(elements=[deque()
-                                       for _ in range(self._capacity)])
+        self._pairs = PairsVector(elements=[deque()
+                                            for _ in range(self._capacity)])
         # since vector by itself has Nones inside by default
         # have to cut the slice of it so that no Nones would be
         # left inside vector
-        self._pairs = self._pairs.elements[:self._capacity]
+        self._pairs.elements = self._pairs.elements[:self._capacity]
         self._size = 0
         self._max_deque_len = self._capacity // 2
         self._hashfunc = hashfunc
@@ -98,7 +109,7 @@ class HashTable_closed():
             return int(hashlib.sha1(x.__repr__().encode()).hexdigest(), 16) \
                 % self._capacity
         elif callable(self._hashfunc):
-            return self._hashfunc(x)
+            return self._hashfunc(x) % self._capacity
 
     @property
     def pairs(self):
@@ -106,11 +117,9 @@ class HashTable_closed():
         return ret
 
     @pairs.setter
-    def pairs(self, pair):
+    def pairs(self, value):
         raise NotImplementedError('cannot set value to protected property' +
-                                  'to append or set value use ' +
-                                  'traditional setitem method: ' +
-                                  f'{self.__name__}[{pair[0]}] = {pair[1]}')
+                                  'to append or set value use setitem')
 
     @property
     def size(self):
@@ -134,8 +143,6 @@ class HashTable_closed():
     def __setitem__(self, key, x):
         # update by delete and reset
         hashed_key = self.get_hash(key)
-        while self._pairs[hashed_key] is None:
-            self.increase_capacity()
         index = self.search(key)
         if not (str(index) == 'False'):
             del self._pairs[hashed_key][index]
@@ -162,8 +169,10 @@ class HashTable_closed():
         self.recapacitate_and_rehash(old_capacity)
 
     def recapacitate_and_rehash(self, old_capacity):
-        newVector = Vector(capacity=self._capacity,
-                           elements=[deque() for _ in range(self._capacity)])
+        newVector = PairsVector(
+            capacity=self._capacity, elements=[
+                deque() for _ in range(
+                    self._capacity)])
         for i in range(old_capacity):
             for pair in self._pairs[i]:
                 key = pair[0]
@@ -176,7 +185,7 @@ class HashTable_closed():
 
     def decrease_capacity(self):
         old_capacity = self._capacity
-        self._capacity //= 2
+        self._capacity = self._capacity // 2 if self._capacity != 1 else 1
         self.recapacitate_and_rehash(old_capacity)
 
     def search(self, key):
@@ -227,6 +236,15 @@ class HashTable_closed():
         return dict.__eq__(self.to_dict(), other.to_dict())
 
 
+class ElementsList(list):
+
+    def __setitem__(self, key, value):
+        raise NotImplementedError(
+            'can only store elements inside ' +
+            'hashtable with open addressing ' +
+            f'using HashTable_open_name[{key}] = {value}')
+
+
 class HashTable_open(HashTable_closed):
 
     def __init__(self, capacity=30, hashfuncs=['md5', 'sha1']):
@@ -252,7 +270,7 @@ class HashTable_open(HashTable_closed):
         self._hashfuncs = hashfuncs
         self._one_table_capacity = self.one_table_capacity()
         # create those tables
-        self._elements = []
+        self._elements = ElementsList()
         for _ in hashfuncs:
             self._elements.append([
                     None for _ in range(self.one_table_capacity())])
@@ -274,7 +292,7 @@ class HashTable_open(HashTable_closed):
 
     @property
     def elements(self):
-        ret = self.elements.copy()
+        ret = self._elements.copy()
         return ret
 
     @elements.setter
@@ -296,48 +314,68 @@ class HashTable_open(HashTable_closed):
                 if self._elements[table_index][hashed_key] is None:
                     self._elements[table_index][hashed_key] = Pair(key, value)
                     self._size += 1
-                    return
-                if self._elements[table_index][hashed_key].key == key:
-                    # update method's functionality
-                    self._elements[table_index][hashed_key] = Pair(key, value)
+                    # pytest.set_trace()
+                    logging.debug(
+                        f'index: {hashed_key} in table {table_index} busy ' +
+                        f'with key: {self._elements[table_index][hashed_key].key}')
                     return
             # Cuckoo hashing
             # (displacing pairs from occupied places to possible free)
             hashed_key = self.current_hashed_key(key, index)
-            old_key = self._elements[index][hashed_key].key
-            old_value = self._elements[index][hashed_key].value
+            logging.debug(f'placing key: {key}, value: {value} to ' +
+                          f'index: {hashed_key} in table {index}')
+            new_key = self._elements[index][hashed_key].key
+            new_value = self._elements[index][hashed_key].value
             self._elements[index][hashed_key] = Pair(key, value)
+            logging.debug(f'instead of key: {new_key}, value: {new_value}')
             # check if Cuckoo leads to looping
-            if old_key == starting_key:
+            if new_key == starting_key:
                 # if it does - change the table
                 # to check other loops for free places
                 index += 1
+                logging.debug('loop\n')
             # if all tables are busy - increase capacity
             if index == len(self._hashfuncs):
+                logging.debug('increase capacity\n')
                 super().increase_capacity()
-            key = old_key
-            value = old_value
+            key = new_key
+            value = new_value
+            logging.debug(f'new key: {key}, value: {value}\n')
+
+    def update(self, key, value):
+        for table_index, hashed_key in enumerate(self.get_hashes(key)):
+            if self._elements[table_index][hashed_key] is None:
+                raise KeyError('no value for the corresponding key present')
+            if self._elements[table_index][hashed_key].key == key:
+                self._elements[table_index][hashed_key] = Pair(key, value)
+                return
 
     def __delitem__(self, key):
         table_index, hashed_key = self.search(key)
-        del self._elements[table_index][hashed_key]
+        logging.debug(
+            f'deleting key: {hashed_key} in table: {table_index}' +
+            f' with value: {self._elements[table_index][hashed_key]}')
+        self._elements[table_index][hashed_key] = None
+        self._size -= 1
 
     def __getitem__(self, key):
         result = self.search(key)
         if result is False:
-            raise ValueError('no value for corresponding key found')
+            raise KeyError('no value for corresponding key found')
         table_index, hashed_key = result
         return self._elements[table_index][hashed_key].value
 
     def search(self, key):
         for table_index, hashed_key in enumerate(self.get_hashes(key)):
+            if self._elements[table_index][hashed_key] is None:
+                continue
             if self._elements[table_index][hashed_key].key == key:
                 return table_index, hashed_key
         return False
 
     def recapacitate_and_rehash(self, old_capacity):
         old_elements = self._elements
-        self._elements = []
+        self._elements = ElementsList()
         self._size = 0
         for _ in self._hashfuncs:
             self._elements.append([

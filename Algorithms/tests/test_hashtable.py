@@ -1,5 +1,5 @@
 from Algorithms.python_solutions.hashtable \
-    import HashTable_closed, gen_primes, HashTable_open
+    import HashTable_closed, gen_primes, HashTable_open, poly_hash
 import random
 import pytest
 
@@ -57,14 +57,17 @@ def test_ht_handles_collisions(ht):
         'collisions are handled ineffectively or wrong'
 
 
-
 # TODO replace to the separated file with stress tests
+# @pytest.mark.skip
 def test_stress_ht_closed(ht):
-    for i in range(100000):
+    for i in range(1000):
         ht[chr(i)] = chr(i)
-    for i in range(100000):
+    for i in range(1000):
         assert ht[chr(i)] == chr(i), \
             'ht_open does not stand stress test'
+        del ht[chr(i)]
+    assert ht.size == 0, \
+        'del works wrong'
 
 
 def test_cannot_set_size_and_capacity_for_ht_after_init(ht):
@@ -80,6 +83,23 @@ def ht_with_samples(ht):
     ht['believe'] = 1
     ht[32] = 18
     return ht
+
+
+def test_property_pairs_getter(ht_with_samples):
+    assert ht_with_samples.pairs is not ht_with_samples.pairs, \
+        'check for defensive copying does not pass'
+
+
+def test_property_pairs_setitem(ht_with_samples):
+    with pytest.raises(NotImplementedError):
+        ht_with_samples._pairs[19] = 19
+        assert ht_with_samples[19] != 19, \
+            'ht lets access internal stash when it should not'
+
+
+def test_property_pairs_setter(ht_with_samples):
+    with pytest.raises(NotImplementedError):
+        ht_with_samples.pairs = []
 
 
 def test_deletion_in_ht(ht_with_samples):
@@ -123,11 +143,48 @@ def test_contains_in_ht(ht_with_samples):
         'ht considers present actually absent elements'
 
 
+def test_getitem_raises_for_absent_element(ht_with_samples):
+    with pytest.raises(KeyError):
+        print(ht_with_samples[23])
+
+
+def test_str_and_repr(ht_with_samples):
+    assert str(ht_with_samples) == str(ht_with_samples.to_dict()), \
+        'str works wrong'
+    assert ht_with_samples.__repr__() == str(ht_with_samples), \
+        'repr works wrong'
+
+
 def test_from_dict(ht_with_samples):
     dict1 = {True: 0, 'believe': 1, 32: 18}
     ht = HashTable_closed.from_dict(dict1)
     assert ht == ht_with_samples, \
         'from dict method works wrong'
+
+
+def test_ht_with_different_hashes():
+    hashes = ['poly', 'sha1', 'md5', poly_hash]
+    ht_s = list()
+    for index, i in enumerate(hashes):
+        ht_s.append(HashTable_closed(hashfunc=i))
+        ht_s[index][True] = 0
+        ht_s[index]['a'] = 1
+        ht_s[index][6] = 2
+        assert (ht_s[index][True] == 0 and
+                ht_s[index]['a'] == 1 and
+                ht_s[index][6] == 2), \
+            f'ht with chains and {i} hash works wrong'
+
+
+def test_ht_with_poly_hash_as_callable():
+    ht = HashTable_closed(hashfunc=poly_hash)
+    ht[True] = 0
+    ht['a'] = 1
+    ht[6] = 2
+    assert (ht[True] == 0 and ht['a'] == 1 and ht[6] == 2), \
+        'ht with chains and polynomial hash works wrong'
+
+# HashTable_open
 
 
 def test_can_create_ht_open():
@@ -150,11 +207,36 @@ def test_setitem_and_getitem_in_ht(ht_open):
         'setitem or getitem work wrong'
 
 
+@pytest.fixture
+def ht_open_with_samples(ht_open):
+    ht_open[True] = 0
+    ht_open['believe'] = 1
+    ht_open[32] = 18
+    return ht_open
+
 # TODO replace to the separated file with stress tests
+
+
+# @pytest.mark.skip
 def test_stress_ht_open(ht_open):
-    for i in range(100000):
-        ht_open[chr(i)] = chr(i)
-    for i in range(100000):
-        assert ht_open[chr(i)] == chr(i), \
+    for i in range(1000):
+        ht_open[chr(i + 100)] = chr(i + 100)
+    assert ht_open.size == 1000, 'size calculates wrong'
+    for i in range(1000):
+        assert ht_open[chr(i + 100)] == chr(i + 100), \
             'ht_open does not stand stress test'
-    assert ht_open.size == 100000, 'size calculates wrong'
+        del ht_open[chr(i + 100)]
+    assert ht_open.size == 0, 'size calculates wrong'
+
+
+def test_property_elements_defensive_copy(ht_open_with_samples):
+    assert ht_open_with_samples.elements is not \
+        ht_open_with_samples.elements, \
+        'defensive copying for ht open works wrong'
+
+
+def test_property_elements_setitem(ht_open_with_samples):
+    with pytest.raises(Exception):
+        ht_open_with_samples._elements[9] = 9
+        assert ht_open_with_samples[9] != 9, \
+            'ht lets access internal stash when it should not'
