@@ -40,3 +40,9 @@ jobs:
     - name: Check tests coverage
       run: |
         coverage report -m
+
+repos:
+  - repo: https://github.com/PyCQA/bandit
+    rev: '' # Update me!
+    hooks:
+      - id: bandit -r ./Algorithms/python_solutions -b bandit.json
