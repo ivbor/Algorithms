@@ -15,39 +15,36 @@ def array_count_sort(array: list[list[int]], key=0, position=False):
         array: list[list[int]]
             2-dimensional array which will be sorted
         key: int
-            shows by which index to sort, works even in situations
-            when there are blank spaces with this index in the rows
+            Shows by which index to sort, works even in situations
+            when there are blank spaces with this index in the rows.
             In this case puts those rows higher than those with
-            filled spaces
-            default value: 0
+            filled spaces.
+            Default value: 0
         position: bool
-            tells function whether to return positions information
-            among the sorted array
-            this is handy if there are elements with the same value
-            and you want to sort them further by other keys or indexes
-
-            positions information is the list telling what rows of the array
+            Tells function whether to return positions information
+            among the sorted array.
+            This is handy if there are elements with the same value
+            and you want to sort them further by other keys or indexes.
+            Positions information is the list telling what rows of the array
             (by the indexes in the form of the numbers inside lists)
             where to put in order to create a sorted array
-            (by the indexes of the lists containing numbers)
-            default value: False
+            (by the indexes of the lists containing numbers).
+            Default value: False
 
         Returns
         -------
         list[list[int]]
-            sorted array
+            Sorted array
         optional: list[list[int|BLANK]]
-            positions array which looks like this:
+            Positions array looking like this:
             [[53, 46, 18], [12], [36], [11, 34], ...]
             which means that
-            53, 46 and 18 rows have the same lowest value among all rows
+            53, 46 and 18 rows have the same lowest value among all rows,
             so they should be placed first in the sorted array (meaning
-            new indexes 0, 1 and 2) in any preferable order
-            blank lists mean the absence of rows with some value
-            in the key index
-            and so on
-
-            return is modified by parameter position
+            new indexes 0, 1 and 2) in any preferable order.
+            Blank lists mean the absence of rows with some value
+            in the key index and so on.
+            Return is modified by parameter position.
     """
 
     # in order to do that let's first introduce

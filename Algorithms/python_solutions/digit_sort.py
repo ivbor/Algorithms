@@ -2,7 +2,7 @@ from Algorithms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
 
 
-def to_m_based(number, base):
+def to_m_based(number, base, array=True):
     m_based = []
     whole = number
     remainder = 0
@@ -11,13 +11,17 @@ def to_m_based(number, base):
         whole = whole // base
         m_based.append(remainder)
     m_based = [i for i in reversed(m_based)]
-    return m_based
+    if array:
+        return m_based
+    if not array:
+        m_based = restore_to_nums(m_based)
+        return m_based
 
 
-def restore_to_nums(array, base):
+def restore_to_nums(array):
     number = 0
     for power, multiplier in enumerate(array):
-        number += pow(base, (len(array) - power - 1)) * multiplier
+        number += pow(10, (len(array) - power - 1)) * multiplier
     return number
 
 
@@ -32,7 +36,7 @@ def digit_sort(array, base=10):
         array = [i - min_of_array for i in array]
 
     # translate any numeration to the m-based
-    array = [to_m_based(i, base) for i in array]
+    array = [to_m_based(i, base, array=True) for i in array]
 
     # translate array to 2-dim array, where k is number of digits,
     # add 0 before numbers where less than k digits so that
@@ -49,7 +53,7 @@ def digit_sort(array, base=10):
     array = two_dim_array_count_sort(array)
 
     # restore numbers from arrays
-    array = [restore_to_nums(i, base) for i in array]
+    array = [restore_to_nums(i) for i in array]
 
     # extend on negative numbers
     if min_of_array < 0:

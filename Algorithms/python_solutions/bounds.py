@@ -51,9 +51,29 @@ def _lower_bound(array, left_edge, right_edge, value_to_search):
 
 def lower_bound(array, value_to_search):
     '''
-        search for the first encounter
-        of the whole value_to_search if it its
-        existency is known
+        This function determines where is first encounter of the whole-
+        numbered value.
+
+        This function utilizes algorithm working on the cut, hence the
+        searching job is delegated to the function-helper. The algorithm
+        itself is similar to the binary search without any additional
+        calculation complexity.
+        Array where is the value to be searched for has to be already sorted.
+        Function assumes by-default the presence of the value to be searched.
+
+        Parameters
+        ----------
+        array: list[int]
+            Sorted array where to find the first encounter of the
+            searched value.
+        value_to_search: int
+            Searched value which first encounter is to be found by the
+            function.
+
+        Returns
+        -------
+        int
+            index of the first encounter of the searched value
     '''
     return _lower_bound(
         array, left_edge=0, right_edge=len(array) - 1,
@@ -62,10 +82,28 @@ def lower_bound(array, value_to_search):
 
 def upper_bound(array, value_to_search):
     '''
-        works like lower_bound
-        for value_to_search + 1 and subtracts 1
-        from calculated index
-        giving the last position of value_to_search
+        This function determines where is the last encounter of the whole-
+        numbered value.
+
+        This function is very similar to the lower_bound() except for it
+        searches for the last encounter. Generally, it is done via
+        lower_bound of the next (+1) whole value and subtraction 1 from the
+        returned index.
+
+        Parameters
+        ----------
+        array: list[int]
+            Sorted array where to find the last encounter of the
+            searched value.
+        value_to_search: int
+            Searched value which last encounter is to be found by the
+            function.
+
+        Returns
+        -------
+        int
+            index of the last encounter of the searched value
+
     '''
     return _lower_bound(array, left_edge=0, right_edge=len(array) - 1,
                         value_to_search=value_to_search + 1) - 1

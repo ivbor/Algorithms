@@ -8,20 +8,20 @@ def _bin_search(array, left_edge, right_edge, value_to_search):
         Parameters
         ----------
         array: list[int]
-            one-dimensional array consisting of whole numbers
+            One-dimensional array consisting of whole numbers.
         left_edge: int
-            index inside the array meaning left edge of indexes
-            inside array (itself included) where search will be performed
+            Index inside the array meaning left edge of indexes
+            inside array (itself included) where search will be performed.
         right_edge: int
-            index inside the array meaning right edge of indexes
-            inside array (itself included) where search will be performed
+            Index inside the array meaning right edge of indexes
+            inside array (itself included) where search will be performed.
         value_to_search: int
-            value to be searched among the given indexes slice inside array
+            Value to be searched among the given indexes slice inside array.
 
         Returns
         -------
         bool
-            whether searched value is inside the array
+            Whether searched value is inside the array
     '''
 
     # once the cut has the length of 1
@@ -67,24 +67,22 @@ def bin_search(array: list[int], value_to_search: int, no_recursion=False):
         Parameters
         ----------
         array: list[int]
-            one-dimensional array consisting of whole numbers
+            One-dimensional array consisting of whole numbers
         value_to_search: int
-            value to be searched inside the array
+            Value to be searched inside the array
         no_recursion: bool
-            since binary search in general has two implementations,
-            with or without recursion, this is the switcher between them
-
-            the no_recursion implementation requires exactly 3 variables
+            Since binary search in general has two implementations,
+            with or without recursion, this is the switcher between them.
+            The no_recursion implementation requires exactly 3 variables
             which makes it very space efficient (O(1) to be exact),
-            however time takes damage up to O(size of array)
-
-            the recursion implementation requires space up to O(log2 of
-            the size of the array), and time cuts up to the same value
+            however time takes damage up to O(size of array).
+            The recursion implementation requires space up to O(log2 of
+            the size of the array), and time cuts up to the same value.
 
         Returns
         -------
         bool
-            whether searched value is inside the array
+            Whether searched value is inside the array
     '''
 
     # this is no recursion realization

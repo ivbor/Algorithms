@@ -1,5 +1,6 @@
 def count_sort(array):
     """
+        This function implements
         only for whole numbers (or derived from them basic rational)
         with little range
         requires o(n + k) time, where
