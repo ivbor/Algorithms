@@ -98,10 +98,12 @@ class HashTable_closed():
             # polynomial hash
             return poly_hash(x) % self._capacity
         elif self._hashfunc == 'md5':
-            return int(hashlib.md5(x.__repr__().encode()).hexdigest(), 16) \
+            return int(hashlib.md5(x.__repr__().encode(),
+                                   usedforsecurity=False).hexdigest(), 16) \
                 % self._capacity
         elif self._hashfunc == 'sha1':
-            return int(hashlib.sha1(x.__repr__().encode()).hexdigest(), 16) \
+            return int(hashlib.sha1(x.__repr__().encode(),
+                                    usedforsecurity=False).hexdigest(), 16) \
                 % self._capacity
         elif callable(self._hashfunc):
             return self._hashfunc(x) % self._capacity
