@@ -18,10 +18,10 @@ def to_m_based(number, base, array=True):
         return m_based
 
 
-def restore_to_nums(array):
+def restore_to_nums(array, base=10):
     number = 0
     for power, multiplier in enumerate(array):
-        number += pow(10, (len(array) - power - 1)) * multiplier
+        number += pow(base, (len(array) - power - 1)) * multiplier
     return number
 
 
@@ -53,7 +53,7 @@ def digit_sort(array, base=10):
     array = two_dim_array_count_sort(array)
 
     # restore numbers from arrays
-    array = [restore_to_nums(i) for i in array]
+    array = [restore_to_nums(i, base) for i in array]
 
     # extend on negative numbers
     if min_of_array < 0:
