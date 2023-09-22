@@ -38,7 +38,7 @@ def test_false_positives_less_than_5_percent(bf):
     for i in range(10000, 20000):
         if bf.check(i):
             fails_count += 1
-    assert fails_count >= 500, 
+    assert fails_count <= 500, \
         'fails exceed required range' 
 
 # make a distinct file with this test
