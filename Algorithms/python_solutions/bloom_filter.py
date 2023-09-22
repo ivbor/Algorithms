@@ -321,7 +321,7 @@ class Bloom_filter():
         '''
         for i in range(self.hash_count):
             hashed_index = self.hashfunc(str(item), i) % self.size
-            self.bit_array[hashed_index] = True
+            self.bit_array[hashed_index] = 1
 
     def check(self, item):
         '''
@@ -339,7 +339,7 @@ class Bloom_filter():
         '''
         for i in range(self.hash_count):
             hashed_index = self.hashfunc(str(item), i) % self.size
-            if self.bit_array[hashed_index] is False:
+            if self.bit_array[hashed_index] == 0:
                 return False
         return True
 
