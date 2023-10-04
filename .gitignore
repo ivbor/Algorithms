@@ -1,4 +1,3 @@
-.coverage
 **/.pytest_cache
 Lectures
 __pycache__
@@ -10,3 +9,4 @@ lib*
 lib64*
 include/*
 pyvenv.cfg
+pytest.log
