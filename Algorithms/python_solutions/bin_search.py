@@ -1,3 +1,22 @@
+"""
+Binary Search Module
+
+This module provides implementations of binary search algorithms
+for searching a value within a sorted one-dimensional array of whole numbers.
+Two implementations are available: one with recursion and another
+without recursion. The choice between the two depends on your
+requirements for space efficiency and time complexity.
+
+Functions
+---------
+bin_search(array: list[int], value_to_search: int, no_recursion=False)
+    Binary search in a sorted array.
+
+_bin_search(array, left_edge, right_edge, value_to_search)
+    Helper function for binary search with recursion.
+"""
+
+
 def _bin_search(array, left_edge, right_edge, value_to_search):
     '''
         This is the binary search with recursion implementation helper.
@@ -9,12 +28,15 @@ def _bin_search(array, left_edge, right_edge, value_to_search):
         ----------
         array: list[int]
             One-dimensional array consisting of whole numbers.
+
         left_edge: int
             Index inside the array meaning left edge of indexes
             inside array (itself included) where search will be performed.
+
         right_edge: int
             Index inside the array meaning right edge of indexes
             inside array (itself included) where search will be performed.
+
         value_to_search: int
             Value to be searched among the given indexes slice inside array.
 

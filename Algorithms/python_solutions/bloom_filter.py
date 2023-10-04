@@ -1,3 +1,29 @@
+"""
+Bloom Filter Module
+
+====================
+This module provides an implementation of a Bloom filter, a probabilistic
+data structure used to check whether an item is a member of a set with a
+certain probability of false positives. The Bloom filter is used
+for efficient membership testing.
+
+Functions
+---------
+hashlittle2(data, initval=0, initval2=0)
+rot(x)
+mix(a, b, c)
+final(a, b, c)
+hashlittle(data, initval=0)
+    All functions above participate in calculating Jenkins hash of data
+    using an optional seed.
+
+Classes
+-------
+Bloom_filter(items_count=1000000, fp_prob=0.05, hashfunc='mmh3')
+    Implements a Bloom filter data structure for efficient membership testing.
+
+"""
+
 import math
 import mmh3
 from bitarray import bitarray
@@ -230,11 +256,14 @@ class Bloom_filter():
         fp_prob: float
             False positives probability.
             Default value = 0.05
+
         size: int
             Real size of the structure, is calculated automatically
+
         hash_count: int
             Amount of hashes needed to redeem fp_prob given items_count,
             is calculated automatically provided with hashfunc family
+
         bit_array: bitarray
             Special structure imported from bitarray module, allows usage
             of only one byte per bucket, compared to unlimited memory for
@@ -242,7 +271,8 @@ class Bloom_filter():
             Consists of either 0's or 1's and has a size of self.size.
             It is the main storage and the filter itself.
             Cannot be modified directly, modifies itself when new values
-            passes through filter.
+            pass through filter.
+
         hashfunc: string
             Family of algorithms for generating hash functions.
             Default value = 'mmh3' (murmur3 hash), possible value = 'jenkins'
@@ -280,9 +310,11 @@ class Bloom_filter():
             items_count: int
                 Expected amount of items to be passed through filter.
                 Default value = 1000000
+
             fp_prob: float
                 Expected false positive outcome probability.
                 Default value = 0.05
+
             hashfunc: 'mmh3' or 'jenkins'
                 Name of the family of functions to use for hash functions
                 generation.
@@ -312,7 +344,6 @@ class Bloom_filter():
 
             Parameters
             ----------
-            self: Bloom_filter
             item: str or byte-like
 
             Returns
@@ -329,7 +360,6 @@ class Bloom_filter():
 
             Parameters
             ----------
-            self: Bloom_filter
             item: str or byte-like
 
             Returns
@@ -349,9 +379,9 @@ class Bloom_filter():
 
             Parameters
             ----------
-            self: Bloom_filter
             items_count: int
                 Amount of items expected to be passed through.
+
             fp_prob: float
                 False positive case probability
 
@@ -370,9 +400,9 @@ class Bloom_filter():
 
             Parameters
             ----------
-            self: Bloom_filter
             size: int
                 Calculated size of the bloom filter.
+
             items_count: int
                 Amount of items expected to be passed through the filter.
 

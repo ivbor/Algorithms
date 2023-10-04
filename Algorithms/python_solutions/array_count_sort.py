@@ -1,3 +1,23 @@
+"""
+Array Counting Sort Module
+
+
+==========================
+For examples please head to the speed_analysis.ipynb
+
+This module is suitable for sorting arrays of integers and
+is not intended for sorting arrays containing floating-point numbers.
+
+Functions
+---------
+array_count_sort(array, key=0, position=False)
+    Sort a 2-dimensional array of integers based on a key index.
+    It can also return positions information for elements
+    with the same key value.
+
+"""
+
+
 def array_count_sort(array: list[list[int]], key=0, position=False):
     """
         This function performs counting sort on the 2-dimensional array
@@ -12,15 +32,17 @@ def array_count_sort(array: list[list[int]], key=0, position=False):
 
         Parameters
         ----------
-        array: list[list[int]]
+        array : list[list[int]]
             2-dimensional array which will be sorted
-        key: int
+
+        key : int
             Shows by which index to sort, works even in situations
             when there are blank spaces with this index in the rows.
             In this case puts those rows higher than those with
             filled spaces.
             Default value: 0
-        position: bool
+
+        position : bool
             Tells function whether to return positions information
             among the sorted array.
             This is handy if there are elements with the same value
@@ -35,7 +57,8 @@ def array_count_sort(array: list[list[int]], key=0, position=False):
         -------
         list[list[int]]
             Sorted array
-        optional: list[list[int|BLANK]]
+
+        optional : list[list[int|BLANK]]
             Positions array looking like this:
             [[53, 46, 18], [12], [36], [11, 34], ...]
             which means that

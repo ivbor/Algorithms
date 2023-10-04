@@ -54,3 +54,14 @@ def test_pop_last_element(st_with_3_elements):
         st_with_3_elements.pop()
     assert len(st_with_3_elements) == 0, \
         'popping the last element does not lead to empty stack'
+
+
+def test_can_not_pop_when_zero_elements(st):
+    with pytest.raises(Exception):
+        st.pop()
+
+
+def test_can_not_pop_when_less_than_zero_elements(st):
+    for _ in range(2):
+        with pytest.raises(Exception):
+            st.pop()

@@ -1,52 +1,91 @@
 def tern_search_min(func, start, end, eps=1e-6):
     '''
-        ternary search for min, if func has many mins
-        this search will find only one of them
-        so it is better to be used when func
-        has only one min between start and end positions
+    Ternary search for finding the minimum value of a function
+    within a specified range.
 
-        eps parameter controls accuracy of the
-        min search
+    This search algorithm is suitable for cases where the function has
+    only one minimum value within the given range [start, end].
+    This ternary search algorithm works with a time complexity of O(log2(n)),
+    where n is the number of times the epsilon (eps) can fit in the absolute
+    difference between the start and end positions.
+    It determines the local minimum by comparing the function's values
+    at two points within the search interval.
 
-        works for O(log2(n)), where n is how many
-        times can eps fit in abs(r-l)
-        for local min determination uses
-        absolute values of local func values
+    Parameters
+    ----------
+    func: callable
+        The function for which to find the minimum value.
+
+    start: float
+        The start of the range for the search.
+
+    end: float
+        The end of the range for the search.
+
+    eps: float, optional
+        The epsilon parameter controlling the accuracy
+        of search. Default is 1e-6.
+
+    Returns
+    -------
+    float
+        The approximate x-coordinate of the minimum value of the function
+        within the specified range.
     '''
-    l = start
-    r = end
-    while (abs(r-l) >= eps):
-        m_l = l + (r - l)/3
-        m_r = l + 2*(r - l)/3
-        if func(m_r) < func(m_l):
-            l = m_l
+    left_edge = start
+    right_edge = end
+    while (abs(right_edge - left_edge) >= eps):
+        middle_left = left_edge + (right_edge - left_edge)/3
+        middle_right = left_edge + 2 * (right_edge - left_edge)/3
+        if func(middle_right) < func(middle_left):
+            left_edge = middle_left
         else:
-            r = m_r
-    return (m_l + m_r)/2
+            right_edge = middle_right
+    return (middle_left + middle_right)/2
 
 
 def tern_search_max(func, start, end, eps=1e-6):
     '''
-        ternary search for max, if func has many maxes
-        this search will find only one of them
-        so it is better to be used when func
-        has only one max between start and end positions
+    Ternary search for finding the maximum value of a function
+    within a specified range.
 
-        eps parameter controls accuracy of the
-        max search
+    This search algorithm is suitable for cases where the function has
+    only one maximum value within the given range [start, end].
+    This ternary search algorithm works with a time complexity of O(log2(n)),
+    where n is the number of times the epsilon (eps) can fit in the absolute
+    difference between the start and end positions.
+    It determines the local minimum by comparing the function's values
+    at two points within the search interval.
 
-        works for O(log2(n)), where n is how many
-        times can eps fit in abs(r-l)
-        for local max determination uses
-        absolute values of local func values
+    Parameters
+    ----------
+    func: callable
+        The function for which to find the maximum value.
+
+    start: float
+        The start of the range for the search.
+
+    end: float
+        The end of the range for the search.
+
+    eps: float, optional
+        The epsilon parameter controlling the accuracy of the search.
+        Default is 1e-6.
+
+    Returns
+    -------
+    float
+        The approximate x-coordinate of the maximum value of the function
+        within the specified range.
+
     '''
-    l = start
-    r = end
-    while (abs(r-l) >= eps):
-        m_l = l + (r - l)/3
-        m_r = l + 2*(r - l)/3
-        if func(m_r) > func(m_l):
-            l = m_l
+    left_edge = start
+    right_edge = end
+    while (abs(right_edge - left_edge) >= eps):
+        middle_left = left_edge + (right_edge - left_edge)/3
+        middle_right = left_edge + 2 * (right_edge - left_edge)/3
+        if func(middle_right) > func(middle_left):
+            left_edge = middle_left
         else:
-            r = m_r
-    return (m_l + m_r)/2
+            right_edge = middle_right
+    return (middle_left + middle_right)/2

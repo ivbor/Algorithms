@@ -1,19 +1,51 @@
 def real_bin_search(func, func_value, left_edge,
                     right_edge, eps=1e-6, check=False):
-    '''
-        basic binary search among real
-        numbers for x where func(x) = y
-        works only for monotonic functions
-        in O(log2(n)) time where n is how
-        many eps will fit in abs(r-l)
-        r - right edge of search interval
-        l - left one accordingly
+    """
+    This function performs a binary search among real numbers to find an x
+    where func(x) is approximately equal to func_value.
 
-        by default assumes required x
-        to be between left and right edges
-        but can check that
-        if check is set to True
-    '''
+    It works only for monotonic functions and
+    has a time complexity of O(log2(n)),
+    where n is the number of epsilon intervals that can fit in the
+    absolute difference between right_edge and left_edge.
+
+    Parameters
+    ----------
+    func: callable
+        The function for which we are searching for an input value.
+
+    func_value: float
+        The target value we want to find an input value for.
+
+    left_edge: float
+        The left edge of the search interval.
+        The function is assumed to exist within this interval.
+
+    right_edge: float
+        The right edge of the search interval.
+        The function is assumed to exist within this interval.
+
+    eps: float, optional
+        The epsilon value that determines the desired accuracy of the result.
+        The search will stop when the interval size
+        becomes smaller than this epsilon. Default is 1e-6.
+
+    check: bool, optional
+        If True, the function will perform a check to ensure that
+        the func_value is reachable within the given edges. Default is False.
+
+    Returns
+    -------
+    float
+        The approximate input value (x) for which func(x) is close to
+        func_value within the specified epsilon.
+
+    Raises
+    ------
+    KeyError
+        Is raised if the check parameter is set to True and the func_value is
+        unreachable within the given edges.
+    """
 
     # this algo requires O(log2(n))
     # operations where n is the amount of

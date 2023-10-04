@@ -3,12 +3,33 @@ from Algorithms.python_solutions.array_count_sort import array_count_sort
 
 def two_dim_array_count_sort(a, keys='all'):
     """
-        for 2-dim arrays, consisting of whole numbers
-        algo sorts 1-dim arrays inside 2-dim array
-        in ascending order by all indexes (by default)
-        or by exact indexes in order they present
-        ** given keys = [i for i in reversed(range(len(a)))]
-        can make a triangle matrix **
+    Sorts a 2-dimensional array consisting of whole numbers.
+
+    This function sorts the 1-dimensional arrays inside a 2-dimensional array
+    in ascending order by all indexes (by default) or by exact indexes
+    in the order they are presented.
+
+    Parameters
+    ----------
+    a : list[list[int]]
+        The 2-dimensional array to be sorted.
+
+    keys : 'all', list of int, or int, optional
+        Specifies the indexes to sort by. If 'all', it sorts by all indexes
+        (default). If a list of integers is provided, it sorts by the exact
+        indexes in the specified order. If an integer is provided,
+        it sorts by a single index.
+
+    Returns
+    -------
+    list[list[int]]
+        The sorted 2-dimensional array.
+
+    Raises
+    ------
+    TypeError
+        Raised if the 'keys' argument is of an unsupported type.
+
     """
 
     if keys == 'all' or isinstance(keys, list):
@@ -33,7 +54,25 @@ def two_dim_array_count_sort(a, keys='all'):
 
 
 def two_dim_array_count_sort_list(a, keys):
+    """
+    Helper function for sorting a 2-dimensional array by specific keys.
 
+    This function is used internally by `two_dim_array_count_sort`
+    to perform the sorting of a 2-dimensional array based on specific keys.
+
+    Parameters
+    ----------
+    a : list[list[int]]
+        The 2-dimensional array to be sorted.
+
+    keys : list of int
+        Specifies the indexes to sort by.
+
+    Returns
+    -------
+    None
+
+    """
     # list of rows with the same key symbol (to be sorted further)
     p_set = [0, len(a)-1]
 

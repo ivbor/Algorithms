@@ -1,3 +1,26 @@
+"""
+Binary Boundaries Search Module
+
+====================
+This module provides implementations of lower_bound and upper_bound
+search algorithms for finding the first and last occurrences of a given
+whole-numbered value in a sorted array. The lower_bound algorithm returns
+the index of the first encounter of the value, while the upper_bound algorithm
+returns the index of the last encounter.
+
+Functions
+---------
+lower_bound(array, value_to_search)
+    Determines the index of the first encounter of the whole-numbered value
+    in a sorted array.
+
+upper_bound(array, value_to_search)
+    Determines the index of the last encounter of the whole-numbered value
+    in a sorted array.
+
+"""
+
+
 def _lower_bound(array, left_edge, right_edge, value_to_search):
     '''
         This is lower bound search helper.
@@ -11,12 +34,15 @@ def _lower_bound(array, left_edge, right_edge, value_to_search):
         ----------
         array: list[int]
             one-dimensional array consisting of whole numbers
+
         left_edge: int
             index inside the array meaning left edge of indexes
             inside array (itself included) where search will be performed
+
         right_edge: int
             index inside the array meaning right edge of indexes
             inside array (itself included) where search will be performed
+
         value_to_search: int
             value to be searched among the given indexes slice inside array
 
@@ -66,6 +92,7 @@ def lower_bound(array, value_to_search):
         array: list[int]
             Sorted array where to find the first encounter of the
             searched value.
+
         value_to_search: int
             Searched value which first encounter is to be found by the
             function.
@@ -95,6 +122,7 @@ def upper_bound(array, value_to_search):
         array: list[int]
             Sorted array where to find the last encounter of the
             searched value.
+
         value_to_search: int
             Searched value which last encounter is to be found by the
             function.

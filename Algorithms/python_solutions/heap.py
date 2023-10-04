@@ -1,11 +1,63 @@
-from Algorithms.python_solutions.vector import Vector
+"""
+Binary Heap and Sort
+====================
+
+A module for implementing a binary tree-based min-heap data structure and
+heap sort algorithm.
+
+This module contains classes and functions for working with binary tree-based
+min-heaps and performing heap sort. A binary tree-based min-heap is a data
+structure where the minimum value is stored at the root, and each parent node
+contains elements smaller than its children.
+
+Classes
+-------
+Heap
+    A binary tree-based min-heap that extends the Vector class to represent
+    the heap. It provides methods for insertion, removal of the minimum
+    element, and other heap-related operations.
+
+Functions
+---------
+heap_sort(array)
+    Sorts an array in ascending order using the heap sort algorithm.
+    Heap sort is an efficient comparison-based sorting algorithm that uses
+    a binary heap to perform the sorting.
+
+get_terminal_width()
+    Retrieves the width of the terminal window using a subprocess to
+    execute 'tput cols' command.
+
+swap(array, x, y)
+    Swaps two elements in a list.
+
+sift_up(array, element_index, size)
+    Performs the sift-up operation to maintain the heap property.
+
+sift_down(array, element_index)
+    Performs the sift-down operation to maintain the heap property.
+
+"""
 import subprocess
 
-# neither os.get_terminal_size() nor shutil give right terminal size
-# hence, have to write this function
+from Algorithms.python_solutions.vector import Vector
 
 
 def get_terminal_width():
+    """
+    Retrieve the width of the terminal window.
+
+    This function uses a subprocess to execute the 'tput cols' command
+    to obtain the terminal width.
+
+    Returns
+    -------
+    int
+        The width of the terminal window in pixels.
+
+    """
+    # neither os.get_terminal_size() nor shutil give right terminal size
+    # hence, have to write this function
     out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)
     out = out.communicate()[0]
     cols = out.split(b'\n')[0]
@@ -13,26 +65,138 @@ def get_terminal_width():
 
 
 def swap(array, x, y):
+    """
+    Swap two elements in an array.
+
+    Parameters
+    ----------
+    array : list
+        The list containing the elements to be swapped.
+
+    x : int
+        The index of the first element to be swapped.
+
+    y : int
+        The index of the second element to be swapped.
+
+    Returns
+    -------
+    None
+    """
     b = array[x]
     array[x] = array[y]
     array[y] = b
 
 
 class Heap(Vector):
-    '''
-        binary tree with min in parents and elts > min in children in each node
-    '''
+    """
+    A binary tree-based min-heap data structure.
+
+    This class extends the Vector class to represent a binary
+    tree-based min-heap, where the minimum value is stored at the root,
+    and each parent node contains elements smaller than its children.
+
+    Attributes
+    ----------
+    elements : list or None, optional
+        An optional list of initial elements for the heap,
+        by default None.
+
+    size : int, optional
+        The initial size of the heap, by default 0.
+
+    capacity : int, optional
+        The initial capacity of the heap, by default 1.
+
+    Methods
+    -------
+    append(self, x) -> None
+        Append an element to the heap.
+
+    get_children(self, i) -> tuple(float, float) or float or None
+        Get the children of a node at the specified index.
+
+    height(self) -> int
+        Calculate the height of the heap.
+
+    insert(self, x) -> None
+        Insert an element into the heap.
+
+    __iter__(self) -> Generator
+        Iterate through the elements in the heap.
+
+    remove_min(self) -> float
+        Remove and return the minimum element from the heap.
+
+    __repr__(self) -> str
+        Return a string representation of the heap.
+
+    erase(self) -> float
+        Alias for `remove_min`.
+
+    """
 
     def __init__(self, elements=None, size=0, capacity=1):
+        """
+        Initialize a new Heap instance.
+
+        Parameters
+        ----------
+        elements : list or None, optional
+            An optional list of initial elements for the heap,
+            by default None.
+
+        size : int, optional
+            The initial size of the heap, by default 0.
+
+        capacity : int, optional
+            The initial capacity of the heap, by default 1.
+
+        Returns
+        -------
+        None
+
+        """
         super().__init__(size=size, capacity=capacity)
         if elements is not None:
             for i in elements:
                 self.insert(i)
 
     def append(self, x):
+        """
+        Append an element to the heap.
+
+        This method is an alias for `insert`.
+
+        Parameters
+        ----------
+        x : float
+            The element to append to the heap.
+
+        Returns
+        -------
+        None
+
+        """
         self.insert(x)
 
     def get_children(self, i):
+        """
+        Get the children of a node at the specified index.
+
+        Parameters
+        ----------
+        i : int
+            The index of the node for which to retrieve children.
+
+        Returns
+        -------
+        tuple or float or None
+            A tuple containing the left and right children of the node
+            if both exist, the left child if only the left child exists,
+            or None if the node has no children.
+
+        """
         if self.size > 2 * i + 2:
             return (self.elements[2*i+1], self.elements[2*i+2])
         elif self.size > 2 * i + 1:
@@ -41,6 +205,15 @@ class Heap(Vector):
             return None
 
     def height(self):
+        """
+        Calculate the height of the heap.
+
+        Returns
+        -------
+        int
+            The height of the heap.
+
+        """
         size = self.size
         high = 0
         while (int(size) != 0):
@@ -49,7 +222,22 @@ class Heap(Vector):
         return high
 
     def insert(self, x):
+        """
+        Insert an element into the heap.
 
+        If the size of the heap becomes equal to its capacity after
+        insertion, the capacity is increased.
+
+        Parameters
+        ----------
+        x : Any
+            The element to insert into the heap.
+
+        Returns
+        -------
+        None
+
+        """
         if self.size + 1 >= self.capacity:
             self.increaseCapacity()
 
@@ -60,11 +248,36 @@ class Heap(Vector):
         sift_up(self.elements, i)
 
     def __iter__(self):
+        """
+        Iterate through the elements in the heap.
+
+        Yields
+        ------
+        Any
+            The next element in the heap.
+
+        """
         for i in self.elements[:self.size]:
             yield i
 
     def remove_min(self):
+        """
+        Remove and return the minimum element from the heap.
 
+        If the size of the heap becomes less than or equal to one-fourth
+        of its capacity after removal, the capacity is decreased.
+
+        Returns
+        -------
+        float
+            The minimum element in the heap.
+
+        Raises
+        ------
+        IndexError
+            Raised if the heap is empty.
+
+        """
         if self.size <= self.capacity / 4:
             self.decreaseCapacity()
 
@@ -82,6 +295,15 @@ class Heap(Vector):
         return _return
 
     def __repr__(self) -> str:
+        """
+        Return a string representation of the heap.
+
+        Returns
+        -------
+        str
+            A string representation of the heap in a tree-like format.
+
+        """
         string_to_print = ''
         index_of_element_to_print = 0
         current_height = 0
@@ -102,13 +324,38 @@ class Heap(Vector):
             string_on_current_height += '\n\n'
             string_to_print += string_on_current_height
             current_height += 1
+
         return string_to_print
 
     def erase(self):
+        """
+        Alias for `remove_min`.
+
+        Returns
+        -------
+        float
+            The minimum element in the heap.
+
+        """
         return self.remove_min()
 
 
 def sift_up(a, i):
+    """
+    Perform the sift-up operation to maintain heap property.
+
+    Parameters
+    ----------
+    a : list
+        The list representing the elements of the heap.
+
+    i : int
+        The index at which the sift-up operation is performed.
+
+    Returns
+    -------
+    None
+    """
     while i > 0:
         if a[i] < a[int((i-1)/2)]:
             swap(a, i, int((i-1)/2))
@@ -118,6 +365,25 @@ def sift_up(a, i):
 
 
 def sift_down(a, i, size):
+    """
+    Perform the sift-down operation to maintain heap property.
+
+    Parameters
+    ----------
+    a : list
+        The list representing the elements of the heap.
+
+    i : int
+        The index at which the sift-down operation is performed.
+
+    size : int
+        The size of the heap.
+
+    Returns
+    -------
+    None
+
+    """
     while True:
         if size > 2*i+2:
             if (a[i] > a[2*i+2] and a[2*i+1] >= a[2*i+2]):
@@ -138,7 +404,38 @@ def sift_down(a, i, size):
 
 
 def heap_sort(array):
+    """
+    Sort an array in ascending order using the heap sort algorithm.
 
+    Heap sort is a comparison-based sorting algorithm that builds a binary
+    heap data structure and repeatedly extracts the minimum element from the
+    heap. The sorted elements are stored in the original array. This algorithm
+    has a time complexity of O(n log n) in the worst case, making it efficient
+    for large datasets. However, it is not an in-place sorting algorithm since
+    it requires additional space for the heap, making its O(n) space
+    complexity.
+
+    Parameters
+    ----------
+    array : list
+        The list to be sorted.
+
+    Returns
+    -------
+    list
+        The sorted list in ascending order.
+
+    Notes
+    -----
+    - The heap sort algorithm consists of two main phases: heapify and sorting.
+    - The "heapify" phase builds a binary heap from the input array,
+    ensuring that the heap property is maintained (parent nodes have smaller
+    values than their children).
+    - The "sorting" phase repeatedly removes the minimum element from the heap
+    and places it at the end of the array until the heap is empty.
+    This process results in a sorted array.
+
+    """
     heap = Heap()
     for i in range(len(array)):
         heap.insert(array[i])

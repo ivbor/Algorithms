@@ -3,8 +3,41 @@ from Algorithms.python_solutions.Stack import Stack
 
 
 class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
+    """
+    Queue class
 
+    The Queue class represents a queue data structure
+    with a first-in-first-out (FIFO) ordering of elements.
+    Elements are added to the back (enqueued) and
+    removed from the front (dequeued) of the queue.
+
+    Attributes
+    ----------
+    Inherits attributes from the Stack class.
+
+    Methods
+    -------
+    push(self, value)
+        Enqueue an element to the back of the queue.
+
+    pop(self)
+        Dequeue and return the element from the front of the queue.
+
+    """
     def push(self, value):
+        """
+        Enqueue an element to the back of the queue.
+
+        Parameters
+        ----------
+        value: any
+            The element to be added to the back of the queue.
+
+        Returns
+        -------
+        None
+
+        """
         # for the first element
         if self.size == 0:
             newNode = DoubleNode(value, None, None)
@@ -19,6 +52,15 @@ class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
             self.size += 1
 
     def pop(self):
+        """
+        Dequeue and return the element from the front of the queue.
+
+        Returns
+        -------
+        any
+            The element removed from the front of the queue.
+
+        """
         # for the last element
         if self.size == 1:
             _return = self.head.data

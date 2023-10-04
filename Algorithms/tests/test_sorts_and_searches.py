@@ -9,6 +9,7 @@ from Algorithms.python_solutions.array_count_sort import array_count_sort
 from Algorithms.python_solutions.count_sort import count_sort
 from Algorithms.python_solutions.insert_sort import insert_sort
 from Algorithms.python_solutions.merge_sort import merge_sort
+from Algorithms.python_solutions.merge_sort import merge_sort_parallel
 from Algorithms.python_solutions.quick_sort import quick_sort
 from Algorithms.python_solutions.digit_sort import digit_sort
 from Algorithms.python_solutions.two_dim_array_count_sort \
@@ -56,6 +57,7 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
     sorts = {'array_count_sort': array_count_sort,
              'insert_sort': insert_sort,
              'merge_sort': merge_sort,
+             'merge_sort_parallel': merge_sort_parallel,
              'quick_sort': quick_sort,
              'two_dim_array_count_sort': two_dim_array_count_sort,
              'count_sort': count_sort,
