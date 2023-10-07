@@ -1,6 +1,8 @@
-from Algorithms.python_solutions.heap import Heap, heap_sort
 import random
 import time
+import logging
+
+from Algorithms.python_solutions.heap import Heap, heap_sort
 
 
 def test_can_create_heap():
@@ -48,11 +50,11 @@ def test_heap_sort():
     built_in_time = et - st
 
     assert developed == built_in
-    print(f'heap_sort: {developed_time:.10f},\
+    logging.info(f'heap_sort: {developed_time:.10f},\
             sorted: {built_in_time:.10f}')
 
 
 def test_repr():
     h = Heap(elements=[random.uniform(-100, 100) for i in range(40)])
-    print(h)
+    logging.info(h)
     pass

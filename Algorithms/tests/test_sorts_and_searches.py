@@ -1,5 +1,9 @@
-# import better view function for 2dim arrays
+# import math for calculations
+import math
 import time
+import logging
+# import better view function for 2dim arrays
+from Algorithms.python_solutions.matrix_view import Matrix2dim
 # import some helpers for creating arrays and time checking
 from Algorithms.python_solutions.speed_analysis \
     import make_random_whole_1_dim_array, make_random_whole_2_dim_array, \
@@ -23,8 +27,6 @@ from Algorithms.python_solutions.ternary_search_extremum \
 from Algorithms.python_solutions.bounds import lower_bound, upper_bound
 # and for split find test
 from Algorithms.python_solutions.split_find import split_find
-# import math for calculations
-import math
 
 
 def test_sort_speed_analysis(test_size_range=(10, 100),
@@ -104,11 +106,23 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
             {} if i[0] != 'array_count_sort' else {'key': lambda a: a[0]})
 
         # and compare result
-        assert (built_in == developed), i[0]
+        assert (built_in == developed)
+
+        # print to the log file
+        if isinstance(built_in[0], list):
+            built_in = Matrix2dim(data=built_in)
+            developed = Matrix2dim(data=developed)
+            logging.info(f'{i[0]} \n built_in: \n' +
+                         f'{Matrix2dim.__repr__(built_in)} \n developed: \n' +
+                         f'{Matrix2dim.__repr__(developed)}')
+        else:
+            logging.info(f'{i[0]} \n built_in: \n' +
+                         f'{built_in} \n developed: \n' +
+                         f'{developed}')
 
         # and print times:
-        print(f'{i[0]:25}: {developed_time:.10f}, \
-              sorted: {built_in_time:.10f}\n')
+        logging.info(f'{i[0]:25}: {developed_time:.10f}, \
+                        sorted: {built_in_time:.10f}\n')
 
 
 # if in array searched value is absent
@@ -156,10 +170,10 @@ def test_bin_search_speed_analysis(
     developed_rec_time, developed_rec = speed_analysis(
         lambda x: bin_search(x, 3, True), a, {})
 
-    assert (type(built_in) == int) == developed_no_rec, print(a)
-    assert developed_no_rec == developed_rec, print(a)
-    print('Without desired element')
-    print(f'developed_no_rec: {developed_no_rec_time:.10f}, \
+    assert isinstance(built_in, int) == developed_no_rec, logging.debug(a)
+    assert developed_no_rec == developed_rec, logging.debug(a)
+    logging.info('Without desired element')
+    logging.info(f'developed_no_rec: {developed_no_rec_time:.10f}, \
             developed_rec: {developed_rec_time:.10f}, \
             index: {built_in_time:.10f}\n')
 
@@ -179,8 +193,8 @@ def test_bin_search_speed_analysis(
         lambda x: bin_search(x, 3, True), a, {})
 
     # and print times:
-    print('With desired element')
-    print(f'developed_no_rec: {developed_no_rec_time:.10f}, \
+    logging.info('With desired element')
+    logging.info(f'developed_no_rec: {developed_no_rec_time:.10f}, \
             developed_rec: {developed_rec_time:.10f}, \
             index: {built_in_time:.10f}\n')
 
@@ -195,7 +209,7 @@ def test_real_bin_search():
     et = time.time()
     # func(-6) = -1.070
     assert abs(res + 1.07) <= 5*10**(-4), res
-    print(f'real_bin_search_time: {(et-st):.10f}')
+    logging.info(f'real_bin_search_time: {(et-st):.10f}')
 
 
 def test_min_max_tern_search():
@@ -204,28 +218,28 @@ def test_min_max_tern_search():
     et = time.time()
     # min there is -2.121
     assert abs(res + 2.121) <= 5*10**(-4), res
-    print(f'tern_search_min_time, one min: {(et-st):.10f}')
+    logging.info(f'tern_search_min_time, one min: {(et-st):.10f}')
 
     st = time.time()
     res = tern_search_min(func, 0, 3)
     et = time.time()
     # min there is 0 or 3
     assert (abs(res) <= 5*10**(-4) or abs(res - 3) <= 5*10**(-4)), res
-    print(f'tern_search_min_time, two mins: {(et-st):.10f}')
+    logging.info(f'tern_search_min_time, two mins: {(et-st):.10f}')
 
     st = time.time()
     res = tern_search_max(func, -3, 0)
     et = time.time()
     # max there is 0 or -3
     assert (abs(res) <= 5*10**(-4) or abs(res + 3) <= 5*10**(-4)), res
-    print(f'tern_search_max_time, two maxes: {(et-st):.10f}')
+    logging.info(f'tern_search_max_time, two maxes: {(et-st):.10f}')
 
     st = time.time()
     res = tern_search_max(func, 0, 3)
     et = time.time()
     # max there is 2.121
     assert abs(res - 2.121) <= 5*10**(-4), res
-    print(f'tern_search_max_time, one max: {(et-st):.10f}')
+    logging.info(f'tern_search_max_time, one max: {(et-st):.10f}')
 
 
 def test_bounds():
@@ -244,8 +258,8 @@ def test_bounds():
     developed_time = et - st
 
     assert built_in == developed, (built_in, developed)
-    print('lower bound')
-    print(f'built_in_time: {built_in_time:.10f}, \
+    logging.info('lower bound')
+    logging.info(f'built_in_time: {built_in_time:.10f}, \
            developed_time: {developed_time:.10f}')
 
     st = time.time()
@@ -259,8 +273,8 @@ def test_bounds():
     developed_time = et - st
 
     assert built_in == developed, (built_in, developed)
-    print('upper bound')
-    print(f'built_in_time: {built_in_time:.10f}, \
+    logging.info('upper bound')
+    logging.info(f'built_in_time: {built_in_time:.10f}, \
            developed_time: {developed_time:.10f}')
 
 
@@ -275,4 +289,4 @@ def test_split_search():
     developed_time = et - st
 
     assert a[36] == developed, (a[36], developed)
-    print(f'split search time: {developed_time:.10f}')
+    logging.info(f'split search time: {developed_time:.10f}')
