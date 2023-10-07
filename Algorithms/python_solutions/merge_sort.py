@@ -1,3 +1,28 @@
+"""
+Merge Sort Module
+================
+
+A module containing Merge Sort algorithms and a helper function for merging
+arrays.
+
+This module specializes in various implementations of the Merge Sort
+algorithm and a helper function for merging two sorted arrays into a single
+sorted array.
+
+Functions
+---------
+merge_sort(array)
+    Sort a list of elements using the Merge Sort algorithm.
+
+merge_sort_parallel(array)
+    Sort a list of elements with multiprocessing using the Merge Sort
+    algorithm.
+
+merge(array_one, array_two)
+    Merge two sorted arrays into a single sorted array.
+
+"""
+
 from multiprocessing import cpu_count
 from concurrent.futures import ThreadPoolExecutor as Pool
 

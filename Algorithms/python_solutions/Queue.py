@@ -1,3 +1,18 @@
+"""
+Queue Module
+
+This module defines a Queue class representing a queue data structure with
+a first-in-first-out (FIFO) ordering of elements. Elements are enqueued
+to the back and dequeued from the front of the queue.
+
+Classes
+-------
+Queue
+    A class representing a queue data structure with enqueue and dequeue
+    operations.
+"""
+
+
 from Algorithms.python_solutions.DoubleNode import DoubleNode
 from Algorithms.python_solutions.Stack import Stack
 

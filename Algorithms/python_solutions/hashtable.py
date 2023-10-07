@@ -851,7 +851,7 @@ class HashTable_open(HashTable_closed):
                     self._size += 1
                     logging.debug(
                         f'index: {hashed_key} in table {table_index} busy ' +
-                        f'with key:' +
+                        'with key:' +
                         f' {self._elements[table_index][hashed_key].key}')
                     return
             # Cuckoo hashing

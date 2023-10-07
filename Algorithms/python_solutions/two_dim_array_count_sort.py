@@ -1,3 +1,22 @@
+"""
+Two-Dimensional Array Count Sort Module
+
+This module provides a function, `two_dim_array_count_sort`, for sorting a
+2-dimensional array consisting of whole numbers. The function can sort the
+1-dimensional arrays inside a 2-dimensional array in ascending order by all
+indexes (by default) or by exact indexes in the order they are presented.
+
+Functions
+---------
+two_dim_array_count_sort(a, keys='all')
+    Sorts a 2-dimensional array consisting of whole numbers.
+
+two_dim_array_count_sort_list(a, keys)
+    Helper function for sorting a 2-dimensional array by specific keys.
+
+"""
+
+
 from Algorithms.python_solutions.array_count_sort import array_count_sort
 
 

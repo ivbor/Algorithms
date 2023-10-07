@@ -1,3 +1,21 @@
+"""
+Real Binary Search Module
+
+This module provides a binary search function for finding an approximate
+input value (x) for which a given function func(x) is close to func_value
+within a specified epsilon. The binary search algorithm is suitable for
+monotonic functions.
+
+Functions
+---------
+real_bin_search(func, func_value, left_edge,
+    right_edge, eps=1e-6, check=False)
+    Performs a binary search among real numbers to find an x
+    where func(x) is approximately equal to func_value.
+
+"""
+
+
 def real_bin_search(func, func_value, left_edge,
                     right_edge, eps=1e-6, check=False):
     """

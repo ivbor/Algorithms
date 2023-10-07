@@ -1,3 +1,17 @@
+"""
+Vector Class Module
+
+This module defines a Python class, `Vector`, which implements a
+self-expanding array, also known as a dynamic array. A dynamic array can
+resize itself to accommodate additional elements as needed.
+
+Class
+-----
+Vector
+    A self-expanding array implementation.
+"""
+
+
 class Vector:
     """
     A self-expanding array implementation, also known as a dynamic array.

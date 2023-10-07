@@ -1,3 +1,30 @@
+"""
+Quick Sort Module
+
+This module provides Quick Sort implementations for efficiently sorting
+a list of elements. Quick Sort is a divide-and-conquer algorithm that selects
+a pivot value, divides the input array, and sorts the resulting parts.
+
+Functions
+---------
+quick_sort(array)
+    Sorts a list of elements using the Quick Sort algorithm.
+
+split(a, pivot, left_edge, right_edge)
+    Divides the input array into two parts relative to the pivot value.
+
+avg(a, left_edge, right_edge)
+    Calculates the average value of elements in a specified range.
+
+clst_avg(a, avg, left_edge, right_edge)
+    Finds the element closest to the average value in a specified range.
+
+_quick_sort(array, left_edge, right_edge, faster=True)
+    Performs the Quick Sort algorithm on a given array within specified
+    indices.
+"""
+
+
 import random
 
 

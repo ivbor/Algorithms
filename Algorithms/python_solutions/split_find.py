@@ -1,3 +1,30 @@
+"""
+Real Binary Search Module
+
+This module provides a binary search function for finding an element at
+a specified index in an array as if it was already sorted in ascending order.
+The binary search algorithm uses a randomized pivot selection and partitioning
+to efficiently search for the element.
+
+Functions
+---------
+split_find(a, index)
+    Searches for an element with the specified index in an array as if it was already sorted
+    in ascending order. It is a wrapper for _split_find function.
+
+split(array, pivot, left_edge, right_edge)
+    Splits an array into two parts based on a pivot value. Elements less
+    than the pivot are moved to the left subarray, and elements equal to
+    or greater than the pivot are moved to the right subarray.
+
+_split_find(array, left_edge, right_edge, index)
+    Recursively finds the element at the specified index inside an array as
+    if it were sorted in ascending order. It uses random pivot selection
+    and the split function to partition the array while narrowing down
+    the search range.
+"""
+
+
 import random
 
 

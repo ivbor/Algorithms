@@ -1,3 +1,22 @@
+"""
+Ternary Search Module
+
+This module provides two functions, `tern_search_min` and `tern_search_max`,
+for finding the minimum and maximum values of a function within a specified
+range, respectively. These search algorithms are suitable for cases where
+the function has only one minimum or maximum value within the given range.
+
+Functions
+---------
+tern_search_min(func, start, end, eps=1e-6)
+    Find the minimum value of a function within a specified range.
+
+tern_search_max(func, start, end, eps=1e-6)
+    Find the maximum value of a function within a specified range.
+
+"""
+
+
 def tern_search_min(func, start, end, eps=1e-6):
     '''
     Ternary search for finding the minimum value of a function

@@ -1,3 +1,17 @@
+"""
+Node Module
+
+This module defines a simple one-way node class that can store data and
+have a reference to the next node in a linked list.
+
+Classes
+-------
+Node
+    A class representing a one-way node with basic operations.
+
+"""
+
+
 class Node:
     """
     Simple One-Way Node Class

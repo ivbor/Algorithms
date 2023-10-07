@@ -1,3 +1,20 @@
+"""
+Matrix2dim Module
+======================
+
+A module for creating and displaying 2-Dimensional matrices.
+
+This module contains the `Matrix2dim` class, which provides a convenient way
+to create and display 2-Dimensional matrices.
+
+Classes
+-------
+Matrix2dim
+    A class for creating and displaying 2-Dimensional matrices.
+
+"""
+
+
 class Matrix2dim:
     """
     2-Dimensional Matrix Class
@@ -19,6 +36,7 @@ class Matrix2dim:
         Returns a string representation of the matrix.
 
     """
+
     def __init__(self, data) -> None:
         """
         Initialize a Matrix2dim object.
@@ -37,7 +55,7 @@ class Matrix2dim:
             if isinstance(data[0], list):
                 self.data = data
 
-    def __repr__(self, indexes=False) -> None:
+    def __repr__(self, indexes=False) -> str:
         """
         Return a string representation of the 2D matrix.
 
@@ -54,6 +72,9 @@ class Matrix2dim:
         """
         array = self.data
 
+        # this str will be returned
+        res = ''
+
         # sizes: n for rows, m for columns
         n = len(array)
         m = max([len(array) for _ in array])
@@ -62,17 +83,19 @@ class Matrix2dim:
         if indexes:
             for i in range(m + 1):
                 if i == 0:
-                    print(f'{i: 5.0f}', end=' ')
-                print(f'{i: 5.0f}', end=' ')
-            print('\n', end='')
+                    res += f'{i: 5.0f} '
+                res += f'{i: 5.0f} '
+            res += '\n'
 
         # printing matrix
         for i in range(n):
             for j in range(m + 1):
                 if indexes:
                     if j == 0:
-                        print(f'{i: 5.0f}', end=' ')
+                        res += f'{i: 5.0f} '
                 if j < len(array[i]):
-                    print(f'{array[i][j]: 5.0f}', end=' ')
-            print('\n', end='')
-        print('\n', end='')
+                    res += f'{array[i][j]: 5.0f} '
+            res += '\n\n'
+        res += '\n'
+
+        return res

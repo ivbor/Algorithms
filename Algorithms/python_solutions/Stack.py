@@ -1,3 +1,18 @@
+"""
+Stack Module
+
+This module provides a Python implementation of a stack data structure. The
+stack follows the Last-In-First-Out (LIFO) principle, where the last element
+added is the first one to be removed. This class provides methods to
+manipulate and query the stack.
+
+Classes
+-------
+Stack
+    A stack data structure implemented using a doubly-linked list.
+"""
+
+
 from Algorithms.python_solutions.DoubleNode import DoubleNode
 
 
