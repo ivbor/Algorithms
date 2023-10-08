@@ -84,7 +84,8 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
             else arrays[0].copy(),
 
             # no need for params here
-            params={} if i[0] != 'digit_sort' else {'base': 16})
+            params={} if i[0] != 'quick_sort' else {'faster': False} \
+            if i[0] != 'digit_sort' else {'base': 16})
 
         # register time to sort for built_in function
         built_in_time, built_in = speed_analysis(
@@ -113,8 +114,9 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
             built_in = Matrix2dim(data=built_in)
             developed = Matrix2dim(data=developed)
             logging.info(f'{i[0]} \n built_in: \n' +
-                         f'{Matrix2dim.__repr__(built_in)} \n developed: \n' +
-                         f'{Matrix2dim.__repr__(developed)}')
+                         f'{Matrix2dim.__repr__(built_in, indexes=True)} \
+                         \n developed: \n' +
+                         f'{Matrix2dim.__repr__(developed, indexes=True)}')
         else:
             logging.info(f'{i[0]} \n built_in: \n' +
                          f'{built_in} \n developed: \n' +

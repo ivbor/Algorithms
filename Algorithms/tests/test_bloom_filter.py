@@ -31,6 +31,7 @@ def test_can_create_bloom_filter_jenkins():
             fails_count += 1
     assert fails_count < 60, 'fails_count does not converge to 50'
 
+
 def test_false_positives_less_than_5_percent(bf):
     fails_count = 0
     for i in range(10000):
@@ -42,6 +43,8 @@ def test_false_positives_less_than_5_percent(bf):
         'fails exceed required range'
 
 # make a distinct file with this test
+
+
 def test_bloom_filter_stress():
     bf = Bloom_filter()
     fails_count = 0
@@ -50,3 +53,21 @@ def test_bloom_filter_stress():
         if not bf.check(i):
             fails_count += 1
     assert fails_count < 50
+
+
+def test_long_strings_for_advanced_jenkins():
+    bf = Bloom_filter(hashfunc='jenkins')
+    for i in range(1000):
+        str_to_add = ''
+        fails_count = 0
+        for ch in range(i):
+            str_to_add += chr(ch)
+        bf.add(str_to_add)
+        if not bf.check(str_to_add):
+            fails_count += 1
+    assert fails_count < 60, 'fails_count does not converge to 50'
+
+
+def test_raises_error_when_unrecognized_hash_passed():
+    with pytest.raises(Exception):
+        bf = Bloom_filter(hashfunc='34')

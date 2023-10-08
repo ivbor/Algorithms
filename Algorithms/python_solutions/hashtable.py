@@ -463,14 +463,7 @@ class HashTable_closed():
         """
         old_capacity = self._capacity
         self._capacity = self._capacity // 2 if self._capacity != 1 else 1
-        # this method is used by both open and closed HashTables
-        # hence, to use inheritance and do not copy the same function
-        # without one parameter in the call in the end to the different
-        # class it's better to write just if closure
-        if 'closed' in self.__class__.__name__:
-            self.recapacitate_and_rehash(old_capacity)
-        else:
-            self.recapacitate_and_rehash()
+        self.recapacitate_and_rehash(old_capacity)
 
     def search(self, key):
         """
@@ -795,31 +788,6 @@ class HashTable_open(HashTable_closed):
         """
         ret = self._elements.copy()
         return ret
-
-    @elements.setter
-    def elements(self, pair):
-        """
-        Setter for the elements property, raises NotImplementedError.
-
-        Parameters
-        ----------
-        pair : tuple
-            The key-value pair to be set.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        NotImplementedError
-            Raised when attempting to set the value of the protected property.
-
-        """
-        raise NotImplementedError('cannot set value to protected property' +
-                                  'to append or set value use ' +
-                                  'traditional setitem method: ' +
-                                  f'{self.__name__}[{pair[0]}] = {pair[1]}')
 
     def __setitem__(self, key, value):
         """

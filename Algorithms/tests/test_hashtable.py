@@ -119,7 +119,7 @@ def test_update_in_ht(ht_with_samples):
             1), 'update damages other ht elements'
 
 
-def test_to_dict(ht_with_samples):
+def test_to_dict_closed(ht_with_samples):
     dict_from_ht = ht_with_samples.to_dict()
     assert len(dict_from_ht) == len(
         ht_with_samples), 'size of dict from ht is wrong'
@@ -240,3 +240,35 @@ def test_property_elements_setitem(ht_open_with_samples):
         ht_open_with_samples._elements[9] = 9
         assert ht_open_with_samples[9] != 9, \
             'ht lets access internal stash when it should not'
+
+
+def test_set_elements(ht_open_with_samples):
+    with pytest.raises(Exception):
+        ht_open_with_samples._elements(True, 31)
+
+
+def test_update_in_ht_open(ht_open_with_samples):
+    ht_open_with_samples.update(True, 31)
+    assert ht_open_with_samples[True] == 31, \
+        'update works wrong'
+
+
+def test_errors_in_update_and_getitem(ht_open_with_samples):
+    with pytest.raises(Exception):
+        ht_open_with_samples.update(24, 1)
+    with pytest.raises(Exception):
+        ht_open_with_samples[18]
+
+
+def test_search_returns_false_when_no_elements_found(ht_open_with_samples):
+    assert ht_open_with_samples.search(18) is False
+
+
+def test_to_dict_open(ht_open):
+    dict_compare = {}
+    for i in range(1000):
+        dict_compare[chr(i + 100)] = chr(i + 100)
+        ht_open[chr(i + 100)] = chr(i + 100)
+    dict_with_samples = ht_open.to_dict()
+    assert isinstance(dict_with_samples, dict)
+    assert dict_with_samples.items() == dict_compare.items()

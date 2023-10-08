@@ -144,7 +144,7 @@ def _quick_sort(array, left_edge, right_edge, faster=True):
     return array
 
 
-def quick_sort(array):  # o(nlogn)
+def quick_sort(array, faster=True):  # o(nlogn)
     """
     Quick Sort Function (Wrapper)
 
@@ -168,4 +168,5 @@ def quick_sort(array):  # o(nlogn)
         The sorted list.
 
     """
-    return _quick_sort(array, left_edge=0, right_edge=len(array))
+    return _quick_sort(array, left_edge=0, right_edge=len(array),
+                       faster=faster)

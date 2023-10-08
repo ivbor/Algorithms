@@ -193,8 +193,8 @@ class Vector:
             i = self.size + i
 
         # main changes to the vector while setting an item
-        self.size += 1
         self.elements[i] = x
+        self.size += 1
 
         # some memory work
         if self.size + 1 >= self.capacity:
