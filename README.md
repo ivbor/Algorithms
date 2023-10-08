@@ -19,20 +19,20 @@ provided you are inside Algorithms-master/ or this folder is added to your PYTHO
 | inside 2-dimensional array | done | done | done | not started | done | not started | not started |
 | | | | | | | | |
 | Count sort |
-| for 2-dimensional array | done | done | done | not started | almost done | not started | not started |
+| for 2-dimensional array | done | done | done | not started | done | not started | not started |
 | | | | | | | | | 
 | Digit sort | done | done | done | not started | done | not started | not started |
 | Insertion sort | done | done | done | not started | done | not started | not started |
-| Merge sort | done | done | done | not started | almost done | not started | not started |
-| Quick sort | done | done | done | not started | almost done | not started | not started |
+| Merge sort | done | done | done | not started | done | not started | not started |
+| Quick sort | done | done | done | not started | done | not started | not started |
 | | | | | | | | |
 | **Searches** | | | | | | | |
 | | | | | | | | |
 | Binary search | done | done | done | not started | done | not started | not started |
 | Lower and upper bounds | done | done | done | not started | done | not started | not started |
 | Real binary search | done | done | done | not started | almost done | not started | not started |
-| Ternary extrema search | done | done | done | not started | almost done | not started | not started |
-| Split search | done | done | done | not started | almost done | not started | not started |
+| Ternary extrema search | done | done | done | not started | done | not started | not started |
+| Split search | done | done | done | not started | done | not started | not started |
 | | | | | | | | |
 | **Data structures** | | | | | | | |
 | | | | | | | | |
@@ -42,14 +42,14 @@ provided you are inside Algorithms-master/ or this folder is added to your PYTHO
 | DoubleNode | done | done | done | not started | done | not started | not started |
 | Hashtable | done | done | done | started | done | not started | not started |
 | Heap | done | done | done | not started | done | not started | not started |
-| Linked List | done | done | done | not started | almost done | not started | not started |
-| Node | done | done | done | not started | almost done | not started | not started |
-| Queue | done | done | done | not started | almost done | not started | not started |
-| Stack | done | done | done | not started | almost done | not started | not started |
-| Vector | done | done | done | not started | almost done | not started | not started |
+| Linked List | done | done | done | not started | done | not started | not started |
+| Node | done | done | done | not started | done | not started | not started |
+| Queue | done | done | done | not started | done | not started | not started |
+| Stack | done | done | done | not started | done | not started | not started |
+| Vector | done | done | done | not started | done | not started | not started |
 | | | | | | | | |
 | **Helpers** | ready-to-use | need to refactor | | | | | |
-| Matrix view | no | yes |
+| Matrix view | yes | no |
 | Speed analysis | yes | yes |
 | Dynamic programming | no | - |
 | | | | | | | | |
@@ -62,7 +62,7 @@ Tests coverage checked by
 ```coverage run``` 
 command with all configs in ./.coveragerc
 
-Coverage output is 87% with 170 missed out of 1318
+Coverage output is 96% with 50 missed out of 1334
 
 Security issues discovered by 
 ```bandit -r ./Algorithms/python_solutions -b bandit.json```
@@ -73,16 +73,17 @@ Baseline for bandit was generated using
 
 Bandit output shows no severe security issues
  
-Docstrings were made by ChatGPT
+Docstrings were made with the use of ChatGPT
 
 Docstrings coverage checked by 
 ```interrogate ./Algorithms/python_solutions -vv```
 
-Interrogate output is 82.7%
+Interrogate output is 88.9%
  
 Precommits are set using Github Actions with ./.github/workflows/python-app.yml file
 
 ## What is planned:
+Write dynamic programming, prefixes, trees and graphs
 Get docstrings parsed for making a documentation
 Provide some experiments using notebook for bottlenecks determination and elimination
 
