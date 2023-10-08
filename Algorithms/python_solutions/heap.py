@@ -60,8 +60,9 @@ def get_terminal_width():
     # hence, have to write this function
     out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)
     out = out.communicate()[0]
-    cols = out.split(b'\n')[0]
-    return int(cols)
+    out = out.split(b'\n')[0]
+    out = out.decode()
+    return int(out)
 
 
 def swap(array, x, y):

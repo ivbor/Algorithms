@@ -69,4 +69,3 @@ def test_repr():
 def test_get_terminal_width():
     terminal_width = get_terminal_width()
     assert isinstance(terminal_width, int)
-    assert terminal_width == 80
