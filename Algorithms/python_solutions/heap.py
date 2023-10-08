@@ -62,7 +62,7 @@ def get_terminal_width():
     out = out.communicate()[0]
     out = out.split(b'\n')[0]
     out = out.decode()
-    return int(out)
+    return int(out) if out != '' else 0
 
 
 def swap(array, x, y):
