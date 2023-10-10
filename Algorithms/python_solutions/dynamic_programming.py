@@ -1,5 +1,6 @@
 # TODO
 # write tests for the function with (generated) test cases
+# (maybe) find, adapt or generate hard test cases
 # write time and space complexities for all functions
 # (maybe) write naive solutions and their time and space complexities
 # write some additional problems (with modifying basic dp function
@@ -13,100 +14,77 @@
 #   optimal binary search tree
 #   coin change
 
+class DynamicProgrammingProblem:
+    def __init__(self):
+        self.dp = None
 
-def dynamic_programming(problem_params, transition_function, dimensions=2):
-    """
-    Solve a dynamic programming problem using the given transition function.
-
-    Parameters
-    ----------
-    problem_params: tuple or list
-        Contains problem-specific parameters to be passed to the
-        transition_function.
-
-    transition_function: callable
-        A function that calculates the transition values using problem_params.
-
-    dimensions: int
-        A number of dimensions inside dynamic programming table required
-        for solving a particular problem. Default is 2.
-
-    Returns
-    -------
-    any
-        The solution to the dynamic programming problem.
-
-    """
-    n = len(problem_params[0])
-
-    # Create a table for memorization
-    # Fill in the table using the transition function
-    # Return the final result (specific to the problem)
-    if dimensions == 1:
-        dp = [0] * n
-
-        for i in range(1, n):
-            dp[i] = transition_function(dp, i, problem_params)
-
-        return dp[n]
-
-    elif dimensions == 2:
-        dp = [[0] * n for _ in range(n)]
-
-        for i in range(1, n):
-            for j in range(1, n):
-                dp[i][j] = transition_function(dp, i, j, problem_params)
-
-        return dp[n][n]
-
-    elif dimensions == 3:
-        dp = [[[0] * n for _ in range(n)] for _ in range(n)]
-
-        for i in range(1, n):
-            for j in range(1, n):
-                for k in range(1, n):
-                    dp[i][j][k] = transition_function(dp, i, j, k,
-                                                      problem_params)
-        return dp[n][n][n]
-
-    else:
-        raise NotImplementedError('problems with tables having more' +
-                                  ' than 3 dimensions are not supported')
+    def solve(self):
+        raise NotImplementedError("Subclasses must implement the solve method")
 
 
-# Example 1: Knapsack problem
+class KnapsackProblem(DynamicProgrammingProblem):
+    def __init__(self, weights, values, capacity):
+        super().__init__()
+        self.weights = weights
+        self.values = values
+        self.capacity = capacity
+        self.num_items = len(weights)
 
-# With the use of dynamic programming time complexity is O(n*W)
-# instead of O(2^n) on low W
-def knapsack_transition(dp, i, j, params):
-    weight, value = params
-    if weight[i - 1] <= j:
-        return max(dp[i - 1][j], dp[i - 1][j - weight[i - 1]] + value[i - 1])
-    else:
-        return dp[i - 1][j]
-
-
-weights = [2, 1, 3, 2]
-values = [3, 2, 4, 2]
-problem_params = (weights, values)
-
-knapsack_solution = dynamic_programming(
-    problem_params, knapsack_transition)
-print("Knapsack Problem Solution:", knapsack_solution)
-
-
-# Example 2: Longest Common Subsequence (LCS) problem
-def lcs_transition(dp, i, j, params):
-    str1, str2 = params
-    if str1[i - 1] == str2[j - 1]:
-        return dp[i - 1][j - 1] + 1
-    else:
-        return max(dp[i - 1][j], dp[i][j - 1])
+    def solve(self):
+        self.dp = [[0] * (self.capacity + 1)
+                   for _ in range(self.num_items + 1)]
+        for i in range(1, self.num_items + 1):
+            for w in range(1, self.capacity + 1):
+                if self.weights[i - 1] <= w:
+                    self.dp[i][w] = max(
+                        self.dp[i - 1][w],
+                        self.dp[i - 1][w - self.weights[i - 1]] + self.values
+                        [i - 1])
+                else:
+                    self.dp[i][w] = self.dp[i - 1][w]
+        return self.dp[self.num_items][self.capacity]
 
 
-str1 = "AGGTAB"
-str2 = "GXTXAYB"
-problem_params = (str1, str2)
+class LongestCommonSubsequence(DynamicProgrammingProblem):
+    def __init__(self, str1, str2):
+        super().__init__()
+        self.str1 = str1
+        self.str2 = str2
+        self.m = len(str1)
+        self.n = len(str2)
 
-lcs_length = dynamic_programming(problem_params, lcs_transition)
-print("Longest Common Subsequence Length:", lcs_length)
+    def solve(self):
+        self.dp = [[0] * (self.n + 1) for _ in range(self.m + 1)]
+        for i in range(1, self.m + 1):
+            for j in range(1, self.n + 1):
+                if self.str1[i - 1] == self.str2[j - 1]:
+                    self.dp[i][j] = self.dp[i - 1][j - 1] + 1
+                else:
+                    self.dp[i][j] = max(self.dp[i - 1][j], self.dp[i][j - 1])
+        return self.dp[self.m][self.n]
+
+
+class LevenshteinDistance(DynamicProgrammingProblem):
+    def __init__(self, str1, str2):
+        super().__init__()
+        self.str1 = str1
+        self.str2 = str2
+        self.m = len(str1)
+        self.n = len(str2)
+
+    def solve(self):
+        self.dp = [[0] * (self.n + 1) for _ in range(self.m + 1)]
+        for i in range(self.m + 1):
+            self.dp[i][0] = i
+        for j in range(self.n + 1):
+            self.dp[0][j] = j
+
+        for i in range(1, self.m + 1):
+            for j in range(1, self.n + 1):
+                cost = 0 if self.str1[i - 1] == self.str2[j - 1] else 1
+                self.dp[i][j] = min(
+                    self.dp[i - 1][j] + 1,  # Deletion
+                    self.dp[i][j - 1] + 1,  # Insertion
+                    self.dp[i - 1][j - 1] + cost  # Substitution
+                )
+        return self.dp[self.m][self.n]
