@@ -41,9 +41,6 @@ def test_sort_speed_analysis(test_size_range=(10, 100),
         of elements generation and the second - the end of this range
     '''
 
-    # TODO add multidim sort
-    # and create n-dim arrays using for cycle
-
     # make a list of 1dim array and 2dim array
     one_dim_array = make_random_1_dim_array(
             elts_range=num_range, size_of_1_dim_range=test_size_range)
