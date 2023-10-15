@@ -8,12 +8,13 @@ from ctypes import c_int, POINTER, CDLL, c_char
 from Algorithms.python_solutions.dynamic_programming \
     import KnapsackProblem, DamerauLevensteinDistance, \
     LongestCommonSubsequence, DynamicProgrammingProblem, \
-    LevensteinDistanceOptimized
+    LevensteinDistanceOptimized, LongestIncreasingSubsequence, \
+    LongestIncreasingSubsequenceOptimized
 
 
 def test_dp_class_solve_raises():
     with pytest.raises(Exception):
-        DynamicProgrammingProblem.solve()
+        DynamicProgrammingProblem().solve()
 
 
 def generate_test_cases_with_output_for_knapsack(
@@ -88,17 +89,27 @@ def test_knapsack_bounds():
     assert KnapsackProblem([12], [1], 0).solve() == 0
     assert KnapsackProblem([15, 1, 12], [10000, 1, 0], 14).solve() == 1
 
+# DamerauLevenstein
+
 
 def test_damerau_levenstein_bounds():
     assert DamerauLevensteinDistance('', '').solve() == 0
+    assert LevensteinDistanceOptimized('', '').solve() == 0
     char1 = random.SystemRandom().choice(
         string.ascii_uppercase + string.digits)
     char2 = random.SystemRandom().choice(
         string.ascii_uppercase + string.digits)
-    assert DamerauLevensteinDistance(char1, char2).solve() == 1
+    assert DamerauLevensteinDistance(char1, char2).solve() == 1 \
+        if char1 != char2 else 0
+    assert LevensteinDistanceOptimized(char1, char2).solve() == 1 \
+        if char1 != char2 else 0
     str1 = ''.join(random.SystemRandom().choice(
         string.ascii_uppercase + string.digits) for _ in range(10))
     assert DamerauLevensteinDistance(str1, '').solve() == len(str1)
+    assert LevensteinDistanceOptimized(str1, '').solve() == len(str1)
+    # transpositional assert
+    assert DamerauLevensteinDistance('10', '01').solve() == 1
+    assert LevensteinDistanceOptimized('10', '01').solve() == 1
 
 
 def generate_test_cases_with_output_for_damerau_levenstein(
@@ -153,3 +164,40 @@ def test_lcs_bounds():
                            (('abc', 'def'), 0)])
 def test_some_lcs_test_cases(test_input, test_output):
     assert LongestCommonSubsequence(*test_input).solve() == test_output
+
+
+def test_lis_bounds():
+    assert LongestIncreasingSubsequence([]).solve() == 0
+    assert LongestIncreasingSubsequenceOptimized([]).solve() == 0
+    assert LongestIncreasingSubsequence(
+        [random.randint(0, 100)]).solve() == 1
+    assert LongestIncreasingSubsequenceOptimized(
+        [random.randint(0, 100)]).solve() == 1
+    assert LongestIncreasingSubsequence(
+        [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10]).solve() == 10
+    assert LongestIncreasingSubsequenceOptimized(
+        [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10]).solve() == 10
+    assert LongestIncreasingSubsequence(
+        [1, 0, 2, 3, 4, 5, 6, 7, 8, 10, 9]).solve() == 9
+    assert LongestIncreasingSubsequenceOptimized(
+        [1, 0, 2, 3, 4, 5, 6, 7, 8, 10, 9]).solve() == 9
+
+
+# test cases are from here:
+# https://practice.geeksforgeeks.org/problems/
+# longest-increasing-subsequence-1587115620/1
+# https://workat.tech/problem-solving/practice/
+# longest-increasing-subsequence
+@ pytest.mark.parametrize('test_input, test_output',
+                          [(([10, 20, 2, 5, 3, 8, 8, 25, 6]), 4),
+                           (([10, -63, 7, -50, 32, -9, -3]), 4),
+                           (([71, 0, 4, 42, -31, 4, -42]), 3),
+                           (([77, 0, -2, 25, 1, 70]), 3),
+                           (([2, 2, 1, 5, 7, -50, 80]), 4),
+                           (([0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11,
+                              7, 15]), 6),
+                           (([5, 8, 3, 7, 9, 1]), 3)])
+def test_some_lis_test_cases(test_input, test_output):
+    assert LongestIncreasingSubsequence(test_input).solve() == test_output
+    assert LongestIncreasingSubsequenceOptimized(test_input).solve() == \
+        test_output

@@ -1,14 +1,8 @@
 # TODO
-# write tests for the function with (generated) test cases
-# write time and space complexities for all functions
-# (maybe) write naive solutions' time and space complexities
-# write some additional problems including but not limited to:
-#   matrix chain multiplication (with and without chain order multiplication
-#   and time and space complexities for them)
-#   travelling salesman (bitmask dynamic programming etc.)
-#   longest increasing subsequence (with and without binary search)
-#   optimal binary search tree
-#   coin change
+# docs
+# travelling salesman (bitmask dynamic programming etc.)
+import logging
+
 
 class DynamicProgrammingProblem:
     def __init__(self):
@@ -92,12 +86,12 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[i][j - 1] + 1,  # Insertion
                     self.dp[i - 1][j - 1] + cost  # Substitution
                 )
-                if 1 < i and i < self.m and 1 < j and j < self.n:
-                    if (self.str1[i] == self.str2[j - 1]) \
-                            and (self.str1[i - 1] == self.str2[j]):
-                        self.dp[i][j] = min(
-                            self.dp[i][j],
-                            self.dp[i - 2][j - 2] + 1)  # Transposition
+                if (self.str1[i - 1] == self.str2[j - 2]) \
+                        and (self.str1[i - 2] == self.str2[j - 1]):
+                    self.dp[i][j] = min(
+                        self.dp[i][j],
+                        self.dp[i - 2][j - 2] + 1)  # Transposition
+        logging.debug(self.dp)
         return self.dp[self.m][self.n]
 
 
@@ -115,22 +109,108 @@ class LevensteinDistanceOptimized(DynamicProgrammingProblem):
             self.str1, self.str2, m, n = self.str2, self.str1, n, m
 
         # Initialize a 1D array to store the current and previous row
-        self.dp = [0] * (m + 1)
+        self.dp = [[0] * (m + 1) for _ in range(3)]
 
         # Initialize the first row
         for i in range(m + 1):
-            self.dp[i] = i
+            self.dp[0][i] = i
 
+        current_row = 0
         for j in range(1, n + 1):
-            prev_diag = self.dp[0]  # Store the previous diagonal value
-            self.dp[0] = j  # Update the first element in the current row
+            logging.debug(' j = ' + f'{j}')
+            # Store the previous row
+            logging.debug('current_row = ' + f'{current_row}')
+            current_row = 1 + current_row if current_row < 2 else 0
+
+            logging.debug('current_row = ' + f'{current_row}')
+
+            # Update the first element in the current row
+            self.dp[current_row][0] = j
 
             for i in range(1, m + 1):
-                insert_cost = self.dp[i - 1] + 1
-                delete_cost = self.dp[i] + 1
-                replace_cost = prev_diag + \
-                    (0 if self.str1[i - 1] == self.str2[j - 1] else 1)
-                prev_diag, self.dp[i] = \
-                    self.dp[i], min(insert_cost, delete_cost, replace_cost)
+                logging.debug(' i = ' + f'{i}')
+                cost = \
+                    0 if self.str1[i - 1] == self.str2[j - 1] else 1
 
-        return self.dp[m]
+                insert_cost = self.dp[current_row][i - 1] + 1
+                delete_cost = self.dp[current_row - 1][i] + 1
+                replace_cost = self.dp[current_row - 1][i - 1] + cost
+                transposition_cost = self.dp[current_row - 2][i - 2] + 1
+                logging.debug(f''' costs: {insert_cost}, {delete_cost}, ''' +
+                              f'''{replace_cost}, ''' +
+                              f'''{transposition_cost}''')
+
+                logging.debug(f'{self.dp}')
+                self.dp[current_row][i] = \
+                    min(insert_cost, delete_cost, replace_cost)
+                logging.debug(f'{self.dp}')
+                if (self.str1[j - 1] == self.str2[i - 2] and
+                        self.str1[j - 2] == self.str2[i - 1]):
+                    self.dp[current_row][i] = \
+                        min(self.dp[current_row][i],
+                            self.dp[current_row - 2][i - 2] + 1)
+                logging.debug(f'{self.dp}')
+
+        return self.dp[current_row][m]
+
+
+class LongestIncreasingSubsequence(DynamicProgrammingProblem):
+
+    def __init__(self, nums):
+        super().__init__()
+        self.nums = nums
+
+    def solve(self):
+        if not self.nums:
+            return 0
+
+        n = len(self.nums)
+        # Initialize the LIS array with a length of 1 for each element
+        self.dp = [1] * n
+
+        for i in range(1, n):
+            for j in range(i):
+                if self.nums[i] > self.nums[j]:
+                    self.dp[i] = max(self.dp[i], self.dp[j] + 1)
+
+        return max(self.dp)
+
+
+class LongestIncreasingSubsequenceOptimized(DynamicProgrammingProblem):
+    '''This implementation uses binary search'''
+
+    def __init__(self, nums):
+        super().__init__()
+        self.nums = nums
+
+    def solve(self):
+        if not self.nums:
+            return 0
+
+        n = len(self.nums)
+        # using dp for representing the smallest tail of all
+        # increasing subsequences of length i
+        self.dp = [0] * n
+        self.dp[0] = self.nums[0]
+
+        # Initialize the length of the LIS to 1
+        length = 1
+
+        for i in range(1, n):
+            if self.nums[i] < self.dp[0]:
+                self.dp[0] = self.nums[i]
+            elif self.nums[i] > self.dp[length - 1]:
+                self.dp[length] = self.nums[i]
+                length += 1
+            else:
+                # Find the position of the smallest element in tails
+                # that is greater than or equal to nums[i]
+                left, right = 0, length - 1
+                while left < right:
+                    mid = (left + right) // 2
+                    if self.dp[mid] < self.nums[i]:
+                        left = mid + 1
+                    else:
+                        right = mid
+                self.dp[left] = self.nums[i]
+        return length
