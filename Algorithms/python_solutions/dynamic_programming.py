@@ -1,19 +1,101 @@
 # TODO
-# docs
 # travelling salesman (bitmask dynamic programming etc.)
 import logging
 
 
 class DynamicProgrammingProblem:
+    """
+    Base class for dynamic programming problems.
+
+
+    Attributes
+    ----------
+    dp: list[Unknown]
+        Dynamic programming memory. Can be an array of anything or multiple
+        arrays depending on the problem requirements
+
+    Methods
+    -------
+    solve(self) -> None
+        Subclasses must implement this method.
+
+    """
+
     def __init__(self):
+        '''
+            Creates an instance of the DynamicProgrammingProblem class
+
+            Returns
+            -------
+            None
+        '''
         self.dp = None
 
     def solve(self):
+        """
+        Subclasses must implement this method to solve a specific problem.
+
+        Raises
+        ------
+        NotImplementedError
+            Raised to indicate that this method should be overridden in
+            subclasses.
+
+        """
         raise NotImplementedError("Subclasses must implement the solve method")
 
 
 class KnapsackProblem(DynamicProgrammingProblem):
+    """
+    Class for solving the Knapsack problem using dynamic programming.
+
+    Knapsack problem is an optimization problem. It can be described the
+    next way. You have a set of items, each with a weight and a value, and you
+    have a knapsack with a maximum weight capacity. The goal is to determine
+    the combination of items to include in the knapsack that maximizes the
+    total value while not exceeding the weight capacity.
+    Dynamic programming offers an option to solve this problem within O(n*w)
+    time where n - amount of items, w - knapsack capacity. Since this is
+    well-known NP-hard problem, usual time to solve is O(2**n).
+
+    Attributes
+    ----------
+    weights: list[int]
+        Array of weights for the knapsack problem.
+
+    values: list[int]
+        Array of values for the knapsack problem.
+
+    capacity: int
+        Capacity of the knapsack.
+
+
+    Methods
+    -------
+    solve(self) -> int
+        Solves the Knapsack problem and returns the maximum value.
+
+    """
+
     def __init__(self, weights, values, capacity):
+        '''
+            Creates an instance of the KnapsackProblem class
+
+            Parameters
+            ----------
+            weights: list[int]
+                Array of weights for the knapsack problem.
+
+            values: list[int]
+                Array of values for the knapsack problem.
+
+            capacity: int
+                Capacity of the knapsack.
+
+            Returns
+            -------
+            None
+        '''
         super().__init__()
         self.weights = weights
         self.values = values
@@ -21,6 +103,16 @@ class KnapsackProblem(DynamicProgrammingProblem):
         self.num_items = len(weights)
 
     def solve(self):
+        """
+        Solves the Knapsack problem using dynamic programming.
+
+        Returns
+        -------
+        int
+            The maximum value that can be obtained.
+
+        """
+
         # dynamic programming table for this problem includes
         # amount of rows equal to the amount of items and
         # amount of columns equal to the capacity
@@ -31,6 +123,7 @@ class KnapsackProblem(DynamicProgrammingProblem):
         # start to fill the table
         for i in range(1, self.num_items + 1):
             for w in range(1, self.capacity + 1):
+
                 # check if weight of i-1 item can fit inside
                 # current capacity which is w
                 if self.weights[i - 1] <= w:
@@ -40,11 +133,49 @@ class KnapsackProblem(DynamicProgrammingProblem):
                         self.values[i - 1])
                 else:
                     self.dp[i][w] = self.dp[i - 1][w]
+
         return self.dp[self.num_items][self.capacity]
 
 
 class LongestCommonSubsequence(DynamicProgrammingProblem):
+    """
+    Class for finding the Longest Common Subsequence (LCS) of two strings.
+
+    This problem has a naive solution with time complexity O(2**n) where n is
+    the length of the longest string. Dynamic programming offers solution
+    with O(n^2) time complexity, where n and m are the length of strings.
+
+    Attributes
+    ----------
+    str1: str
+        First string of the two to find LCS for.
+
+    str2: str
+        Second string of the two to find LCS for.
+
+    Methods
+    -------
+    solve(self) -> int
+        Finds the LCS of the two input strings.
+
+    """
+
     def __init__(self, str1, str2):
+        '''
+            Creates an instance of the LongestCommonSubsequence class
+
+            Parameters
+            ----------
+            str1: str
+                First string of the two to find LCS for.
+
+            str2: str
+                Second string of the two to find LCS for.
+
+            Returns
+            -------
+            None
+        '''
         super().__init__()
         self.str1 = str1
         self.str2 = str2
@@ -52,6 +183,15 @@ class LongestCommonSubsequence(DynamicProgrammingProblem):
         self.n = len(str2)
 
     def solve(self):
+        """
+        Finds the Longest Common Subsequence (LCS) of two strings.
+
+        Returns
+        -------
+        int
+            The length of the LCS.
+
+        """
         self.dp = [[0] * (self.n + 1) for _ in range(self.m + 1)]
         for i in range(1, self.m + 1):
             for j in range(1, self.n + 1):
@@ -63,7 +203,52 @@ class LongestCommonSubsequence(DynamicProgrammingProblem):
 
 
 class DamerauLevensteinDistance(DynamicProgrammingProblem):
+    """
+    Class for calculating the Damerau-Levenshtein distance
+    between two strings using dynamic programming.
+
+    Damerau-Levenshtein distance is the option for the edit distance
+    between two strings. It calculates the difference based on the amount
+    of 4 operations needed to convert the first string to the second.
+    These are insertion, deletion, substitution and transposition. It is
+    important to note that transpositions are made only between adjacent
+    characters.
+
+    Attributes
+    ----------
+    str1: str
+        First string of the two to find LCS for.
+
+    str2: str
+        Second string of the two to find LCS for.
+
+    Methods
+    -------
+    solve(self) -> int
+        Calculates the Damerau-Levenshtein distance between the two input
+        strings.
+
+    solve_optimized(self) -> int
+
+
+    """
+
     def __init__(self, str1, str2):
+        '''
+            Creates an instance of the DamerauLevensteinDistance class
+
+            Parameters
+            ----------
+            str1: str
+                First string of the two to find DLD for.
+
+            str2: str
+                Second string of the two to find DLD for.
+
+            Returns
+            -------
+            None
+        '''
         super().__init__()
         self.str1 = str1
         self.str2 = str2
@@ -71,6 +256,16 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
         self.n = len(str2)
 
     def solve(self):
+        """
+        Calculates the Damerau-Levenshtein distance between the two input
+        strings.
+
+        Returns
+        -------
+        int
+            The Damerau-Levenshtein distance.
+
+        """
         self.dp = [[0] * (self.n + 1) for _ in range(self.m + 1)]
         for i in range(self.m + 1):
             self.dp[i][0] = i
@@ -94,31 +289,40 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
         logging.debug(self.dp)
         return self.dp[self.m][self.n]
 
+    def solve_optimized(self):
+        """
+        Calculates the Damerau-Levenshtein distance between the two input
+        strings with dynamic programming memory reduced to O(m) instead of
+        O(m*n), where
+        m - the length of the longest string,
+        n - the length of the shortest string.
 
-class LevensteinDistanceOptimized(DynamicProgrammingProblem):
-    def __init__(self, str1, str2):
-        super().__init__()
-        self.str1 = str1
-        self.str2 = str2
+        Returns
+        -------
+        int
+            The Damerau-Levenshtein distance.
 
-    def solve(self):
-        m, n = len(self.str1), len(self.str2)
+        """
+        len1, len2 = len(self.str1), len(self.str2)
 
         # Ensure str1 is the shorter string
-        if m > n:
-            self.str1, self.str2, m, n = self.str2, self.str1, n, m
+        if len1 > len2:
+            self.str1, self.str2, len1, len2 = \
+                self.str2, self.str1, len2, len1
 
-        # Initialize a 1D array to store the current and previous row
-        self.dp = [[0] * (m + 1) for _ in range(3)]
+        # Initialize a 3*m array to store the current, previous and
+        # preprevious rows
+        self.dp = [[0] * (len1 + 1) for _ in range(3)]
 
         # Initialize the first row
-        for i in range(m + 1):
+        for i in range(len1 + 1):
             self.dp[0][i] = i
 
         current_row = 0
-        for j in range(1, n + 1):
+        for j in range(1, len2 + 1):
             logging.debug(' j = ' + f'{j}')
-            # Store the previous row
+
+            # Go to the next row inside the table
             logging.debug('current_row = ' + f'{current_row}')
             current_row = 1 + current_row if current_row < 2 else 0
 
@@ -127,7 +331,7 @@ class LevensteinDistanceOptimized(DynamicProgrammingProblem):
             # Update the first element in the current row
             self.dp[current_row][0] = j
 
-            for i in range(1, m + 1):
+            for i in range(1, len1 + 1):
                 logging.debug(' i = ' + f'{i}')
                 cost = \
                     0 if self.str1[i - 1] == self.str2[j - 1] else 1
@@ -144,23 +348,64 @@ class LevensteinDistanceOptimized(DynamicProgrammingProblem):
                 self.dp[current_row][i] = \
                     min(insert_cost, delete_cost, replace_cost)
                 logging.debug(f'{self.dp}')
-                if (self.str1[j - 1] == self.str2[i - 2] and
-                        self.str1[j - 2] == self.str2[i - 1]):
+                if (self.str1[i - 1] == self.str2[j - 2] and
+                        self.str1[i - 2] == self.str2[j - 1]):
                     self.dp[current_row][i] = \
                         min(self.dp[current_row][i],
                             self.dp[current_row - 2][i - 2] + 1)
                 logging.debug(f'{self.dp}')
 
-        return self.dp[current_row][m]
+        return self.dp[current_row][len1]
 
 
 class LongestIncreasingSubsequence(DynamicProgrammingProblem):
+    """
+    Class for finding the length of the Longest Increasing Subsequence (LIS)
+    in a list of numbers using dynamic programming.
+
+    This problem has a naive solution with time complexity O(2**n) where n is
+    the length of the longest string. Dynamic programming offers solution
+    with O(n^2) time complexity, where n and m are the length of strings.
+
+    Attributes
+    ----------
+    nums: list[float]
+        The list where LIS will be determined and its length found.
+
+    Methods
+    -------
+    solve(self) -> int
+        Finds the length of the Longest Increasing Subsequence (LIS).
+
+    """
 
     def __init__(self, nums):
+        '''
+            Creates an instance of the LongestIncreasingSubsequence class
+
+            Parameters
+            ----------
+            nums: list[float]
+                The list where to find the length of the LIS.
+
+            Returns
+            -------
+            None
+        '''
         super().__init__()
         self.nums = nums
 
     def solve(self):
+        """
+        Finds the length of the Longest Increasing Subsequence (LIS)
+        in the list of numbers.
+
+        Returns
+        -------
+        int
+            The length of the Longest Increasing Subsequence.
+
+        """
         if not self.nums:
             return 0
 
@@ -175,19 +420,23 @@ class LongestIncreasingSubsequence(DynamicProgrammingProblem):
 
         return max(self.dp)
 
+    def solve_optimized(self):
+        """
+        Finds the length of the Longest Increasing Subsequence (LIS)
+        in the list of numbers with time of work reduced from O(n^2) to
+        O(n*logn) by using binary search.
 
-class LongestIncreasingSubsequenceOptimized(DynamicProgrammingProblem):
-    '''This implementation uses binary search'''
+        Returns
+        -------
+        int
+            The length of the Longest Increasing Subsequence.
 
-    def __init__(self, nums):
-        super().__init__()
-        self.nums = nums
-
-    def solve(self):
+        """
         if not self.nums:
             return 0
 
         n = len(self.nums)
+
         # using dp for representing the smallest tail of all
         # increasing subsequences of length i
         self.dp = [0] * n
@@ -203,8 +452,10 @@ class LongestIncreasingSubsequenceOptimized(DynamicProgrammingProblem):
                 self.dp[length] = self.nums[i]
                 length += 1
             else:
+
                 # Find the position of the smallest element in tails
                 # that is greater than or equal to nums[i]
+                # using binary search
                 left, right = 0, length - 1
                 while left < right:
                     mid = (left + right) // 2
