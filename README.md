@@ -1,10 +1,10 @@
 ## There are some algorithms implemented on python and some experiments with them
 
-All code is inside the ./Algorithms/python_solutions/ folder and can be imported with statement
-```
+All code is inside the `./Algorithms/python_solutions/` folder and can be imported with statement
+```python
 from Algorithms.python_solutions.... import ...
 ```
-provided you are inside Algorithms-master/ or this folder is added to your PYTHONPATH
+provided you are inside `Algorithms-master/` or this folder is added to your PYTHONPATH
 
 ## The next table shows what is ready for which structures and what is yet planned to be done
 
@@ -30,7 +30,7 @@ provided you are inside Algorithms-master/ or this folder is added to your PYTHO
 | | | | | | | | |
 | Binary search | done | done | done | not started | done | not started | not started |
 | Lower and upper bounds | done | done | done | not started | done | not started | not started |
-| Real binary search | done | done | done | not started | almost done | not started | not started |
+| Real binary search | done | done | done | not started | done | not started | not started |
 | Ternary extrema search | done | done | done | not started | done | not started | not started |
 | Split search | done | done | done | not started | done | not started | not started |
 | | | | | | | | |
@@ -47,6 +47,7 @@ provided you are inside Algorithms-master/ or this folder is added to your PYTHO
 | Queue | done | done | done | not started | done | not started | not started |
 | Stack | done | done | done | not started | done | not started | not started |
 | Vector | done | done | done | not started | done | not started | not started |
+| Sparse table | done | not started | not started | not started | not started | not started | not started |
 | | | | | | | | |
 | **Helpers** | ready-to-use | need to refactor | | | | | |
 | Matrix view | yes | no |
@@ -54,38 +55,48 @@ provided you are inside Algorithms-master/ or this folder is added to your PYTHO
 | Dynamic programming | no | - |
 | | | | | | | | |
 ## Workflows are set up as following:
-Virtual environment made by venv with requirements for python listed in ./requirements.txt
+Virtual environment made by venv with requirements for python listed in `./requirements.txt`
 
-Tests performed by pytest with all configs in ./pytest.ini
+Tests performed by pytest with all configs in `./pytest.ini`
 
 Tests coverage checked by 
-```coverage run``` 
-command with all configs in ./.coveragerc
 
-Coverage output is 96% with 50 missed out of 1334
+```bash
+coverage run
+``` 
+
+with all configs in `./.coveragerc`
 
 Security issues discovered by 
-```bandit -r ./Algorithms/python_solutions -b bandit.json```
-command
+
+```python
+bandit -r ./Algorithms/python_solutions -b bandit.json
+```
 
 Baseline for bandit was generated using 
-```bandit -r ./Algorithms/python_solutions -f json -o bandit.json```
 
-Bandit output shows no severe security issues
- 
-Docstrings were made with the use of ChatGPT
+```bash
+bandit -r ./Algorithms/python_solutions -f json -o bandit.json
+```
+
+Docstrings were made with the help of ChatGPT
 
 Docstrings coverage checked by 
-```interrogate ./Algorithms/python_solutions -vv```
 
-Interrogate output is 88.9%
+```bash
+interrogate ./Algorithms/python_solutions -vv
+```
  
-Precommits are set using Github Actions with ./.github/workflows/python-app.yml file
+Precommits are set using Github Actions with `./.github/workflows/python-app.yml` file
 
 ## What is planned:
-Write dynamic programming, prefixes, trees and graphs
+
+Write dynamic programming (only tsp left which comes with graph's algos), prefixes (sparse table, maybe something else), trees and graphs
+
 Get docstrings parsed for making a documentation
+
 Provide some experiments using notebook for bottlenecks determination and elimination
 
 ## Contact: 
+
 borovoy.vanya@gmail.com
