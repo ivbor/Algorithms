@@ -1,6 +1,5 @@
 # TODO
 # tests and docs
-# in the new file write segment and Fenwick trees, Mo's algo and wavelet tree
 import math
 
 
