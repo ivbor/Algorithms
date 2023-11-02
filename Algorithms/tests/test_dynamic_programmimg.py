@@ -8,7 +8,7 @@ from ctypes import c_int, POINTER, CDLL, c_char
 from Algorithms.python_solutions.dynamic_programming \
     import DynamicProgrammingProblem,  KnapsackProblem, \
     DamerauLevensteinDistance, LongestCommonSubsequence, \
-    LongestIncreasingSubsequence
+    LongestIncreasingSubsequence, maxSubarraySum
 
 
 def test_dp_class_solve_raises():
@@ -118,7 +118,7 @@ def generate_test_cases_with_output_for_damerau_levenstein(
 
     # initialize c interface and convert parsed data
     # to the appropriate c_types
-    c_lib = CDLL('./Algorithms/C_solutions/damerau_levenstein.so')
+    c_lib = CDLL('./Algorithms/C_solutions/damerau_levenstein')
     c_lib.DamerauLevensteinDistance.argtypes = \
         [POINTER(c_char), POINTER(c_char)]
     seq_str1 = c_char * len(str1)
@@ -191,3 +191,51 @@ def test_some_lis_test_cases(test_input, test_output):
     instance = LongestIncreasingSubsequence(test_input)
     assert instance.solve() == test_output
     assert instance.solve_optimized() == test_output
+
+
+arr = [1, 2, 3, -2, 5]
+queries = [(1, 3), (2, 4), (0, 4)]
+
+
+@pytest.mark.parametrize('arr, queries', [(arr, queries)])
+def test_max_subarray_sum_init(arr, queries):
+    maxSubarray = maxSubarraySum(arr, queries)
+
+    prefix = 0
+    result = []
+    for i in range(len(arr)):
+        prefix += arr[i]
+        result.append(prefix)
+    assert maxSubarray.arr == arr
+    assert maxSubarray.dp == [0] + result
+    assert maxSubarray.queries == queries
+
+
+@pytest.mark.parametrize('arr, queries', [(arr, queries)])
+def test_max_subarray_sum_solve(arr, queries):
+    maxSubarray = maxSubarraySum(arr, queries)
+    result = maxSubarray.solve()
+    result_opt = maxSubarray.solve_optimized()
+
+    expected_result = 9
+    assert result == expected_result
+    assert result_opt == expected_result
+
+
+@pytest.mark.parametrize('arr, queries', [([], [])])
+def test_max_subarray_sum_empty(arr, queries):
+    maxSubarray = maxSubarraySum(arr, queries)
+    result = maxSubarray.solve()
+    result_opt = maxSubarray.solve_optimized()
+
+    assert result == float('-inf')
+    assert result_opt == float('-inf')
+
+
+@pytest.mark.parametrize('arr, queries', [([5], [(0, 0)])])
+def test_max_subarray_sum_one(arr, queries):
+    maxSubarray = maxSubarraySum(arr, queries)
+    result = maxSubarray.solve()
+    result_opt = maxSubarray.solve_optimized()
+    assert result == 5
+    assert result_opt == 5

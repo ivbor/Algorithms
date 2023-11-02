@@ -23,7 +23,7 @@ int DamerauLevensteinDistance(char *s1, char *s2) {
                                fmin(dp[i][j-1], /*Insertion*/
                                    dp[i-1][j-1])); /*Substitution*/
             };
-            if (1 < i && i < strlen(s1) && 1 < j && j < strlen(s2) &&
+            if (0 < i && i < strlen(s1) && 0 < j && j < strlen(s2) &&
                 s1[i] == s2[j - 1] && s1[i - 1] == s2[j])
               dp[i][j] = fmin(dp[i][j], dp[i - 2][j - 2] + 1); 
             /*Transposition*/

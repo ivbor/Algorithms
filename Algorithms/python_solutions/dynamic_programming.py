@@ -286,7 +286,7 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[i][j] = min(
                         self.dp[i][j],
                         self.dp[i - 2][j - 2] + 1)  # Transposition
-        logging.debug(self.dp)
+        logging.info(f'simple solve\n {self.dp}')
         return self.dp[self.m][self.n]
 
     def solve_optimized(self):
@@ -347,13 +347,14 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                 logging.debug(f'{self.dp}')
                 self.dp[current_row][i] = \
                     min(insert_cost, delete_cost, replace_cost)
-                logging.debug(f'{self.dp}')
+                logging.debug(f'before transposition\n {self.dp}')
                 if (self.str1[i - 1] == self.str2[j - 2] and
                         self.str1[i - 2] == self.str2[j - 1]):
                     self.dp[current_row][i] = \
                         min(self.dp[current_row][i],
                             self.dp[current_row - 2][i - 2] + 1)
-                logging.debug(f'{self.dp}')
+                logging.debug(f'after transposition\n {self.dp}')
+        logging.debug(f'simple solve\n {self.dp}')
 
         return self.dp[current_row][len1]
 
@@ -465,3 +466,119 @@ class LongestIncreasingSubsequence(DynamicProgrammingProblem):
                         right = mid
                 self.dp[left] = self.nums[i]
         return length
+
+
+class maxSubarraySum(DynamicProgrammingProblem):
+    '''
+        This class provides a solution to the Maximum Subarray Sum problem
+        using Mo's algorithm and dynamic programming. It allows you to find
+        the maximum sum of a subarray within a given array for multiple
+        queries.
+
+        Attributes
+        ----------
+        arr : list[int]
+            The input array for which maximum subarray sums will be
+            calculated.
+
+        queries : list[tuple]
+            A list of queries, each represented as a tuple (l, r) where
+            l and r are the left and right endpoints of the subarray to
+            consider.
+
+        Methods
+        -------
+        solve(self) -> int
+            Solves the Maximum Subarray Sum problem for each query in the
+            sorted order of left endpoints and returns the maximum subarray
+            sum for each query.
+    '''
+
+    def __init__(self, arr, queries):
+        """
+        Initializes a new maxSubarraySum instance with the provided input
+        array and a list of queries.
+
+        Parameters
+        ----------
+        arr : list[int]
+            The input array for which maximum subarray sums will be
+            calculated.
+
+        queries : list[tuple]
+            A list of queries, each represented as a tuple (l, r) where l
+            and r are the left and right endpoints of the subarray to
+            consider.
+
+        Returns
+        -------
+        None
+        """
+
+        super().__init__()
+
+        # In the dp prefixSum is stored
+        self.arr = arr
+        self.dp = [0]
+        for i in range(len(arr)):
+            self.dp.append(self.dp[-1] + arr[i])
+        self.queries = queries
+
+    def solve(self):
+        """
+        Solves the Maximum Subarray Sum problem for each query in the sorted
+        order of left endpoints.
+
+        Returns
+        -------
+        list[int]
+            A list of maximum subarray sums for each query.
+
+        """
+
+        maxSum = float('-inf')
+
+        # Sort queries based on their left endpoints
+        sortedQueries = sorted(self.queries, key=lambda x: x[0])
+
+        for query in sortedQueries:
+
+            l, r = query
+
+            currentSum = self.dp[r + 1] - self.dp[l]
+
+            maxSum = max(maxSum, currentSum)
+
+        return maxSum
+
+    def solve_optimized(self):
+
+        maxSum = float('-inf')
+        left = 0
+        right = 0
+        currentSum = 0
+        sortedQueries = sorted(self.queries, key=lambda x: x[0])
+
+        for query in sortedQueries:
+            l, r = query
+            r += 1
+
+            # Adjust the pointers to the range of the query
+            while right < r:
+                currentSum += self.arr[right]
+                right += 1
+                logging.debug(f'currentSum\n {currentSum}')
+
+            while right > r:
+                right -= 1
+                currentSum -= self.arr[right]
+                logging.debug(f'currentSum\n {currentSum}')
+
+            while left < l:
+                currentSum -= self.arr[left]
+                left += 1
+                logging.debug(f'currentSum\n {currentSum}')
+
+            maxSum = max(maxSum, currentSum)
+
+        return maxSum
