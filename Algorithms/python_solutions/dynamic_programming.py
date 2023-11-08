@@ -281,12 +281,15 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[i][j - 1] + 1,  # Insertion
                     self.dp[i - 1][j - 1] + cost  # Substitution
                 )
-                if (self.str1[i - 1] == self.str2[j - 2]) \
-                        and (self.str1[i - 2] == self.str2[j - 1]):
+                if (self.str1[j - 1] == self.str2[i - 2]) \
+                        and (self.str1[j - 2] == self.str2[i - 1]):
                     self.dp[i][j] = min(
                         self.dp[i][j],
                         self.dp[i - 2][j - 2] + 1)  # Transposition
-        logging.info(f'simple solve\n {self.dp}')
+        logging.info(f'simple solve\n')
+        for i in range(len(self.dp)):
+            to_log = self.dp[i]
+            logging.info(f'{to_log}\n')
         return self.dp[self.m][self.n]
 
     def solve_optimized(self):
@@ -488,10 +491,15 @@ class maxSubarraySum(DynamicProgrammingProblem):
 
         Methods
         -------
-        solve(self) -> int
+        solve(self, arr: list[int]) -> int
             Solves the Maximum Subarray Sum problem for each query in the
             sorted order of left endpoints and returns the maximum subarray
-            sum for each query.
+            sum for each query using Mo's algorithm.
+
+        solve_optimized(self) -> int
+            Solves the Maximum Subarray Sum problem for each query in the
+            sorted order of left endpoints and returns the maximum subarray
+            sum for each query using dynamic programming.
     '''
 
     def __init__(self, arr, queries):
@@ -518,16 +526,16 @@ class maxSubarraySum(DynamicProgrammingProblem):
         super().__init__()
 
         # In the dp prefixSum is stored
-        self.arr = arr
         self.dp = [0]
         for i in range(len(arr)):
             self.dp.append(self.dp[-1] + arr[i])
         self.queries = queries
 
-    def solve(self):
+    def solve_optimized(self):
         """
         Solves the Maximum Subarray Sum problem for each query in the sorted
-        order of left endpoints.
+        order of left endpoints using dynamic programming. Time complexity
+        is O(Q), space complexity is O(array length).
 
         Returns
         -------
@@ -551,34 +559,56 @@ class maxSubarraySum(DynamicProgrammingProblem):
 
         return maxSum
 
-    def solve_optimized(self):
+    def solve(self, arr):
+        """
+        Solves the Maximum Subarray Sum problem for each query in an
+        optimized manner using Mo's algorithm.
 
+        The time complexity of this method is O(Q * sqrt(N)) for Q queries,
+        where N is the length of the input array.
+        This is because, in the worst case, each query requires
+        O(sqrt(N)) operations to adjust the pointers.
+        The space complexity of this method is O(1),
+        since it requires nothing, but 4 pointers and 2 variables for
+        storing sums.
+
+        Returns
+        -------
+        int
+            The maximum subarray sum among queries.
+        """
         maxSum = float('-inf')
         left = 0
         right = 0
         currentSum = 0
-        sortedQueries = sorted(self.queries, key=lambda x: x[0])
 
-        for query in sortedQueries:
+        for query in self.queries:
             l, r = query
             r += 1
+            logging.debug(f'query_sum before query\n {currentSum}')
 
             # Adjust the pointers to the range of the query
             while right < r:
-                currentSum += self.arr[right]
+                currentSum += arr[right]
                 right += 1
                 logging.debug(f'currentSum\n {currentSum}')
 
             while right > r:
                 right -= 1
-                currentSum -= self.arr[right]
+                currentSum -= arr[right]
                 logging.debug(f'currentSum\n {currentSum}')
 
             while left < l:
-                currentSum -= self.arr[left]
+                currentSum -= arr[left]
                 left += 1
                 logging.debug(f'currentSum\n {currentSum}')
 
+            while left > l:
+                left -= 1
+                currentSum += arr[left]
+                logging.debug(f'currentSum\n {currentSum}')
+
+            logging.info(f'query_sum\n {currentSum}')
             maxSum = max(maxSum, currentSum)
 
         return maxSum
