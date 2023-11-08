@@ -118,7 +118,7 @@ class Vector:
         else:
             self.size = size
             self.capacity = capacity
-            self.elements = [None for _ in range(self.capacity)]
+            self.elements = [None] * self.capacity
             # if in C - have to do malloc on self.capacity here
 
     # len in its essential will not lead to expected result
@@ -247,19 +247,15 @@ class Vector:
 
     def copy_to_new_vector(self):
         """
-        Creates a new vector and copies elements from the current vector
-        to the new one.
+        Change the size of the vector and copies elements from the current
+        vector to the new one.
 
         Returns
         -------
         None
         """
-        newVector = [None for _ in range(self.capacity)]
-        for i in range(self.size):
-            newVector[i] = self.elements[i]
-        del self.elements
-        self.elements = newVector
-        del newVector
+        self.elements = self.elements[:self.size] + \
+            [None] * (self.capacity - self.size)
 
     def increaseCapacity(self):
         """
