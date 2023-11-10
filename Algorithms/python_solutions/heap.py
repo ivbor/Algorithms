@@ -28,9 +28,6 @@ get_terminal_width()
     Retrieves the width of the terminal window using a subprocess to
     execute 'tput cols' command.
 
-swap(array, x, y)
-    Swaps two elements in a list.
-
 sift_up(array, element_index, size)
     Performs the sift-up operation to maintain the heap property.
 
@@ -63,30 +60,6 @@ def get_terminal_width():
     out = out.split(b'\n')[0]
     out = out.decode()
     return int(out) if out != '' else 0
-
-
-def swap(array, x, y):
-    """
-    Swap two elements in an array.
-
-    Parameters
-    ----------
-    array : list
-        The list containing the elements to be swapped.
-
-    x : int
-        The index of the first element to be swapped.
-
-    y : int
-        The index of the second element to be swapped.
-
-    Returns
-    -------
-    None
-    """
-    b = array[x]
-    array[x] = array[y]
-    array[y] = b
 
 
 class Heap(Vector):
@@ -158,7 +131,9 @@ class Heap(Vector):
         None
 
         """
-        super().__init__(size=size, capacity=capacity)
+        self.size = size
+        self.capacity = capacity
+        self.elements = []
         if elements is not None:
             for i in elements:
                 self.insert(i)
@@ -285,7 +260,8 @@ class Heap(Vector):
         if self.size == 0:
             raise IndexError('list assignment index out of range')
 
-        swap(self.elements, 0, self.size - 1)
+        self.elements[0], self.elements[self.size - 1] = \
+            self.elements[self.size - 1], self.elements[0]
         _return = self.elements[self.size - 1]
         del self.elements[self.size - 1]
         self.size -= 1
@@ -359,7 +335,7 @@ def sift_up(a, i):
     """
     while i > 0:
         if a[i] < a[int((i-1)/2)]:
-            swap(a, i, int((i-1)/2))
+            a[i], a[int((i - 1) / 2)] = a[int((i - 1) / 2)], a[i]
             i = int((i-1)/2)
         else:
             break
@@ -388,16 +364,16 @@ def sift_down(a, i, size):
     while True:
         if size > 2*i+2:
             if (a[i] > a[2*i+2] and a[2*i+1] >= a[2*i+2]):
-                swap(a, i, 2*i+2)
+                a[i], a[2 * i + 2] = a[2 * i + 2], a[i]
                 i = 2*i+2
             elif (a[i] > a[2*i+1] and a[2*i+2] >= a[2*i+1]):
-                swap(a, i, 2*i+1)
+                a[i], a[2 * i + 1] = a[2 * i + 1], a[i]
                 i = 2*i+1
             else:
                 break
         elif size > 2*i+1:
             if a[i] > a[2*i+1]:
-                swap(a, i, 2*i+1)
+                a[i], a[2 * i + 1] = a[2 * i + 1], a[i]
                 break
             break
         else:
@@ -438,11 +414,9 @@ def heap_sort(array):
 
     """
     heap = Heap()
-    for i in range(len(array)):
+    length = len(array)
+    for i in range(length):
         heap.insert(array[i])
-    new_array = array.copy()
-    for i in range(len(new_array)):
-        heap.capacity = heap.size
-        heap.copy_to_new_vector()
-        new_array[i] = heap.erase()
-    return new_array
+    for i in range(length):
+        array[i] = heap.erase()
+    return array
