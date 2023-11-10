@@ -19,28 +19,29 @@ Heap
 
 Functions
 ---------
-heap_sort(array)
+heap_sort(array: list[float]) -> list[float]
     Sorts an array in ascending order using the heap sort algorithm.
     Heap sort is an efficient comparison-based sorting algorithm that uses
     a binary heap to perform the sorting.
 
-get_terminal_width()
+get_terminal_width() -> int
     Retrieves the width of the terminal window using a subprocess to
     execute 'tput cols' command.
 
-sift_up(array, element_index, size)
+sift_up(array: list[float], element_index: int, size: int) -> None
     Performs the sift-up operation to maintain the heap property.
 
-sift_down(array, element_index)
+sift_down(array: list[float], element_index: int) -> None
     Performs the sift-down operation to maintain the heap property.
 
 """
 import subprocess
+from collections.abc import Iterator
 
 from Algorithms.python_solutions.vector import Vector
 
 
-def get_terminal_width():
+def get_terminal_width() -> int:
     """
     Retrieve the width of the terminal window.
 
@@ -84,16 +85,16 @@ class Heap(Vector):
 
     Methods
     -------
-    append(self, x) -> None
+    append(self, x: float) -> None
         Append an element to the heap.
 
-    get_children(self, i) -> tuple(float, float) or float or None
+    get_children(self, i: int) -> tuple(float, float) or float or None
         Get the children of a node at the specified index.
 
     height(self) -> int
         Calculate the height of the heap.
 
-    insert(self, x) -> None
+    insert(self, x: float) -> None
         Insert an element into the heap.
 
     __iter__(self) -> Generator
@@ -110,7 +111,8 @@ class Heap(Vector):
 
     """
 
-    def __init__(self, elements=None, size=0, capacity=1):
+    def __init__(self, elements: list[float] | None = None,
+                 size: int = 0, capacity: int = 1) -> None:
         """
         Initialize a new Heap instance.
 
@@ -138,7 +140,7 @@ class Heap(Vector):
             for i in elements:
                 self.insert(i)
 
-    def append(self, x):
+    def append(self, x: float) -> None:
         """
         Append an element to the heap.
 
@@ -156,7 +158,7 @@ class Heap(Vector):
         """
         self.insert(x)
 
-    def get_children(self, i):
+    def get_children(self, i: int) -> tuple | float | None:
         """
         Get the children of a node at the specified index.
 
@@ -180,7 +182,7 @@ class Heap(Vector):
         else:
             return None
 
-    def height(self):
+    def height(self) -> int:
         """
         Calculate the height of the heap.
 
@@ -197,7 +199,7 @@ class Heap(Vector):
             high += 1
         return high
 
-    def insert(self, x):
+    def insert(self, x: float) -> None:
         """
         Insert an element into the heap.
 
@@ -223,20 +225,20 @@ class Heap(Vector):
 
         sift_up(self.elements, i)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[float]:
         """
         Iterate through the elements in the heap.
 
         Yields
         ------
-        Any
+        float
             The next element in the heap.
 
         """
         for i in self.elements[:self.size]:
             yield i
 
-    def remove_min(self):
+    def remove_min(self) -> float:
         """
         Remove and return the minimum element from the heap.
 
@@ -304,7 +306,7 @@ class Heap(Vector):
 
         return string_to_print
 
-    def erase(self):
+    def erase(self) -> float:
         """
         Alias for `remove_min`.
 
@@ -317,7 +319,7 @@ class Heap(Vector):
         return self.remove_min()
 
 
-def sift_up(a, i):
+def sift_up(a: list[float], i: int) -> None:
     """
     Perform the sift-up operation to maintain heap property.
 
@@ -341,7 +343,7 @@ def sift_up(a, i):
             break
 
 
-def sift_down(a, i, size):
+def sift_down(a: list[float], i: int, size: int) -> None:
     """
     Perform the sift-down operation to maintain heap property.
 
@@ -380,7 +382,7 @@ def sift_down(a, i, size):
             break
 
 
-def heap_sort(array):
+def heap_sort(array: list[float]) -> list[float]:
     """
     Sort an array in ascending order using the heap sort algorithm.
 
