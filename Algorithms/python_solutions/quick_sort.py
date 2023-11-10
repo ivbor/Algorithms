@@ -1,5 +1,6 @@
 """
 Quick Sort Module
+=================
 
 This module provides Quick Sort implementations for efficiently sorting
 a list of elements. Quick Sort is a divide-and-conquer algorithm that selects
