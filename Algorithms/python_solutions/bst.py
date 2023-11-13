@@ -426,6 +426,9 @@ class BinarySearchTree:
 
         """
         node = self._search(self.root, data)
+        if node.left:
+            if node.left.data == node.data:
+                return node.data
         if node and node.right:
             return self._min_value_node(node.right).data
         successor = None
@@ -458,6 +461,9 @@ class BinarySearchTree:
 
         """
         node = self._search(self.root, data)
+        if node.right:
+            if node.right.data == node.data:
+                return node.data
         if node and node.left:
             return self._max_value_node(node.left).data
         predecessor = None

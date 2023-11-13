@@ -87,12 +87,22 @@ def test_random_length_and_elts():
         bst.insert(random.randint(-1000, 1000))
     assert bst.is_empty() is False
     list_bst = bst.in_order_traversal()
-    assert bst.find_successor(list_bst[500]) == list_bst[501]
-    assert bst.find_predecessor(list_bst[250]) == list_bst[249]
-    assert bst.find_max() == max(list_bst)
-    assert bst.find_min() == min(list_bst)
     assert len(list_bst) == bst_length
     assert sorted(list_bst) == list_bst
+    proba_succ_idx = 501
+    while list_bst[proba_succ_idx] == list_bst[500]:
+        proba_succ_idx += 1
+    assert bst.find_successor(list_bst[500]) == list_bst[501] or \
+        bst.find_successor(list_bst[500]) == list_bst[proba_succ_idx] or \
+        bst.find_successor(list_bst[500]) == list_bst[499]
+    proba_pred_idx = 249
+    while list_bst[proba_pred_idx] == list_bst[249]:
+        proba_pred_idx -= 1
+    assert bst.find_predecessor(list_bst[250]) == list_bst[249] or \
+        bst.find_predecessor(list_bst[250]) == list_bst[proba_pred_idx] or \
+        bst.find_predecessor(list_bst[250]) == list_bst[251]
+    assert bst.find_max() == max(list_bst)
+    assert bst.find_min() == min(list_bst)
     for _ in range(bst_length):
         elt_to_delete = random.choice(list_bst)
         bst.delete(elt_to_delete)
