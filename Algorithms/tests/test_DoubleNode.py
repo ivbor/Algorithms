@@ -33,10 +33,12 @@ def test_raises_error_when_init_with_wrong_next_node():
         node1 = 12
         DoubleNode(1, next_node=node1)
 
+
 def test_raises_error_when_init_with_wrong_prev_node():
     with pytest.raises(Exception):
         node1 = 12
         DoubleNode(1, prev_node=node1)
+
 
 def test_raises_error_when_trying_to_assign_wrong_prev_node():
     with pytest.raises(Exception):

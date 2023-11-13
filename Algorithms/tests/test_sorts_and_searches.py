@@ -13,7 +13,7 @@ from Algorithms.python_solutions.insert_sort \
 from Algorithms.python_solutions.merge_sort \
     import merge_sort, merge_sort_parallel
 from Algorithms.python_solutions.quick_sort import quick_sort
-from Algorithms.python_solutions.digit_sort import digit_sort
+from Algorithms.python_solutions.digit_sort import digit_sort, digit_sort_opt
 from Algorithms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
 # import searching algorythms
@@ -173,6 +173,12 @@ num_range = (-10, 10)
                            {}, {}),
 
                           (digit_sort,
+                           whole_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'base': 16}, {}),
+
+                          (digit_sort_opt,
                            whole_1_dim_array(
                              elts_range=num_range,
                              size_of_1_dim_range=test_size_range),

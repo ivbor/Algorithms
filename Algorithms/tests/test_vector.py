@@ -101,14 +101,14 @@ def test_erase():
 
 def test_vector_with_cap_lt_size():
     with pytest.raises(Exception):
-        vec = vector.Vector(size=2, capacity=1)
+        vector.Vector(size=2, capacity=1)
 
 
 def test_cap_lt_0():
     with pytest.raises(Exception):
-        vec = vector.Vector(capacity=-1)
+       vector.Vector(capacity=-1)
 
 
 def test_size_lt_0():
     with pytest.raises(Exception):
-        vec = vector.Vector(size=-1)
+        vector.Vector(size=-1)

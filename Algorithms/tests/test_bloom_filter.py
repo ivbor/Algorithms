@@ -70,4 +70,4 @@ def test_long_strings_for_advanced_jenkins():
 
 def test_raises_error_when_unrecognized_hash_passed():
     with pytest.raises(Exception):
-        bf = Bloom_filter(hashfunc='34')
+        Bloom_filter(hashfunc='34')

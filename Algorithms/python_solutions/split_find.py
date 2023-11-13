@@ -9,8 +9,9 @@ to efficiently search for the element.
 Functions
 ---------
 split_find(a, index)
-    Searches for an element with the specified index in an array as if it was already sorted
-    in ascending order. It is a wrapper for _split_find function.
+    Searches for an element with the specified index in an array as if it was
+    already sorted in ascending order. It is a wrapper for _split_find
+    function.
 
 split(array, pivot, left_edge, right_edge)
     Splits an array into two parts based on a pivot value. Elements less
@@ -63,8 +64,6 @@ def split(array, pivot, left_edge, right_edge):
             array[i], array[middle] = array[middle], array[i]
             middle += 1
     new_left_edge = middle
-    if middle == len(array):
-        return 0, 0
     for i in range(new_left_edge, right_edge):
         if abs(array[i] - pivot) <= 10**-14:
             array[i], array[middle] = array[middle], array[i]

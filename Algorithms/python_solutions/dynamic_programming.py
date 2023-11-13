@@ -286,7 +286,7 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[i][j] = min(
                         self.dp[i][j],
                         self.dp[i - 2][j - 2] + 1)  # Transposition
-        logging.info(f'simple solve\n')
+        logging.info('simple solve\n')
         for i in range(len(self.dp)):
             to_log = self.dp[i]
             logging.info(f'{to_log}\n')
