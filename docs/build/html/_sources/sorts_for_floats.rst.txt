@@ -1,0 +1,4 @@
+Sorts for floats
+=================
+
+.. _link: ../../Algorithms/researches/sorts_for_floats.ipynb 

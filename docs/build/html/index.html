@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Algorithms’s documentation! &mdash; Algorithms 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Sort Module" href="quick_sort.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Algorithms
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html">Quick Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.clst_avg"><code class="docutils literal notranslate"><span class="pre">clst_avg()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_medians"><code class="docutils literal notranslate"><span class="pre">median_of_medians()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_three"><code class="docutils literal notranslate"><span class="pre">median_of_three()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.partition_small"><code class="docutils literal notranslate"><span class="pre">partition_small()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.quick_sort"><code class="docutils literal notranslate"><span class="pre">quick_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html">Merge Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge"><code class="docutils literal notranslate"><span class="pre">merge()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort"><code class="docutils literal notranslate"><span class="pre">merge_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort_parallel"><code class="docutils literal notranslate"><span class="pre">merge_sort_parallel()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html">Insertion Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort"><code class="docutils literal notranslate"><span class="pre">insert_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort_opt"><code class="docutils literal notranslate"><span class="pre">insert_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html">Binary Heap and Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap"><code class="docutils literal notranslate"><span class="pre">Heap</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.heap_sort"><code class="docutils literal notranslate"><span class="pre">heap_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_down"><code class="docutils literal notranslate"><span class="pre">sift_down()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_up"><code class="docutils literal notranslate"><span class="pre">sift_up()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html">Counting Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html#Algorithms.python_solutions.count_sort.count_sort"><code class="docutils literal notranslate"><span class="pre">count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html">Array Counting Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html#Algorithms.python_solutions.array_count_sort.array_count_sort"><code class="docutils literal notranslate"><span class="pre">array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html#Algorithms.python_solutions.two_dim_array_count_sort.two_dim_array_count_sort"><code class="docutils literal notranslate"><span class="pre">two_dim_array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html">Digit Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort"><code class="docutils literal notranslate"><span class="pre">digit_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort_opt"><code class="docutils literal notranslate"><span class="pre">digit_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.restore_to_nums"><code class="docutils literal notranslate"><span class="pre">restore_to_nums()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.to_m_based"><code class="docutils literal notranslate"><span class="pre">to_m_based()</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Algorithms</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Algorithms’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-algorithms-s-documentation">
+<h1>Welcome to Algorithms’s documentation!<a class="headerlink" href="#welcome-to-algorithms-s-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html">Quick Sort Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quick_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.clst_avg"><code class="docutils literal notranslate"><span class="pre">clst_avg()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_medians"><code class="docutils literal notranslate"><span class="pre">median_of_medians()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_three"><code class="docutils literal notranslate"><span class="pre">median_of_three()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.partition_small"><code class="docutils literal notranslate"><span class="pre">partition_small()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.quick_sort"><code class="docutils literal notranslate"><span class="pre">quick_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html">Merge Sort Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="merge_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge"><code class="docutils literal notranslate"><span class="pre">merge()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort"><code class="docutils literal notranslate"><span class="pre">merge_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort_parallel"><code class="docutils literal notranslate"><span class="pre">merge_sort_parallel()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html">Insertion Sort</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="insert_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort"><code class="docutils literal notranslate"><span class="pre">insert_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort_opt"><code class="docutils literal notranslate"><span class="pre">insert_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html">Binary Heap and Sort</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap"><code class="docutils literal notranslate"><span class="pre">Heap</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.append"><code class="docutils literal notranslate"><span class="pre">Heap.append()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.erase"><code class="docutils literal notranslate"><span class="pre">Heap.erase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.get_children"><code class="docutils literal notranslate"><span class="pre">Heap.get_children()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.height"><code class="docutils literal notranslate"><span class="pre">Heap.height()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.insert"><code class="docutils literal notranslate"><span class="pre">Heap.insert()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap.remove_min"><code class="docutils literal notranslate"><span class="pre">Heap.remove_min()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.heap_sort"><code class="docutils literal notranslate"><span class="pre">heap_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_down"><code class="docutils literal notranslate"><span class="pre">sift_down()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_up"><code class="docutils literal notranslate"><span class="pre">sift_up()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html">Counting Sort Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="count_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html#Algorithms.python_solutions.count_sort.count_sort"><code class="docutils literal notranslate"><span class="pre">count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html">Array Counting Sort Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="array_count_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html#Algorithms.python_solutions.array_count_sort.array_count_sort"><code class="docutils literal notranslate"><span class="pre">array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html#Algorithms.python_solutions.two_dim_array_count_sort.two_dim_array_count_sort"><code class="docutils literal notranslate"><span class="pre">two_dim_array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html">Digit Sort</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="digit_sort.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort"><code class="docutils literal notranslate"><span class="pre">digit_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort_opt"><code class="docutils literal notranslate"><span class="pre">digit_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.restore_to_nums"><code class="docutils literal notranslate"><span class="pre">restore_to_nums()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.to_m_based"><code class="docutils literal notranslate"><span class="pre">to_m_based()</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="some-experiments-and-visualizations">
+<h1>Some experiments and visualizations<a class="headerlink" href="#some-experiments-and-visualizations" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p>with sorting algorithms for float numbers: <a class="reference external" href="sorts_for_floats.ipynb">link</a></p></li>
+<li><p>with sorting algorithms for integer numbers: <a class="reference external" href="sorts_for_integers.ipynb">another link</a></p></li>
+</ul>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quick_sort.html" class="btn btn-neutral float-right" title="Quick Sort Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ivan Baravoi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
