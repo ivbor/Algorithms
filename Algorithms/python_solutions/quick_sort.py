@@ -284,19 +284,19 @@ def quick_sort(array: list[float], pivot_str: str = 'random') -> list[float]:
     wrapper for the `_quick_sort` function and sets initial values for the
     sorting process. A wide selection of pivot strategies is available.
     Average and worst space complexities:
-        - random: O(log n), O(n)
-        - closest to the average: O(log n), O(n)
-        - median of three: O(log n), O(log n)
-        - median of medians: O(log n), O(log n)
+    - random: O(log n), O(n)
+    - closest to the average: O(log n), O(n)
+    - median of three: O(log n), O(log n)
+    - median of medians: O(log n), O(log n)
     Average and worst time complexities:
-        - random: O(n * log n), O(n ** 2)
-        - closest to the average: O(n * log n), O(n * log n)
-        - median of three: O(n * log n), O(n * log n)
-        - median of medians: O(n * log n), O(n * log n)
+    - random: O(n * log n), O(n ** 2)
+    - closest to the average: O(n * log n), O(n * log n)
+    - median of three: O(n * log n), O(n * log n)
+    - median of medians: O(n * log n), O(n * log n)
     Important considerations:
-        O(n ** 2) performance is so extremely rare, it has no implications in
-        practical usage. Median of medians pivot calculation suffers from
-        big constant factor, which makes it impractical for small arrays.
+    O(n ** 2) performance is so extremely rare, it has no implications in
+    practical usage. Median of medians pivot calculation suffers from
+    big constant factor, which makes it impractical for small arrays.
     It is worth noting that quick sort is unstable.
 
     Parameters

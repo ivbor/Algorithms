@@ -1,6 +1,6 @@
 """
 Merge Sort Module
-================
+=================
 
 A module containing Merge Sort algorithms and a helper function for merging
 arrays.
@@ -11,14 +11,16 @@ sorted array.
 
 Functions
 ---------
-merge_sort(array)
+merge_sort(array: list[float], opt: bool = True) -> list[float]
     Sort a list of elements using the Merge Sort algorithm.
+    If optimised version is called uses Insertion Sort for small arrays.
 
-merge_sort_parallel(array)
+merge_sort_parallel(array: list[float]) -> list[float]
     Sort a list of elements with multiprocessing using the Merge Sort
     algorithm.
 
-merge(array_one, array_two)
+merge(array: list[float], part_one: list[float], part_two: list[float])
+    -> None
     Merge two sorted arrays into a single sorted array.
 
 """
@@ -26,73 +28,69 @@ merge(array_one, array_two)
 from multiprocessing import cpu_count
 from concurrent.futures import ThreadPoolExecutor as Pool
 
+from Algorithms.python_solutions.insert_sort import insert_sort_opt
 
-def merge(array_one, array_two):
+
+def merge(array: list[float], part_one: list[float],
+          part_two: list[float]) -> None:
     """
     Merge Two Sorted Arrays
 
-    This function merges two sorted arrays, `array_one` and `array_two`, into
+    This function merges two sorted arrays, `part_one` and `part_two`, into
     a single sorted array. This is a helper for the Merge Sort function.
     Both space and time complexities are O(n), where n - the number of
     elements inside two arrays combined.
 
     Parameters
     ----------
-    array_one: list
+    array: list[float]
+        The resulting array
+
+    part_one: list[float]
         The first sorted array to be merged.
 
-    array_two: list
+    part_two: list[float]
         The second sorted array to be merged.
 
     Returns
     -------
-    list
-        A new sorted array containing elements from both input arrays.
+    None
 
     """
-    length_array_one = len(array_one)
-    length_array_two = len(array_two)
-    index_for_array_one = 0
-    index_for_array_two = 0
-    merged_array = \
-        [0 for _ in range(len(array_one) + len(array_two))]
 
-    # end for both is not reached
-    while (index_for_array_one + index_for_array_two <
-           length_array_one + length_array_two):
+    length_part_one = len(part_one)
+    length_part_two = len(part_two)
+    index_for_part_one = 0
+    index_for_part_two = 0
+    index_for_array = 0
 
-        # move forward in the array one if
+    while (index_for_part_one < length_part_one and
+           index_for_part_two < length_part_two):
 
-        # end for the second is reached or
-        # we can (end for the first is not reached)
-        # and need to move forward inside array one
-        # (i-th element from the first
-        # less than j-th element from the second)
-        if (index_for_array_two == length_array_two or
-           (index_for_array_one < length_array_one and
-                array_one[index_for_array_one] <
-                array_two[index_for_array_two])):
+        if (part_one[index_for_part_one] <
+                part_two[index_for_part_two]):
 
-            # append to c an element from the first
-            merged_array[index_for_array_one + index_for_array_two] = \
-                array_one[index_for_array_one]
-            index_for_array_one += 1
+            array[index_for_array] = part_one[index_for_part_one]
+            index_for_part_one += 1
 
-        # end for the first is reached but not for the second
-        # or bpth ends are not reached and element from array two
-        # less than element from array one
         else:
 
-            # append to c an element from the second
-            merged_array[index_for_array_one + index_for_array_two] = \
-                array_two[index_for_array_two]
-            index_for_array_two += 1
-    del array_one
-    del array_two
-    return merged_array
+            array[index_for_array] = part_two[index_for_part_two]
+            index_for_part_two += 1
+        index_for_array += 1
+
+    while index_for_part_one < length_part_one:
+        array[index_for_array] = part_one[index_for_part_one]
+        index_for_part_one += 1
+        index_for_array += 1
+
+    while index_for_part_two < length_part_two:
+        array[index_for_array] = part_two[index_for_part_two]
+        index_for_part_two += 1
+        index_for_array += 1
 
 
-def merge_sort(array):
+def merge_sort(array: list[float], opt: bool = True) -> list[float]:
     '''
     Merge Sort
 
@@ -107,26 +105,39 @@ def merge_sort(array):
 
     Parameters
     ----------
-    array: list
+    array: list[float]
         The input list to be sorted.
+
+    opt: bool
+        A switch between faster version using Insertion Sort on small arrays
+        and slower version without it. Default is True.
 
     Returns
     -------
-    list
+    list[float]
         A new list containing the elements of the input list in sorted order.
     '''
     length_array = len(array)
+
     if (length_array == 1):
         return array
-    left_part_of_array = array[:round(length_array / 2)]
-    right_part_of_array = array[round(length_array / 2):length_array]
+
+    if opt and length_array <= 70:
+        return insert_sort_opt(array)
+
+    mid = len(array) // 2
+    left_part_of_array = array[:mid]
+    right_part_of_array = array[mid:]
+
     left_part_of_array = merge_sort(left_part_of_array)
     right_part_of_array = merge_sort(right_part_of_array)
-    return merge(left_part_of_array, right_part_of_array)
+
+    merge(array, left_part_of_array, right_part_of_array)
+
+    return array
 
 
-# Merge sort employing parallelism and written by ChatGPT
-def merge_sort_parallel(array):
+def merge_sort_parallel(array: list[float]) -> list[float]:
     '''
     Parallel Merge Sort using dynamic ThreadPoolExecutor
 
@@ -135,19 +146,25 @@ def merge_sort_parallel(array):
 
     Parameters
     ----------
-    array: list
+    array: list[float]
         The input list to be sorted.
 
     Returns
     -------
-    list
+    list[float]
         A new list containing the elements of the input list in sorted order.
     '''
-    def parallel_merge_sort(arr, executor):
-        if len(arr) <= 1:
+
+    def parallel_merge_sort(arr: list[float],
+                            executor: Pool = Pool) -> list[float]:
+
+        length = len(arr)
+        if length <= 1:
             return arr
+        elif length <= 32:
+            return merge_sort(arr)
         else:
-            mid = len(arr) // 2
+            mid = length // 2
             left_half = arr[:mid]
             right_half = arr[mid:]
 
@@ -161,6 +178,6 @@ def merge_sort_parallel(array):
                 left_sorted = left_sorted.result()
                 right_sorted = right_sorted.result()
 
-            return merge(left_sorted, right_sorted)
-
-    return parallel_merge_sort(array, Pool)
+            merge(arr, left_sorted, right_sorted)
+            return arr
+    return parallel_merge_sort(array)

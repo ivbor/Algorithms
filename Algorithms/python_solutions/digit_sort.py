@@ -3,17 +3,17 @@ Digit Sort
 ==================================
 
 This module provides functions for performing digit sort, a sorting algorithm
-specifically designed for non-negative integers.
+specifically designed for integers.
 
 Functions
 ---------
-digit_sort(array: List[int], base: int = 10) -> List[int]
+digit_sort(array: list[int], base: int = 10) -> list[int]
     Sort a list of non-negative integers using the digit sort algorithm.
 
-to_m_based(number: int, base: int) -> List[int]
+to_m_based(number: int, base: int) -> list[int]
     Convert a decimal number to an M-based representation.
 
-restore_to_nums(array: List[int], base: int = 10) -> int
+restore_to_nums(array: list[int], base: int = 10) -> int
     Restore an M-based representation to its decimal form.
 
 """
@@ -21,7 +21,7 @@ from Algorithms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
 
 
-def to_m_based(number, base):
+def to_m_based(number: int, base: int) -> list[int]:
     """
         Convert a decimal number to an M-based representation.
 
@@ -48,17 +48,13 @@ def to_m_based(number, base):
 
     """
     m_based = []
-    whole = number
-    remainder = 0
-    while whole != 0:
-        remainder = whole % base
-        whole = whole // base
-        m_based.append(remainder)
-    m_based = [i for i in reversed(m_based)]
+    while number != 0:
+        number, remainder = divmod(number, base)
+        m_based.insert(0, remainder)
     return m_based
 
 
-def restore_to_nums(array, base=10):
+def restore_to_nums(array: list[int], base: int = 10) -> int:
     """
         Restore an M-based representation to its decimal form.
 
@@ -83,13 +79,12 @@ def restore_to_nums(array, base=10):
             The decimal number restored from the M-based representation.
 
     """
-    number = 0
-    for power, multiplier in enumerate(array):
-        number += pow(base, (len(array) - power - 1)) * multiplier
-    return number
+
+    return sum(multiplier * base**(len(array) - power - 1)
+               for power, multiplier in enumerate(array))
 
 
-def digit_sort(array, base=10):
+def digit_sort(array: list[int], base: int = 10) -> list[int]:
     """
         This function performs digit sort on a list of non-negative integers.
 
@@ -119,32 +114,68 @@ def digit_sort(array, base=10):
     """
 
     # extend on negative numbers (- base^k < array[i] < base^k)
-    min_of_array = min(array)
-    if min_of_array < 0:
-        array = [i - min_of_array for i in array]
+    min_of_array = min(array, default=0)
 
     # translate any numeration to the m-based
-    array = [to_m_based(i, base) for i in array]
+    array = [to_m_based(i - min_of_array, base) for i in array]
 
     # translate array to 2-dim array, where k is number of digits,
     # add 0 before numbers where less than k digits so that
     # new 2dim list would be rectangular matrix
     max_length_of_a_i = max([len(i) for i in array])
-    for i, m_based_number in enumerate(array):
-        if len(m_based_number) < max_length_of_a_i:
-            m_based_number = [j for j in reversed(m_based_number)]
-            while len(m_based_number) < max_length_of_a_i:
-                m_based_number.append(0)
-            array[i] = [j for j in reversed(m_based_number)]
+    array = [[0] * (max_length_of_a_i - len(m)) + m for m in array]
 
     # use written above func to sort 2-dim arrays
     array = two_dim_array_count_sort(array)
 
     # restore numbers from arrays
-    array = [restore_to_nums(i, base) for i in array]
+    array = [restore_to_nums(i, base) + min_of_array for i in array]
 
-    # extend on negative numbers
-    if min_of_array < 0:
-        array = [i + min_of_array for i in array]
+    return array
+
+
+def digit_sort_opt(array: list[int], base: int = 10) -> list[int]:
+    """
+    Sort a list of non-negative integers using the digit + radix sort
+    algorithm.
+
+    Parameters
+    ----------
+    array: list[int]
+        A list of non-negative integers to be sorted using digit sort.
+    base: int
+        The array's integers' base depending on which number of digits
+        will be determined.
+
+    Returns
+    -------
+    list[int]
+        A sorted list of non-negative integers.
+
+    """
+    # Extend on negative numbers (- base^k < array[i] < base^k)
+    min_of_array = min(array, default=0)
+
+    # Normalize the array to positive values
+    array = [i - min_of_array for i in array]
+
+    # Find the maximum number of digits in any integer in the array
+    max_digits = max([len(str(i)) for i in array], default=1)
+
+    # Perform radix sort on each digit from least significant to most
+    # significant
+    for digit_place in range(max_digits):
+        buckets = [[] for _ in range(base)]
+
+        for num in array:
+            # Extract the digit at the current place value
+            digit = (num // (base ** digit_place)) % base
+            buckets[digit].append(num)
+
+        # Reconstruct the array based on the current digit place
+        array = [num for bucket in buckets for num in bucket]
+
+    # Restore numbers to their original form
+    array = [num + min_of_array for num in array]
 
     return array

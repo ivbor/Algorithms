@@ -1,7 +1,7 @@
 """
 Counting Sort Module
-
 ====================
+
 This module provides an implementation of the counting sort algorithm
 for sorting an array of whole numbers.
 
@@ -12,12 +12,13 @@ to the array size.
 
 Functions
 ---------
-count_sort(array)
+count_sort(array: list[int]) -> list[int]
     Sorts an array of whole numbers using the counting sort algorithm.
+
 """
 
 
-def count_sort(array):
+def count_sort(array: list[int]) -> list[int]:
     """
         This function implements counting sort on the array of whole numbers.
 

@@ -1,24 +1,16 @@
 """
 Array Counting Sort Module
-
-
 ==========================
-For examples please head to the speed_analysis.ipynb
-
-This module is suitable for sorting arrays of integers and
-is not intended for sorting arrays containing floating-point numbers.
 
 Functions
 ---------
-array_count_sort(array, key=0, position=False)
+array_count_sort(arr: list[list[int]], key: int = 0)
     Sort a 2-dimensional array of integers based on a key index.
-    It can also return positions information for elements
-    with the same key value.
 
 """
 
 
-def array_count_sort(array: list[list[int]], key=0, position=False):
+def array_count_sort(arr: list[list[int]], key: int = 0) -> list[list[int]]:
     """
         This function performs counting sort on the 2-dimensional array
         of whole numbers.
@@ -42,88 +34,41 @@ def array_count_sort(array: list[list[int]], key=0, position=False):
             filled spaces.
             Default value: 0
 
-        position : bool
-            Tells function whether to return positions information
-            among the sorted array.
-            This is handy if there are elements with the same value
-            and you want to sort them further by other keys or indexes.
-            Positions information is the list telling what rows of the array
-            (by the indexes in the form of the numbers inside lists)
-            where to put in order to create a sorted array
-            (by the indexes of the lists containing numbers).
-            Default value: False
-
         Returns
         -------
         list[list[int]]
             Sorted array
 
-        optional : list[list[int|BLANK]]
-            Positions array looking like this:
-            [[53, 46, 18], [12], [36], [11, 34], ...]
-            which means that
-            53, 46 and 18 rows have the same lowest value among all rows,
-            so they should be placed first in the sorted array (meaning
-            new indexes 0, 1 and 2) in any preferable order.
-            Blank lists mean the absence of rows with some value
-            in the key index and so on.
-            Return is modified by parameter position.
     """
 
-    # in order to do that let's first introduce
-    # dim's sizes
-    len_of_array = len(array)
+    # Helper function for stable counting sort based on a specific key
+    max_value = max([row[key] for row in arr if row[key] != float('-inf')])
+    min_value = min([row[key] for row in arr if row[key] != float('-inf')])
+    count = [0] * (max_value - min_value + 2)
 
-    # let's find min and max among the values with index == key
-    # where len of row is not enough - change value to 0
-    array_i_key = [0
-                   if len(array[i]) <= key else array[i][key]
-                   for i in range(len_of_array)]
-    min_array_key = min(array_i_key)
-    max_array_key = max(array_i_key)
+    # Count occurrences of each key
+    for row in arr:
+        if row[key] != float('-inf'):
+            count[row[key] - min_value] += 1
+        else:
+            count[max_value - min_value + 1] += 1
 
-    # all empty places will be filled
-    # with values < min_a in order to
-    # place strings with them higher than
-    # those without empty places
-    array_i_key = [min_array_key - 1
-                   if len(array[i]) <= key else array[i][key]
-                   for i in range(len_of_array)]
+    # Calculate cumulative count
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
 
-    # create function value-min_a -> index
-    # +2 means +1 for counting first entry
-    # and another +1 for putting rows with
-    # absent positions above others
-    count_first_entry = 1
-    rows_with_absent_key_position = 1
-    indexes = [
-        []
-        for _ in range(
-            max_array_key - min_array_key + count_first_entry +
-            rows_with_absent_key_position)]
-    for i in range(len_of_array):
-        indexes[array_i_key[i] - min_array_key + 1].append(i)
+    # Build the sorted array
+    result = [0] * len(arr)
+    for row in reversed(arr):
+        if row[key] != float('-inf'):
+            count[row[key] - min_value] -= 1
+            result[count[row[key] - min_value]] = row
+        else:
+            count[max_value - min_value + 1] -= 1
+            result[count[max_value - min_value + 1]] = row
 
-    # for optimization purposes
-    # when n > max-min next operation
-    # uses O(max-min) instead of O(n)
-    if len_of_array > (max_array_key - min_array_key):
-        for i in reversed(range(len(indexes))):
-            if len(indexes[i]) == 0:
-                del indexes[i]
-                i += 1
+    # Update the original array with the sorted values
+    for i in range(len(arr)):
+        arr[i] = result[i]
 
-    # calculate new index for each row
-    positions = []
-    for i in range(len(indexes)):
-        positions.extend(indexes[i])
-
-    new_array = [array[i] for i in positions]
-
-    # return positions of distinct
-    # elements for future multiple
-    # index sort
-    if position:
-        return new_array, indexes
-
-    return new_array
+    return arr

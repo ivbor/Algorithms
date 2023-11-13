@@ -158,7 +158,7 @@ class Heap(Vector):
         """
         self.insert(x)
 
-    def get_children(self, i: int) -> tuple | float | None:
+    def get_children(self, i: int) -> tuple[float, float] | float | None:
         """
         Get the children of a node at the specified index.
 
@@ -393,6 +393,12 @@ def heap_sort(array: list[float]) -> list[float]:
     for large datasets. However, it is not an in-place sorting algorithm since
     it requires additional space for the heap, making its O(n) space
     complexity.
+    The heap sort algorithm consists of two main phases: heapify and sorting.
+    The "heapify" phase builds a binary heap from the input array,
+    ensuring that the heap property is maintained (parent nodes have smaller
+    values than their children).
+    The "sorting" phase repeatedly removes the minimum element from the heap
+    and places it at the end of the array until the heap is empty.
 
     Parameters
     ----------
@@ -403,16 +409,6 @@ def heap_sort(array: list[float]) -> list[float]:
     -------
     list
         The sorted list in ascending order.
-
-    Notes
-    -----
-    - The heap sort algorithm consists of two main phases: heapify and sorting.
-    - The "heapify" phase builds a binary heap from the input array,
-    ensuring that the heap property is maintained (parent nodes have smaller
-    values than their children).
-    - The "sorting" phase repeatedly removes the minimum element from the heap
-    and places it at the end of the array until the heap is empty.
-    This process results in a sorted array.
 
     """
     heap = Heap()
