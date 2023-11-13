@@ -1,3 +1,4 @@
+.fuse*
 .ipynb_checkpoints/**
 share/**
 etc/**
