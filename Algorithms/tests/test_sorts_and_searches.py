@@ -1,19 +1,17 @@
 # import math for calculations
 import math
-import time
 import logging
+import pytest
+import random
 # import better view function for 2dim arrays
 from Algorithms.python_solutions.matrix_view import Matrix2dim
-# import some helpers for creating arrays and time checking
-from Algorithms.python_solutions.speed_analysis \
-    import make_random_whole_1_dim_array, make_random_whole_2_dim_array, \
-    speed_analysis, make_random_1_dim_array
 # import sorting algorythms
 from Algorithms.python_solutions.array_count_sort import array_count_sort
 from Algorithms.python_solutions.count_sort import count_sort
-from Algorithms.python_solutions.insert_sort import insert_sort
-from Algorithms.python_solutions.merge_sort import merge_sort
-from Algorithms.python_solutions.merge_sort import merge_sort_parallel
+from Algorithms.python_solutions.insert_sort \
+    import insert_sort, insert_sort_opt
+from Algorithms.python_solutions.merge_sort \
+    import merge_sort, merge_sort_parallel
 from Algorithms.python_solutions.quick_sort import quick_sort
 from Algorithms.python_solutions.digit_sort import digit_sort
 from Algorithms.python_solutions.two_dim_array_count_sort \
@@ -29,173 +27,233 @@ from Algorithms.python_solutions.bounds import lower_bound, upper_bound
 from Algorithms.python_solutions.split_find import split_find
 
 
-def test_sort_speed_analysis(test_size_range=(10, 100),
-                             num_range=(-10, 10)):
-    '''
-        Function for sorts speed testing
-        Parameters:
+def random_1_dim_array(elts_range=(-100, 100),
+                       size_of_1_dim_range=(100, 1000)):
+    return [random.uniform(*elts_range)
+            for _ in range(random.randint(*size_of_1_dim_range))]
 
-        test_size_range: range of number of elements inside array
 
-        num_range: tuple with the first number being start of the range
-        of elements generation and the second - the end of this range
-    '''
+def whole_1_dim_array(elts_range=(-100, 100),
+                      size_of_1_dim_range=(100, 1000)):
+    return [random.randint(*elts_range)
+            for _ in range(random.randint(*size_of_1_dim_range))]
 
-    # make a list of 1dim array and 2dim array
-    one_dim_array = make_random_1_dim_array(
-            elts_range=num_range, size_of_1_dim_range=test_size_range)
-    whole_one_dim_array = make_random_whole_1_dim_array(
-            elts_range=num_range, size_of_1_dim_range=test_size_range)
-    whole_two_dim_array = make_random_whole_2_dim_array(
-            elts_range=num_range, size_of_1_dim_range=test_size_range,
-            size_of_2_dim_range=test_size_range)
-    arrays = [one_dim_array, whole_one_dim_array,
-              whole_two_dim_array]
 
-    # make dict with sorts and functions
-    sorts = {'array_count_sort': array_count_sort,
-             'insert_sort': insert_sort,
-             'merge_sort': merge_sort,
-             'merge_sort_parallel': merge_sort_parallel,
-             'quick_sort': quick_sort,
-             'two_dim_array_count_sort': two_dim_array_count_sort,
-             'count_sort': count_sort,
-             'digit_sort': digit_sort}
+def whole_2_dim_array(elts_range=(-10, 10), size_of_1_dim_range=(1, 10),
+                      size_of_2_dim_range=(10, 100)):
+    return [[random.randint(*elts_range)
+             for _ in range(random.randint(*size_of_1_dim_range))]
+            for _ in range(random.randint(*size_of_2_dim_range))]
 
-    # and sort them using written sorts and built-in
-    for i in sorts.items():
 
-        # register time to sort for developed functions
-        developed_time, developed = speed_analysis(
+# fixed here, but can be changed manually inside parametrize for each
+# particular function
+# test_size_range: range of number of elements inside array
+test_size_range = (10, 100)
+# num_range: tuple with the first number being start of the range
+# of elements generation and the second - the end of this range
+num_range = (-10, 10)
 
-            # function name
-            i[1],
 
-            # choose array to sort (2dim for 2dim sorts, 1dim respectively)
-            arrays[2].copy() if i[0] in (
-                'array_count_sort',
-                'two_dim_array_count_sort') \
+@pytest.mark.parametrize('function, array, params, sorted_params',
+                         [
+                          (array_count_sort,
+                           whole_2_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range,
+                             size_of_2_dim_range=test_size_range),
+                           {}, {'key': lambda a: a[0]}),
 
-            else arrays[1].copy() if i[0] in ['count_sort', 'digit_sort'] \
+                          (insert_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {}, {}),
 
-            else arrays[0].copy(),
+                          (insert_sort_opt,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {}, {}),
 
-            # no need for params here
-            params={} if i[0] != 'quick_sort' else {'faster': False} \
-            if i[0] != 'digit_sort' else {'base': 16})
+                          (merge_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'opt': False}, {}),
 
-        # register time to sort for built_in function
-        built_in_time, built_in = speed_analysis(
+                          (merge_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=(1, 1)),
+                           {'opt': False}, {}),
 
-            sorted,
+                          (merge_sort_parallel,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=(32, 100)),
+                           {}, {}),
 
-            arrays[2].copy() if i[0] in (
-                'array_count_sort',
-                'two_dim_array_count_sort')
+                          (merge_sort_parallel, [0], {}, {}),
 
-            else arrays[1].copy() if i[0] in ['count_sort', 'digit_sort']
+                          (merge_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=(101, 1000)),
+                           {}, {}),
 
-            else arrays[0].copy(),
+                          (merge_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=(10, 60)),
+                           {}, {}),
 
-            # since sorted does sorts by all indexes by default, which written
-            # array_count_sort does not, change parameter from default inside
-            # sorted to special lambda-defined key making it perform the
-            # same sort as array_count_sort
-            {} if i[0] != 'array_count_sort' else {'key': lambda a: a[0]})
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {}, {}),
 
-        # and compare result
-        assert (built_in == developed)
+                          (quick_sort, [0], {}, {}),
 
-        # print to the log file
+                          (quick_sort, [], {}, {}),
+
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'clst_avg'}, {}),
+
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'm3'}, {}),
+
+                          (quick_sort, [1000] +
+                           random_1_dim_array(
+                                elts_range=num_range,
+                                size_of_1_dim_range=test_size_range) +
+                           [-1000],
+                           {'pivot_str': 'm3'}, {}),
+
+
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'mm'}, {}),
+
+                          (two_dim_array_count_sort,
+                           whole_2_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range,
+                             size_of_2_dim_range=test_size_range),
+                           {}, {}),
+
+                          (two_dim_array_count_sort,
+                           whole_2_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range,
+                             size_of_2_dim_range=test_size_range),
+                           {'keys': [0, 1, 2]},
+                           {'key': lambda x: (x[0], x[1], x[2])}),
+
+                          (two_dim_array_count_sort,
+                           whole_2_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range,
+                             size_of_2_dim_range=test_size_range),
+                           {'keys': 2}, {'key': lambda x: x[2]}),
+
+                          (count_sort,
+                           whole_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {}, {}),
+
+                          (digit_sort,
+                           whole_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'base': 16}, {})
+                         ])
+def test_sorts(function, array, params, sorted_params):
+    array_copy = array.copy()
+    developed = function(array_copy, **params)
+    built_in = sorted(array, **sorted_params)
+    assert built_in == developed
+
+    # print to the log file
+    if isinstance(built_in, list) and len(built_in) > 0:
         if isinstance(built_in[0], list):
             built_in = Matrix2dim(data=built_in)
             developed = Matrix2dim(data=developed)
-            logging.info(f'{i[0]} \n built_in: \n' +
-                         f'{Matrix2dim.__repr__(built_in, indexes=True)} \
-                         \n developed: \n' +
-                         f'{Matrix2dim.__repr__(developed, indexes=True)}')
+            logging.debug(f'{function} \n built_in: \n' +
+                          f'{Matrix2dim.__repr__(built_in, indexes=True)}' +
+                          '\n developed: \n' +
+                          f'{Matrix2dim.__repr__(developed, indexes=True)}')
         else:
-            logging.info(f'{i[0]} \n built_in: \n' +
-                         f'{built_in} \n developed: \n' +
-                         f'{developed}')
-
-        # and print times:
-        logging.info(f'{i[0]:25}: {developed_time:.10f}, \
-                        sorted: {built_in_time:.10f}\n')
+            logging.debug(f'{function} \n built_in: \n' +
+                          f'{built_in} \n developed: \n' +
+                          f'{developed}')
 
 
-# if in array searched value is absent
-# .index() throws ValueError
-# this wrapper handles exception so that
-# absence of the element can be handled
-# by speed_analysis function
+@pytest.mark.parametrize('function, array, params',
+                         [(two_dim_array_count_sort,
+                          whole_2_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range,
+                             size_of_2_dim_range=test_size_range),
+                          {'keys': ''}),
+                          (quick_sort,
+                          random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                          {'pivot_str': 'cool'})
+                          ])
+def test_errors_in_sorts(function, array, params):
+    with pytest.raises(Exception):
+        function(array, **params)
 
 
-def index_search(a):
-    try:
-        return a.index(3)
-    except ValueError:
-        return 'No'
+@pytest.mark.parametrize('array',
+                         [random_1_dim_array(
+                            elts_range=num_range,
+                            size_of_1_dim_range=test_size_range),
+                          random_1_dim_array(
+                            elts_range=num_range,
+                            size_of_1_dim_range=test_size_range),
+                          ])
+def test_bin_search(array):
 
+    array_copy = array.copy()
+    # binary search works on sorted arrays
+    array = sorted(array)
 
-def test_bin_search_speed_analysis(
-        test_size_range=(10, 100),
-        num_range=(-10, 10)):
-    '''
-        Function to test the speed of search
-        Parameters:
+    with pytest.raises(ValueError):
+        array.index(3)
 
-        test_size_range: range of number of elements inside array
+    developed_no_rec = bin_search(array, 3)
 
-        num_range: tuple with the first number being start of the range
-        of elements generation and the second - the end of this range
-    '''
+    developed_rec = bin_search(array, 3, True)
 
-    # make sorted array
-    a = make_random_1_dim_array(
-            elts_range=num_range,
-            size_of_1_dim_range=test_size_range)
-    # a.append(3)
-    a = sorted(a)
+    assert developed_no_rec is False
+    assert developed_no_rec == developed_rec
 
-    # find an element inside it using developed functions while registering
-    # time spent
-    built_in_time, built_in = speed_analysis(
-        index_search, a, {})
+    # manually append desired element
+    array_copy.append(3)
+    array_copy = sorted(array_copy)
 
-    developed_no_rec_time, developed_no_rec = speed_analysis(
-        lambda x: bin_search(x, 3), a, {})
+    built_in = array_copy.index(3)
 
-    developed_rec_time, developed_rec = speed_analysis(
-        lambda x: bin_search(x, 3, True), a, {})
+    developed_no_rec = bin_search(array_copy, 3)
 
-    assert isinstance(built_in, int) == developed_no_rec, logging.debug(a)
-    assert developed_no_rec == developed_rec, logging.debug(a)
-    logging.info('Without desired element')
-    logging.info(f'developed_no_rec: {developed_no_rec_time:.10f}, \
-            developed_rec: {developed_rec_time:.10f}, \
-            index: {built_in_time:.10f}\n')
+    developed_rec = bin_search(array_copy, 3, True)
 
-    a = make_random_1_dim_array(
-            elts_range=num_range,
-            size_of_1_dim_range=test_size_range)
-    a.append(3)  # manually append desired element
-    a = sorted(a)
-
-    built_in_time, built_in = speed_analysis(
-        index_search, a, {})
-
-    developed_no_rec_time, developed_no_rec = speed_analysis(
-        lambda x: bin_search(x, 3), a, {})
-
-    developed_rec_time, developed_rec = speed_analysis(
-        lambda x: bin_search(x, 3, True), a, {})
-
-    # and print times:
-    logging.info('With desired element')
-    logging.info(f'developed_no_rec: {developed_no_rec_time:.10f}, \
-            developed_rec: {developed_rec_time:.10f}, \
-            index: {built_in_time:.10f}\n')
+    assert isinstance(built_in, int)
+    assert developed_no_rec is True
+    assert developed_no_rec == developed_rec
 
 
 def func(x):
@@ -203,89 +261,55 @@ def func(x):
 
 
 def test_real_bin_search():
-    st = time.time()
     res = real_bin_search(func, -6, -2, 2)
-    et = time.time()
     # func(-6) = -1.070
     assert abs(res + 1.07) <= 5*10**(-4), res
-    logging.info(f'real_bin_search_time: {(et-st):.10f}')
 
 
 def test_min_max_tern_search():
-    st = time.time()
     res = tern_search_min(func, -3, 0)
-    et = time.time()
     # min there is -2.121
     assert abs(res + 2.121) <= 5*10**(-4), res
-    logging.info(f'tern_search_min_time, one min: {(et-st):.10f}')
 
-    st = time.time()
     res = tern_search_min(func, 0, 3)
-    et = time.time()
     # min there is 0 or 3
     assert (abs(res) <= 5*10**(-4) or abs(res - 3) <= 5*10**(-4)), res
-    logging.info(f'tern_search_min_time, two mins: {(et-st):.10f}')
 
-    st = time.time()
     res = tern_search_max(func, -3, 0)
-    et = time.time()
     # max there is 0 or -3
     assert (abs(res) <= 5*10**(-4) or abs(res + 3) <= 5*10**(-4)), res
-    logging.info(f'tern_search_max_time, two maxes: {(et-st):.10f}')
 
-    st = time.time()
     res = tern_search_max(func, 0, 3)
-    et = time.time()
     # max there is 2.121
     assert abs(res - 2.121) <= 5*10**(-4), res
-    logging.info(f'tern_search_max_time, one max: {(et-st):.10f}')
 
 
-def test_bounds():
-    a = make_random_whole_1_dim_array(
-        size_of_1_dim_range=(1000, 2000))
-    a = sorted(a)
+@pytest.mark.parametrize('array', [whole_1_dim_array(
+                                    size_of_1_dim_range=(1000, 2000)),
+                                   whole_1_dim_array(
+                                    size_of_1_dim_range=(100, 2000))])
+def test_bounds(array):
+    array = sorted(array)
 
-    st = time.time()
-    built_in = a.index(3) if 3 in a else False
-    et = time.time()
-    built_in_time = et - st
+    built_in = \
+        array.index(3) if 3 in array else False
+    developed = \
+        lower_bound(array, 3) if 3 in array else False
+    assert built_in == developed
 
-    st = time.time()
-    developed = lower_bound(a, 3) if 3 in a else False
-    et = time.time()
-    developed_time = et - st
-
-    assert built_in == developed, (built_in, developed)
-    logging.info('lower bound')
-    logging.info(f'built_in_time: {built_in_time:.10f}, \
-           developed_time: {developed_time:.10f}')
-
-    st = time.time()
-    built_in = a.index(4) - 1 if 4 in a else False
-    et = time.time()
-    built_in_time = et - st
-
-    st = time.time()
-    developed = upper_bound(a, 3) if 4 in a else False
-    et = time.time()
-    developed_time = et - st
-
-    assert built_in == developed, (built_in, developed)
-    logging.info('upper bound')
-    logging.info(f'built_in_time: {built_in_time:.10f}, \
-           developed_time: {developed_time:.10f}')
+    built_in = \
+        array.index(4) - 1 if 4 in array else False
+    developed = \
+        upper_bound(array, 3) if 4 in array else False
+    assert built_in == developed
 
 
-def test_split_search():
-    a = make_random_whole_1_dim_array(elts_range=(-10, 10))
-    b = a.copy()
-    a = sorted(a)
-
-    st = time.time()
-    developed = split_find(b, 36)
-    et = time.time()
-    developed_time = et - st
-
-    assert a[36] == developed, (a[36], developed)
-    logging.info(f'split search time: {developed_time:.10f}')
+@pytest.mark.parametrize('array', [whole_1_dim_array(
+                                    elts_range=(-10, 10)),
+                                   whole_1_dim_array(
+                                    elts_range=(-10, 10))])
+def test_split_search(array):
+    array_copy = array.copy()
+    array = sorted(array)
+    developed = split_find(array_copy, 36)
+    assert array[36] == developed
