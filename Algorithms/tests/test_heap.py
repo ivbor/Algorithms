@@ -1,5 +1,4 @@
 import random
-import time
 import logging
 import pytest
 
@@ -26,7 +25,8 @@ def test_can_create_heap():
     with pytest.raises(Exception):
         h.remove_min()
 
-    # tests for boundary cases
+
+def test_boundary_cases():
     h = Heap()
     h.insert(-30.13)
     assert h.size == 1
@@ -46,19 +46,10 @@ def test_can_create_heap():
 
 def test_heap_sort():
     h = [random.uniform(-100, 100) for _ in range(100)]
-    st = time.time()
     developed = heap_sort(h)
-    et = time.time()
-    developed_time = et - st
-
-    st = time.time()
     built_in = sorted(h)
-    et = time.time()
-    built_in_time = et - st
 
     assert developed == built_in
-    logging.info(f'heap_sort: {developed_time:.10f},\
-            sorted: {built_in_time:.10f}')
 
 
 def test_repr():
