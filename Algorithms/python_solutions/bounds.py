@@ -1,7 +1,7 @@
 """
 Binary Boundaries Search Module
+===============================
 
-====================
 This module provides implementations of lower_bound and upper_bound
 search algorithms for finding the first and last occurrences of a given
 whole-numbered value in a sorted array. The lower_bound algorithm returns

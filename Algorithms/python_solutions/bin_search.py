@@ -1,5 +1,6 @@
 """
 Binary Search Module
+====================
 
 This module provides implementations of binary search algorithms
 for searching a value within a sorted one-dimensional array of whole numbers.

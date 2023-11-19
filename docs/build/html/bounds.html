@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binary Boundaries Search Module &mdash; Algorithms 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions" href="ternary_search_extremum.html" />
+    <link rel="prev" title="Functions" href="bin_search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Algorithms
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html">Quick Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.clst_avg"><code class="docutils literal notranslate"><span class="pre">clst_avg()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_medians"><code class="docutils literal notranslate"><span class="pre">median_of_medians()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.median_of_three"><code class="docutils literal notranslate"><span class="pre">median_of_three()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.partition_small"><code class="docutils literal notranslate"><span class="pre">partition_small()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.quick_sort"><code class="docutils literal notranslate"><span class="pre">quick_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_sort.html#Algorithms.python_solutions.quick_sort.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html">Merge Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge"><code class="docutils literal notranslate"><span class="pre">merge()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort"><code class="docutils literal notranslate"><span class="pre">merge_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_sort.html#Algorithms.python_solutions.merge_sort.merge_sort_parallel"><code class="docutils literal notranslate"><span class="pre">merge_sort_parallel()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html">Insertion Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort"><code class="docutils literal notranslate"><span class="pre">insert_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="insert_sort.html#Algorithms.python_solutions.insert_sort.insert_sort_opt"><code class="docutils literal notranslate"><span class="pre">insert_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html">Binary Heap and Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.Heap"><code class="docutils literal notranslate"><span class="pre">Heap</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.heap_sort"><code class="docutils literal notranslate"><span class="pre">heap_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_down"><code class="docutils literal notranslate"><span class="pre">sift_down()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="heap.html#Algorithms.python_solutions.heap.sift_up"><code class="docutils literal notranslate"><span class="pre">sift_up()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html">Counting Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_sort.html#Algorithms.python_solutions.count_sort.count_sort"><code class="docutils literal notranslate"><span class="pre">count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html">Array Counting Sort Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_count_sort.html#Algorithms.python_solutions.array_count_sort.array_count_sort"><code class="docutils literal notranslate"><span class="pre">array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_dim_array_count_sort.html#Algorithms.python_solutions.two_dim_array_count_sort.two_dim_array_count_sort"><code class="docutils literal notranslate"><span class="pre">two_dim_array_count_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html">Digit Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort"><code class="docutils literal notranslate"><span class="pre">digit_sort()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.digit_sort_opt"><code class="docutils literal notranslate"><span class="pre">digit_sort_opt()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.restore_to_nums"><code class="docutils literal notranslate"><span class="pre">restore_to_nums()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="digit_sort.html#Algorithms.python_solutions.digit_sort.to_m_based"><code class="docutils literal notranslate"><span class="pre">to_m_based()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="bin_search.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bin_search.html#Algorithms.python_solutions.bin_search.bin_search"><code class="docutils literal notranslate"><span class="pre">bin_search()</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Binary Boundaries Search Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#Algorithms.python_solutions.bounds.lower_bound"><code class="docutils literal notranslate"><span class="pre">lower_bound()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Algorithms.python_solutions.bounds.upper_bound"><code class="docutils literal notranslate"><span class="pre">upper_bound()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ternary_search_extremum.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ternary_search_extremum.html#Algorithms.python_solutions.ternary_search_extremum.tern_search_max"><code class="docutils literal notranslate"><span class="pre">tern_search_max()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ternary_search_extremum.html#Algorithms.python_solutions.ternary_search_extremum.tern_search_min"><code class="docutils literal notranslate"><span class="pre">tern_search_min()</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Algorithms</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Binary Boundaries Search Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bounds.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="binary-boundaries-search-module">
+<span id="module-Algorithms.python_solutions.bounds"></span><h1>Binary Boundaries Search Module<a class="headerlink" href="#binary-boundaries-search-module" title="Link to this heading"></a></h1>
+<p>This module provides implementations of lower_bound and upper_bound
+search algorithms for finding the first and last occurrences of a given
+whole-numbered value in a sorted array. The lower_bound algorithm returns
+the index of the first encounter of the value, while the upper_bound algorithm
+returns the index of the last encounter.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>lower_bound(array, value_to_search)</dt><dd><p>Determines the index of the first encounter of the whole-numbered value
+in a sorted array.</p>
+</dd>
+<dt>upper_bound(array, value_to_search)</dt><dd><p>Determines the index of the last encounter of the whole-numbered value
+in a sorted array.</p>
+</dd>
+</dl>
+</section>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="Algorithms.python_solutions.bounds.lower_bound">
+<span class="sig-prename descclassname"><span class="pre">Algorithms.python_solutions.bounds.</span></span><span class="sig-name descname"><span class="pre">lower_bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_to_search</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.python_solutions.bounds.lower_bound" title="Link to this definition"></a></dt>
+<dd><p>This function determines where is first encounter of the whole-
+numbered value.</p>
+<p>This function utilizes algorithm working on the cut, hence the
+searching job is delegated to the function-helper. The algorithm
+itself is similar to the binary search without any additional
+calculation complexity.
+Array where is the value to be searched for has to be already sorted.
+Function assumes by-default the presence of the value to be searched.</p>
+<section id="parameters">
+<h1>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h1>
+<dl class="simple">
+<dt>array: list[int]</dt><dd><p>Sorted array where to find the first encounter of the
+searched value.</p>
+</dd>
+<dt>value_to_search: int</dt><dd><p>Searched value which first encounter is to be found by the
+function.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h1>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h1>
+<dl class="simple">
+<dt>int</dt><dd><p>index of the first encounter of the searched value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Algorithms.python_solutions.bounds.upper_bound">
+<span class="sig-prename descclassname"><span class="pre">Algorithms.python_solutions.bounds.</span></span><span class="sig-name descname"><span class="pre">upper_bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_to_search</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Algorithms.python_solutions.bounds.upper_bound" title="Link to this definition"></a></dt>
+<dd><p>This function determines where is the last encounter of the whole-
+numbered value.</p>
+<p>This function is very similar to the lower_bound() except for it
+searches for the last encounter. Generally, it is done via
+lower_bound of the next (+1) whole value and subtraction 1 from the
+returned index.</p>
+<section id="id1">
+<h1>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<dl class="simple">
+<dt>array: list[int]</dt><dd><p>Sorted array where to find the last encounter of the
+searched value.</p>
+</dd>
+<dt>value_to_search: int</dt><dd><p>Searched value which last encounter is to be found by the
+function.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h1>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h1>
+<dl class="simple">
+<dt>int</dt><dd><p>index of the last encounter of the searched value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bin_search.html" class="btn btn-neutral float-left" title="Functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ternary_search_extremum.html" class="btn btn-neutral float-right" title="Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ivan Baravoi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

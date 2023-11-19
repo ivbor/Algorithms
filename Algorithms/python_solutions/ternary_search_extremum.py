@@ -1,5 +1,6 @@
 """
 Ternary Search Module
+=====================
 
 This module provides two functions, `tern_search_min` and `tern_search_max`,
 for finding the minimum and maximum values of a function within a specified

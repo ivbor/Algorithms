@@ -1,5 +1,6 @@
 """
 Real Binary Search Module
+=========================
 
 This module provides a binary search function for finding an element at
 a specified index in an array as if it was already sorted in ascending order.

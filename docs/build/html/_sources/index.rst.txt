@@ -19,14 +19,23 @@ Welcome to Algorithms's documentation!
    array_count_sort
    two_dim_array_count_sort
    digit_sort
+   bin_search
+   bounds
+   ternary_search_extremum
 
 Some experiments and visualizations
 ===================================
-- with sorting algorithms for float numbers: link_
-- with sorting algorithms for integer numbers: `another link`_
+- with sorting algorithms for float numbers: sorts_for_floats_
+- with sorting algorithms for integer numbers: sorts_for_integers_
+- visualization of merge_sort: merge_sort_
+- visualization of count_sort: count_sort_
+- notebook for creating visualization gifs: visualization_
 
-.. _link: sorts_for_floats.ipynb
-.. _another link: sorts_for_integers.ipynb
+.. _sorts_for_floats: sorts_for_floats.ipynb
+.. _sorts_for_integers: sorts_for_integers.ipynb
+.. _merge_sort: merge_sort_visualization.html
+.. _count_sort: count_sort_visualization.html
+.. _visualization: Visualizations.ipynb
 
 Indices and tables
 ==================
