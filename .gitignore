@@ -1,14 +1,13 @@
 **test.in
+**_sources**
 .fuse*
-.ipynb_checkpoints/**
+**.ipynb_checkpoints**
 share/**
 etc/**
 **coverage**
 **/.pytest_cache
 Lectures
-__pycache__
-**/__pycache__
-**/__pycache__
+**__pycache__**
 pyrightconfig.json
 bin*
 lib*
