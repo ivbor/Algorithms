@@ -4,7 +4,9 @@ All documentation and notebooks with some visualizations and experimenting
 are [here](docs/build/html/index.html') if the repo is on the local machine
 and [here](https://htmlpreview.github.io/?https://github.com/ivbor/Algorithms/blob/master/docs/build/html/index.html) 
 if viewed on the github (notebooks will load raw from htmlpreview, but are still
-accessible from repo's page).
+accessible from the repo's page, while animations of sorts will not be available
+until cloned).
+
 
 All source code is inside the `./Algorithms/python_solutions/` folder and can be imported with statement
 ```python
@@ -50,7 +52,9 @@ Docstrings coverage checked by
 ```bash
 interrogate ./Algorithms/python_solutions -vv
 ```
- 
+
+Documentation was prepared by Sphinx and build in html format.
+
 Precommits are set using Github Actions with `./.github/workflows/python-app.yml` file
 
 ## Contact: 
