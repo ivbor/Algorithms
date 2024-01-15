@@ -5,16 +5,17 @@ class RBTreeNode(TreeNode):
     def __init__(self, data, color):
         super().__init__(data)
         self.color = color
-        self.left = None
-        self.right = None
 
 
 class RedBlackTree(BinarySearchTree):
+
     def __init__(self):
         super().__init__()
+        self.node_class = RBTreeNode
 
     def insert(self, key):
-        new_node = RBTreeNode(data=key, color='red')
+        new_node = self.node_class(data=key, color='red')
+        new_node.children = [None, None]
         if self.root is None:
             self.root = new_node
             self.root.color = 'black'
@@ -28,160 +29,162 @@ class RedBlackTree(BinarySearchTree):
         super()._insert(current, new_node)
 
     def _fix_violation(self, node):
-        if node.next_node is not None:
-            while node != self.root and node.next_node.color == 'red':
-                if node.next_node == node.next_node.next_node.left \
-                   and node.next_node.next_node.right is not None:
-                    uncle = node.next_node.next_node.right
+        if node.parent is not None:
+            while node != self.root and node.parent.color == 'red':
+                if node.parent == node.parent.parent.children[0] \
+                   and node.parent.parent.children[1] is not None:
+                    uncle = node.parent.parent.children[1]
                     if uncle.color == 'red':
-                        node.next_node.color = 'black'
+                        node.parent.color = 'black'
                         uncle.color = 'black'
-                        node.next_node.next_node.color = 'red'
-                        node = node.next_node.next_node
+                        node.parent.parent.color = 'red'
+                        node = node.parent.parent
                     else:
-                        if node == node.next_node.right:
-                            node = node.next_node
+                        if node == node.parent.children[1]:
+                            node = node.parent
                             self._left_rotate(node)
-                        node.next_node.color = 'black'
-                        node.next_node.next_node.color = 'red'
-                        self._right_rotate(node.next_node.next_node)
-                elif node.next_node.next_node.left is not None:
-                    uncle = node.next_node.next_node.left
+                        node.parent.color = 'black'
+                        node.parent.parent.color = 'red'
+                        self._right_rotate(node.parent.parent)
+                elif node.parent.parent.children[0] is not None:
+                    uncle = node.parent.parent.children[0]
                     if uncle.color == 'red':
-                        node.next_node.color = 'black'
+                        node.parent.color = 'black'
                         uncle.color = 'black'
-                        node.next_node.next_node.color = 'red'
-                        node = node.next_node.next_node
+                        node.parent.parent.color = 'red'
+                        node = node.parent.parent
                     else:
-                        if node == node.next_node.left:
-                            node = node.next_node
+                        if node == node.parent.children[0]:
+                            node = node.parent
                             self._right_rotate(node)
-                        node.next_node.color = 'black'
-                        node.next_node.next_node.color = 'red'
-                        self._left_rotate(node.next_node.next_node)
+                        node.parent.color = 'black'
+                        node.parent.parent.color = 'red'
+                        self._left_rotate(node.parent.parent)
                 else:
                     break
         self.root.color = 'black'
 
     def _left_rotate(self, node):
-        right_child = node.right
-        node.right = right_child.left
-        if right_child.left is not None:
-            right_child.left.next_node = node
-        right_child.next_node = node.next_node
-        if node.next_node is None:
+        right_child = node.children[1]
+        node.children[1] = right_child.children[0]
+        if right_child.children[0] is not None:
+            right_child.children[0].parent = node
+        right_child.parent = node.parent
+        if node.parent is None:
             self.root = right_child
-        elif node == node.next_node.left:
-            node.next_node.left = right_child
+        elif node == node.parent.children[0]:
+            node.parent.children[0] = right_child
         else:
-            node.next_node.right = right_child
-        right_child.left = node
-        node.next_node = right_child
+            node.parent.children[1] = right_child
+        right_child.children[0] = node
+        node.parent = right_child
 
     def _right_rotate(self, node):
-        left_child = node.left
-        node.left = left_child.right
-        if left_child.right is not None:
-            left_child.right.next_node = node
-        left_child.next_node = node.next_node
-        if node.next_node is None:
+        left_child = node.children[0]
+        node.children[0] = left_child.children[1]
+        if left_child.children[1] is not None:
+            left_child.children[1].parent = node
+        left_child.parent = node.parent
+        if node.parent is None:
             self.root = left_child
-        elif node == node.next_node.right:
-            node.next_node.right = left_child
+        elif node == node.parent.children[1]:
+            node.parent.children[1] = left_child
         else:
-            node.next_node.left = left_child
-        left_child.right = node
-        node.next_node = left_child
+            node.parent.children[0] = left_child
+        left_child.children[1] = node
+        node.parent = left_child
 
     def delete(self, key):
         super().delete(data=key, is_rb=True)
 
     def _delete_rb(self, node):
 
-        if node.left is not None and node.right is not None:
-            successor = node.right
-            while successor.left is not None:
-                successor = successor.left
+        if node.children[0] is not None and node.children[1] is not None:
+            successor = node.children[1]
+            while successor.children[0] is not None:
+                successor = successor.children[0]
             node.data, successor.data = successor.data, node.data
             self._delete_rb(successor)
-        elif node.left is not None or node.right is not None:
-            child = node.left if node.left is not None \
-                else node.right
-            if node.next_node is None:
+        elif node.children[0] is not None or node.children[1] is not None:
+            child = node.children[0] if node.children[0] is not None \
+                else node.children[1]
+            if node.parent is None:
                 self.root = child
-            elif node == node.next_node.left:
-                node.next_node.left = child
+            elif node == node.parent.children[0]:
+                node.parent.children[0] = child
             else:
-                node.next_node.right = child
-            child.next_node = node.next_node
+                node.parent.children[1] = child
+            child.parent = node.parent
             if node.color == 'black':
                 if child.color == 'red':
                     child.color = 'black'
                 else:
                     self._fix_double_black(child)
         else:
-            if node.next_node is not None:
-                node.next_node.color = 'black'
-                if node.next_node.left is node:
-                    node.next_node.left = None
-                elif node.next_node.right is node:
-                    node.next_node.right = None
+            if node.parent is not None:
+                node.parent.color = 'black'
+                if node.parent.children[0] is node:
+                    node.parent.children[0] = None
+                elif node.parent.children[1] is node:
+                    node.parent.children[1] = None
             else:
                 self.root.data = None
 
     def _fix_double_black(self, node: TreeNode):
         while node != self.root and node.color == 'black':
-            if node is node.next_node.left \
-                    and node.next_node.right is not None:
-                sibling = node.next_node.right
+            if node is node.parent.children[0] \
+                    and node.parent.children[1] is not None:
+                sibling = node.parent.children[1]
                 if sibling.color == 'red':
                     sibling.color = 'black'
-                    node.next_node.color = 'red'
-                    self._left_rotate(node.next_node)
-                    sibling = node.next_node.right
+                    node.parent.color = 'red'
+                    self._left_rotate(node.parent)
+                    sibling = node.parent.children[1]
                 if sibling is not None:
-                    if sibling.right is not None and sibling.left is not None:
-                        if sibling.left.color == 'black' and \
-                                sibling.right.color == 'black':
+                    if sibling.children[1] is not None \
+                            and sibling.children[0] is not None:
+                        if sibling.children[0].color == 'black' and \
+                                sibling.children[1].color == 'black':
                             sibling.color = 'red'
-                            node = node.next_node
+                            node = node.parent
                         else:
-                            if sibling.right.color == 'black':
-                                sibling.left.color = 'black'
+                            if sibling.children[1].color == 'black':
+                                sibling.children[0].color = 'black'
                                 sibling.color = 'red'
                                 self._right_rotate(sibling)
-                                sibling = node.next_node.right
-                            sibling.color = node.next_node.color
-                            node.next_node.color = 'black'
-                            sibling.right.color = 'black'
-                            self._left_rotate(node.next_node)
+                                sibling = node.parent.children[1]
+                            sibling.color = node.parent.color
+                            node.parent.color = 'black'
+                            sibling.children[1].color = 'black'
+                            self._left_rotate(node.parent)
                             node = self.root
                     else:
                         break
-            elif node is node.next_node.right \
-                    and node.next_node.left is not None:
-                sibling = node.next_node.left
+            elif node is node.parent.children[1] \
+                    and node.parent.children[0] is not None:
+                sibling = node.parent.children[0]
                 if sibling.color == 'red':
                     sibling.color = 'black'
-                    node.next_node.color = 'red'
-                    self._right_rotate(node.next_node)
-                    sibling = node.next_node.left
+                    node.parent.color = 'red'
+                    self._right_rotate(node.parent)
+                    sibling = node.parent.children[0]
                 if sibling is not None:
-                    if sibling.right is not None and sibling.left is not None:
-                        if sibling.right.color == 'black' and \
-                                sibling.left.color == 'black':
+                    if sibling.children[1] is not None \
+                            and sibling.children[0] is not None:
+                        if sibling.children[1].color == 'black' and \
+                                sibling.children[0].color == 'black':
                             sibling.color = 'red'
-                            node = node.next_node
+                            node = node.parent
                         else:
-                            if sibling.left.color == 'black':
-                                sibling.right.color = 'black'
+                            if sibling.children[0].color == 'black':
+                                sibling.children[1].color = 'black'
                                 sibling.color = 'red'
                                 self._left_rotate(sibling)
-                                sibling = node.next_node.left
-                            sibling.color = node.next_node.color
-                            node.next_node.color = 'black'
-                            sibling.left.color = 'black'
-                            self._right_rotate(node.next_node)
+                                sibling = node.parent.children[0]
+                            sibling.color = node.parent.color
+                            node.parent.color = 'black'
+                            sibling.children[0].color = 'black'
+                            self._right_rotate(node.parent)
                             node = self.root
                     else:
                         break

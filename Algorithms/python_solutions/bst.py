@@ -51,8 +51,9 @@ class TreeNode(Node):
 
         """
         super().__init__(data=data)
-        self.left = None
-        self.right = None
+        # left is 0, right is 1
+        self.children = []
+        self.parent = self.next_node
 
 
 class BinarySearchTree:
@@ -136,6 +137,7 @@ class BinarySearchTree:
         """
         self.root = None
         self.size = 0
+        self.node_class = TreeNode
 
     def insert(self, data: int | float) -> None:
         """
@@ -152,7 +154,8 @@ class BinarySearchTree:
         None
 
         """
-        new_node = TreeNode(data=data)
+        new_node = self.node_class(data=data)
+        new_node.children = [None, None]
         if self.root is None:
             self.root = new_node
         else:
@@ -177,18 +180,18 @@ class BinarySearchTree:
 
         """
         if new_node.data < root.data:
-            if root.left is not None:
-                self._insert(root.left, new_node)
+            if root.children[0] is not None:
+                self._insert(root.children[0], new_node)
                 return
             else:
-                root.left = new_node
+                root.children[0] = new_node
         else:
-            if root.right is not None:
-                self._insert(root.right, new_node)
+            if root.children[1] is not None:
+                self._insert(root.children[1], new_node)
                 return
             else:
-                root.right = new_node
-        new_node.next_node = root
+                root.children[1] = new_node
+        new_node.parent = root
 
     def delete(self, data: int | float, is_rb: bool = False) -> None:
         """
@@ -231,28 +234,29 @@ class BinarySearchTree:
         None
 
         """
-        if node.left is not None and node.right is not None:
-            successor = node.right
-            while successor.left is not None:
-                successor = successor.left
+        if node.children[0] is not None and node.children[1] is not None:
+            successor = node.children[1]
+            while successor.children[0] is not None:
+                successor = successor.children[0]
             node.data, successor.data = successor.data, node.data
             self._delete(successor)
-        elif node.left is not None or node.right is not None:
-            child = node.left if node.left is not None \
-                else node.right
-            if node.next_node is None:
+        elif node.children[0] is not None or node.children[1] is not None:
+            child = node.children[0] \
+                if node.children[0] is not None \
+                else node.children[1]
+            if node.parent is None:
                 self.root = child
-            elif node == node.next_node.left:
-                node.next_node.left = child
+            elif node == node.parent.children[0]:
+                node.parent.children[0] = child
             else:
-                node.next_node.right = child
-            child.next_node = node.next_node
+                node.parent.children[1] = child
+            child.parent = node.parent
         else:
-            if node.next_node is not None:
-                if node.next_node.left is node:
-                    node.next_node.left = None
-                elif node.next_node.right is node:
-                    node.next_node.right = None
+            if node.parent is not None:
+                if node.parent.children[0] is node:
+                    node.parent.children[0] = None
+                elif node.parent.children[1] is node:
+                    node.parent.children[1] = None
             else:
                 self.root.data = None
 
@@ -297,8 +301,8 @@ class BinarySearchTree:
         if root is None or root.data == data:
             return root
         if data < root.data:
-            return self._search(root.left, data)
-        return self._search(root.right, data)
+            return self._search(root.children[0], data)
+        return self._search(root.children[1], data)
 
     def in_order_traversal(self) -> list[int | float]:
         """
@@ -334,9 +338,9 @@ class BinarySearchTree:
 
         """
         if root:
-            self._in_order_traversal_rec(root.left, result)
+            self._in_order_traversal_rec(root.children[0], result)
             result.append(root.data)
-            self._in_order_traversal_rec(root.right, result)
+            self._in_order_traversal_rec(root.children[1], result)
 
     def find_min(self) -> int | float | None:
         """
@@ -370,8 +374,8 @@ class BinarySearchTree:
         """
 
         current = node
-        while current.left is not None:
-            current = current.left
+        while current.children[0] is not None:
+            current = current.children[0]
         return current
 
     def find_max(self) -> int | float | None:
@@ -404,8 +408,8 @@ class BinarySearchTree:
 
         """
         current = node
-        while current.right is not None:
-            current = current.right
+        while current.children[1] is not None:
+            current = current.children[1]
         return current
 
     # after data in traversal
@@ -426,19 +430,16 @@ class BinarySearchTree:
 
         """
         node = self._search(self.root, data)
-        if node.left:
-            if node.left.data == node.data:
-                return node.data
-        if node and node.right:
-            return self._min_value_node(node.right).data
+        if node and node.children[1]:
+            return self._min_value_node(node.children[1]).data
         successor = None
         current = self.root
         while current:
             if data < current.data:
                 successor = current
-                current = current.left
+                current = current.children[0]
             elif data > current.data:
-                current = current.right
+                current = current.children[1]
             else:
                 break
         return successor.data if successor else None
@@ -461,19 +462,19 @@ class BinarySearchTree:
 
         """
         node = self._search(self.root, data)
-        if node.right:
-            if node.right.data == node.data:
+        if node.children[1]:
+            if node.children[1].data == node.data:
                 return node.data
-        if node and node.left:
-            return self._max_value_node(node.left).data
+        if node and node.children[0]:
+            return self._max_value_node(node.children[0]).data
         predecessor = None
         current = self.root
         while current:
             if data > current.data:
                 predecessor = current
-                current = current.right
+                current = current.children[1]
             elif data < current.data:
-                current = current.left
+                current = current.children[0]
             else:
                 break
         return predecessor.data if predecessor else None
@@ -489,3 +490,32 @@ class BinarySearchTree:
 
         """
         return self.root is None
+
+    def max_height(self) -> int:
+        """
+        The maximum height of the tree.
+
+        Returns
+        -------
+        int
+            The height of the tree.
+
+        """
+
+        node_list = []
+        if self.root is not None:
+            curr_height = 0
+            node_list.append(self.root)
+        else:
+            return 0
+
+        while len(node_list) != 0:
+            curr_height += 1
+            curr_len_node_list = len(node_list)
+            for node_num in range(curr_len_node_list):
+                for child in node_list[node_num].children:
+                    if child is not None:
+                        node_list.append(child)
+            node_list = node_list[curr_len_node_list:]
+
+        return curr_height

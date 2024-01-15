@@ -4,13 +4,14 @@ import random
 from Algorithms.python_solutions.bst import BinarySearchTree
 
 
-def test_insert_and_search():
+def test_insert_and_search_and_height():
     bst = BinarySearchTree()
     bst.insert(10)
     bst.insert(5)
     bst.insert(15)
     bst.insert(3)
 
+    assert bst.max_height() == 3
     assert str(bst.search(10)) == '10'
     assert str(bst.search(15)) == '15'
     assert str(bst.search(3)) == '3'
@@ -64,6 +65,18 @@ def test_delete_with_error(bst):
 def test_search(bst):
     assert bst._search(bst.root, 3) is not None
     assert bst._search(bst.root, 9) is None
+
+
+def test_height_advanced(bst):
+
+    bst.insert(9)
+    assert bst.max_height() == 4
+
+    bst.insert(10)
+    assert bst.max_height() == 5
+
+    bst.insert(11)
+    assert bst.max_height() == 6
 
 
 def test_find_min_and_max():
