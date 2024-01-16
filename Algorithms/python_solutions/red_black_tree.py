@@ -24,10 +24,6 @@ class RedBlackTree(BinarySearchTree):
             self._fix_violation(new_node)
         self.size += 1
 
-    # current is parent
-    def _insert(self, current, new_node):
-        super()._insert(current, new_node)
-
     def _fix_violation(self, node):
         if node.parent is not None:
             while node != self.root and node.parent.color == 'red':
