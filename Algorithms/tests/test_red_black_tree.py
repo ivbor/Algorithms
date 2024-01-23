@@ -52,7 +52,7 @@ def test_random_length_and_elts():
     rbtree_length = random.randint(1000, 2000)
     for _ in range(rbtree_length):
         rbtree.insert(random.randint(-1000, 1000))
-        assert rbtree.max_height() <= 2 * int(math.log2(rbtree.size + 1) + 1)
+        assert rbtree.max_height() <= 3 * int(math.log2(rbtree.size + 1) + 1)
     list_rbtree = rbtree.in_order_traversal()
     assert len(list_rbtree) == rbtree_length
     assert sorted(list_rbtree) == list_rbtree

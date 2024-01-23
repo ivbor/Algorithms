@@ -1,3 +1,5 @@
+import logging
+
 from Algorithms.python_solutions.bst import TreeNode, BinarySearchTree
 
 
@@ -14,81 +16,290 @@ class RedBlackTree(BinarySearchTree):
         self.node_class = RBTreeNode
 
     def insert(self, key):
+
         new_node = self.node_class(data=key, color='red')
         new_node.children = [None, None]
+        self.size += 1
+
+        # if no root - insert to the root
         if self.root is None:
             self.root = new_node
             self.root.color = 'black'
-        else:
-            self._insert(self.root, new_node)
-            self._fix_violation(new_node)
-        self.size += 1
+            return
 
-    def _fix_violation(self, node):
-        if node.parent is not None:
-            while node != self.root and node.parent.color == 'red':
-                if node.parent == node.parent.parent.children[0] \
-                   and node.parent.parent.children[1] is not None:
-                    uncle = node.parent.parent.children[1]
-                    if uncle.color == 'red':
-                        node.parent.color = 'black'
-                        uncle.color = 'black'
-                        node.parent.parent.color = 'red'
-                        node = node.parent.parent
-                    else:
-                        if node == node.parent.children[1]:
-                            node = node.parent
-                            self._left_rotate(node)
-                        node.parent.color = 'black'
-                        node.parent.parent.color = 'red'
-                        self._right_rotate(node.parent.parent)
-                elif node.parent.parent.children[0] is not None:
-                    uncle = node.parent.parent.children[0]
-                    if uncle.color == 'red':
-                        node.parent.color = 'black'
-                        uncle.color = 'black'
-                        node.parent.parent.color = 'red'
-                        node = node.parent.parent
-                    else:
-                        if node == node.parent.children[0]:
-                            node = node.parent
-                            self._right_rotate(node)
-                        node.parent.color = 'black'
-                        node.parent.parent.color = 'red'
-                        self._left_rotate(node.parent.parent)
+        # basic insert to bst with red color
+        self._insert(self.root, new_node)
+        self.handle_rb(new_node)
+
+    def handle_rb(self, new_node):
+
+        # if there is root - check the parent color
+        # if black - do nothing
+        if new_node.parent.color == 'red':
+
+            # find uncle and check its color
+            if new_node.parent == new_node.parent.parent.children[0] \
+                    and new_node.parent.parent.children[1] is not None:
+                uncle = new_node.parent.parent.children[1]
+                right_uncle = True
+                logging.info(
+                    f'''uncle: {uncle},
+                        right_uncle: {right_uncle},
+                        parent: {new_node.parent},
+                        new_node: {new_node},
+                        grandparent: {new_node.parent.parent}''')
+
+            elif new_node.parent == new_node.parent.parent.children[1] \
+                    and new_node.parent.parent.children[0] is not None:
+                uncle = new_node.parent.parent.children[0]
+                right_uncle = False
+                logging.info(
+                    f'''uncle: {uncle},
+                        right_uncle: {right_uncle},
+                        parent: {new_node.parent},
+                        new_node: {new_node},
+                        grandparent: {new_node.parent.parent}''')
+
+            # no uncle
+            else:
+
+                # rotate
+
+                #   G (b)
+                #    \                P (b)
+                #     P (r)    ->    /    \
+                #      \          G (r) node (r)
+                #      node (r)
+
+                if new_node.parent.data <= new_node.data and \
+                        new_node.parent.parent.data <= new_node.parent.data:
+
+                    logging.info(
+                        f'''parent: {new_node.parent},
+                            new_node: {new_node},
+                            grandparent: {new_node.parent.parent},
+                            left''')
+                    new_node.parent.color = 'black'
+                    logging.debug(self.root.color)
+                    new_node.parent.parent.color = 'red'
+                    logging.debug(self.root.color)
+                    self._left_rotate(new_node.parent.parent)
+
+                #   G (b)           G (b)
+                #    \               \                  node (b)
+                #     P (r)    ->    node (r)           /    \
+                #     /                \             G (r)   P (r)
+                #   node (r)           P (r)
+
+                elif new_node.parent.data >= new_node.data and \
+                        new_node.parent.parent.data <= new_node.parent.data:
+
+                    logging.info(
+                        f'''parent: {new_node.parent},
+                            new_node: {new_node},
+                            grandparent: {new_node.parent.parent},
+                            right-left''')
+                    new_node.color = 'black'
+                    logging.debug(self.root.color)
+                    new_node.parent.parent.color = 'red'
+                    logging.debug(self.root.color)
+                    self._right_rotate(new_node.parent)
+                    self._left_rotate(new_node.parent)
+
+                #     G (b)          G (b)
+                #     /              /               node (b)
+                #   P (r)    ->    node (r) ->       /    \
+                #     \            /              P (r)  G (r)
+                #     node (r)   P (r)
+
+                elif new_node.parent.data <= new_node.data and \
+                        new_node.parent.parent.data >= new_node.parent.data:
+
+                    logging.info(
+                        f'''parent: {new_node.parent},
+                            new_node: {new_node},
+                            grandparent: {new_node.parent.parent},
+                            left-right''')
+                    new_node.color = 'black'
+                    logging.debug(self.root.color)
+                    new_node.parent.parent.color = 'red'
+                    logging.debug(self.root.color)
+                    self._left_rotate(new_node.parent)
+                    self._right_rotate(new_node.parent)
+
+                #      G (b)
+                #      /            P (b)
+                #    P (r)    ->   /    \
+                #    /        node (r) G (r)
+                # node (r)
+
                 else:
-                    break
-        self.root.color = 'black'
+
+                    logging.info(
+                        f'''parent: {new_node.parent},
+                            new_node: {new_node},
+                            grandparent: {new_node.parent.parent},
+                            right''')
+                    new_node.parent.color = 'black'
+                    logging.debug(self.root.color)
+                    new_node.parent.parent.color = 'red'
+                    logging.debug(self.root.color)
+                    self._right_rotate(new_node.parent.parent)
+
+                return
+
+            if uncle.color == 'red':
+                self.recolor(new_node, uncle)
+
+            else:
+                self.rotate_and_recolor(new_node, right_uncle)
+
+    def recolor(self, node, uncle):
+        logging.info('recoloring')
+        node.parent.color = 'black'
+        logging.debug(self.root.color)
+        uncle.color = 'black'
+        logging.debug(self.root.color)
+        if node.parent.parent is not self.root:
+            node.parent.parent.color = 'red'
+            logging.debug(self.root.color)
+            self.handle_rb(node.parent.parent)
+
+    def rotate_and_recolor(self, node, right):
+
+        logging.info('recoloring and rotating')
+        # grandparent to red
+        node.parent.parent.color = 'red' \
+            if node.parent.parent is not self.root \
+            else 'black'
+        logging.debug(self.root.color)
+        # uncle to black
+        node.parent.parent.children[1].color = 'black'
+        logging.debug(self.root.color)
+
+        # 2 cases if uncle is right_uncle
+        if right:
+
+            # either node is left_child
+            if node is node.parent.children[0]:
+
+                # node to red
+                node.color = 'red'
+                logging.debug(self.root.color)
+                # parent to black
+                node.parent.color = 'black'
+                logging.debug(self.root.color)
+
+            # or right_child
+            else:
+
+                # node to black
+                node.color = 'black'
+                logging.debug(self.root.color)
+                # parent to red
+                node.parent.color = 'red'
+                logging.debug(self.root.color)
+
+                if node.parent is not None:
+                    self._left_rotate(node.parent)
+
+            if node.parent.parent is not None:
+                self._right_rotate(node.parent)
+
+        # same stuff for left uncle case
+        else:
+
+            # left_child
+            if node is node.parent.children[0]:
+
+                # node to red
+                node.color = 'red'
+                logging.debug(self.root.color)
+                # parent to black
+                node.parent.color = 'black'
+                logging.debug(self.root.color)
+
+                if node.parent is not None:
+                    self._right_rotate(node.parent)
+
+            # right_child
+            else:
+
+                # node to black
+                node.color = 'black'
+                logging.debug(self.root.color)
+                # parent to red
+                node.parent.color = 'red'
+                logging.debug(self.root.color)
+
+            if node.parent.parent is not None:
+                self._left_rotate(node.parent)
 
     def _left_rotate(self, node):
-        right_child = node.children[1]
-        node.children[1] = right_child.children[0]
-        if right_child.children[0] is not None:
-            right_child.children[0].parent = node
-        right_child.parent = node.parent
+
+        # around the node - right_child0 bond
+        #
+        #            P                                    P
+        #            |                                    |
+        #           node                             right_child0
+        #          /   \                 ->            /   \
+        # left_child0  right_child0                  node  right_child1
+        #               /    \                       /  \
+        #      left_child1   right_child1  left_child0   left_child1
+        #
+
+        logging.info(f'left rotating on {node}')
+
+        # move right_child0 and left_child1
+        right_child0 = node.children[1]
+        left_child1 = right_child0.children[0]
+        node.children[1] = left_child1
+        if left_child1 is not None:
+            left_child1.parent = node
+
+        # reassign parent to node and right_child0
+        right_child0.parent = node.parent
         if node.parent is None:
-            self.root = right_child
+            self.root = right_child0
         elif node == node.parent.children[0]:
-            node.parent.children[0] = right_child
+            node.parent.children[0] = right_child0
         else:
-            node.parent.children[1] = right_child
-        right_child.children[0] = node
-        node.parent = right_child
+            node.parent.children[1] = right_child0
+        right_child0.children[0] = node
+        node.parent = right_child0
 
     def _right_rotate(self, node):
-        left_child = node.children[0]
-        node.children[0] = left_child.children[1]
-        if left_child.children[1] is not None:
-            left_child.children[1].parent = node
-        left_child.parent = node.parent
+
+        # around the node - left_child0 bond
+        #
+        #                P                                  P
+        #                |                                  |
+        #               node                            left_child0
+        #              /   \               ->             /   \
+        #     left_child0  right_child0         left_child1   node
+        #         /    \                                      /  \
+        # left_child1 right_child1                  right_child1 right_child0
+        #
+
+        logging.info(f'right rotating on {node}')
+
+        # move left_child0 and right_child1
+        left_child0 = node.children[0]
+        right_child1 = left_child0.children[1]
+        node.children[0] = right_child1
+        if right_child1 is not None:
+            right_child1.parent = node
+
+        # reassign parent to node and left_child0
+        left_child0.parent = node.parent
         if node.parent is None:
-            self.root = left_child
+            self.root = left_child0
         elif node == node.parent.children[1]:
-            node.parent.children[1] = left_child
+            node.parent.children[1] = left_child0
         else:
-            node.parent.children[0] = left_child
-        left_child.children[1] = node
-        node.parent = left_child
+            node.parent.children[0] = left_child0
+        left_child0.children[1] = node
+        node.parent = left_child0
 
     def delete(self, key):
         super().delete(data=key, is_rb=True)
