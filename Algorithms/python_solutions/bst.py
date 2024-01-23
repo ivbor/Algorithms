@@ -125,6 +125,16 @@ class BinarySearchTree:
     is_empty(self) -> bool
         Checks if the Binary Search Tree is empty.
 
+    max_height(self) -> int
+        Finds the maximum height of the tree.
+
+    local_tree(self, node: TreeNode, b: int = 2, deepness: int = 1)
+        -> list[int | float]
+        Returns the local tree with the node being root and the required
+        deepness. Nodes' data is loaded into the list down from root from
+        the left to the right. Deepness 1 equals root and its children.
+        b is the order of the tree, for the binary it is 2.
+
     """
 
     def __init__(self) -> None:
@@ -263,6 +273,7 @@ class BinarySearchTree:
     def search(self, data: int | float) -> TreeNode | None:
         """
         Searches for a node with the specified data in the Binary Search Tree.
+        In case of value duplicate returns only one node at random.
 
         Parameters
         ----------
@@ -303,6 +314,26 @@ class BinarySearchTree:
         if data < root.data:
             return self._search(root.children[0], data)
         return self._search(root.children[1], data)
+
+    def node_height(self, node: TreeNode) -> int:
+        """
+        Finds the height of the node with value.
+
+        Parameters
+        ----------
+        value: int
+            Node data.
+
+        Returns
+        -------
+        int
+            Node height.
+        """
+        height = 1
+        while node.parent is not None:
+            height += 1
+            node = node.parent
+        return height
 
     def in_order_traversal(self) -> list[int | float]:
         """
@@ -519,3 +550,44 @@ class BinarySearchTree:
             node_list = node_list[curr_len_node_list:]
 
         return curr_height
+
+    def local_tree(self, node: TreeNode, b: int = 2, deepness: int = 1) \
+            -> list[int | float]:
+        """
+        Returns the local tree with the node being root and the required
+        deepness. Nodes' data is loaded into the list down from root from
+        the left to the right. Deepness 1 equals root and its children.
+        b is the order of the tree, for binary it is 2.
+
+        Parameters
+        ----------
+        node: TreeNode
+            Node to be considered the root one.
+
+        b: int
+            The order of the tree. Default is 2.
+
+        deepness: int
+            The deepness of the local tree.
+
+        Returns
+        -------
+        list[int | float]
+            List containing the tree nodes' data.
+
+        """
+        nodes_to_check = [node]
+        result = []
+        for power in range(deepness + 1):
+            extension_list = []
+            for node_to_check in nodes_to_check:
+                if node_to_check is not None:
+                    result.append(node_to_check.data)
+                    extension_list.extend(
+                        [child for child in node_to_check.children])
+                else:
+                    result.append(None)
+                    extension_list.extend([None, None])
+            nodes_to_check.extend(extension_list)
+            nodes_to_check = nodes_to_check[int(b ** power):]
+        return result

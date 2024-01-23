@@ -123,3 +123,9 @@ def test_random_length_and_elts():
         assert len(list_bst) == bst.size
         assert sorted(list_bst) == bst.in_order_traversal()
     assert len(bst.in_order_traversal()) == 0
+
+
+def test_local_tree(bst):
+    assert bst.local_tree(bst.root) == [5, 3, 7]
+    assert bst.local_tree(bst.root.children[0]) == [3, 2, 4]
+    assert bst.local_tree(bst.root.children[1]) == [7, 6, 8]
