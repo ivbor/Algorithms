@@ -42,7 +42,7 @@ class RedBlackTree(BinarySearchTree):
                     and new_node.parent.parent.children[1] is not None:
                 uncle = new_node.parent.parent.children[1]
                 right_uncle = True
-                logging.info(
+                logging.debug(
                     f'''uncle: {uncle},
                         right_uncle: {right_uncle},
                         parent: {new_node.parent},
@@ -53,7 +53,7 @@ class RedBlackTree(BinarySearchTree):
                     and new_node.parent.parent.children[0] is not None:
                 uncle = new_node.parent.parent.children[0]
                 right_uncle = False
-                logging.info(
+                logging.debug(
                     f'''uncle: {uncle},
                         right_uncle: {right_uncle},
                         parent: {new_node.parent},
@@ -74,7 +74,7 @@ class RedBlackTree(BinarySearchTree):
                 if new_node.parent.data <= new_node.data and \
                         new_node.parent.parent.data <= new_node.parent.data:
 
-                    logging.info(
+                    logging.debug(
                         f'''parent: {new_node.parent},
                             new_node: {new_node},
                             grandparent: {new_node.parent.parent},
@@ -94,7 +94,7 @@ class RedBlackTree(BinarySearchTree):
                 elif new_node.parent.data >= new_node.data and \
                         new_node.parent.parent.data <= new_node.parent.data:
 
-                    logging.info(
+                    logging.debug(
                         f'''parent: {new_node.parent},
                             new_node: {new_node},
                             grandparent: {new_node.parent.parent},
@@ -115,7 +115,7 @@ class RedBlackTree(BinarySearchTree):
                 elif new_node.parent.data <= new_node.data and \
                         new_node.parent.parent.data >= new_node.parent.data:
 
-                    logging.info(
+                    logging.debug(
                         f'''parent: {new_node.parent},
                             new_node: {new_node},
                             grandparent: {new_node.parent.parent},
@@ -135,7 +135,7 @@ class RedBlackTree(BinarySearchTree):
 
                 else:
 
-                    logging.info(
+                    logging.debug(
                         f'''parent: {new_node.parent},
                             new_node: {new_node},
                             grandparent: {new_node.parent.parent},
@@ -155,7 +155,7 @@ class RedBlackTree(BinarySearchTree):
                 self.rotate_and_recolor(new_node, right_uncle)
 
     def recolor(self, node, uncle):
-        logging.info('recoloring')
+        logging.debug('recoloring')
         node.parent.color = 'black'
         logging.debug(self.root.color)
         uncle.color = 'black'
@@ -167,7 +167,7 @@ class RedBlackTree(BinarySearchTree):
 
     def rotate_and_recolor(self, node, right):
 
-        logging.info('recoloring and rotating')
+        logging.debug('recoloring and rotating')
         # grandparent to red
         node.parent.parent.color = 'red' \
             if node.parent.parent is not self.root \
@@ -248,7 +248,7 @@ class RedBlackTree(BinarySearchTree):
         #      left_child1   right_child1  left_child0   left_child1
         #
 
-        logging.info(f'left rotating on {node}')
+        logging.debug(f'left rotating on {node}')
 
         # move right_child0 and left_child1
         right_child0 = node.children[1]
@@ -281,7 +281,7 @@ class RedBlackTree(BinarySearchTree):
         # left_child1 right_child1                  right_child1 right_child0
         #
 
-        logging.info(f'right rotating on {node}')
+        logging.debug(f'right rotating on {node}')
 
         # move left_child0 and right_child1
         left_child0 = node.children[0]
