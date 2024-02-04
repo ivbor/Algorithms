@@ -2,7 +2,7 @@ import pytest
 import random
 import math
 
-from Algorithms.python_solutions.red_black_tree import RedBlackTree
+from Algorithms.python_solutions.red_black_tree import RedBlackTree, TreeNode
 
 
 @pytest.fixture
@@ -20,6 +20,23 @@ def rb_tree():
 
 def test_insert(rb_tree):
     assert rb_tree.in_order_traversal() == [2, 3, 4, 5, 6, 7, 8]
+
+
+def test_rotations():
+    node0 = TreeNode(data=5)
+    node1 = TreeNode(data=4)
+    node2 = TreeNode(data=6)
+    node3 = TreeNode(data=7)
+    node2.parent = node3
+    node0.parent = node2
+    node1.parent = node0
+    node3.children = [None, node2]
+    node2.children = [node0, None]
+    node0.children = [node1, None]
+    RedBlackTree._right_rotate(self=RedBlackTree(), node=node2)
+    assert node0.children == [node1, node2]
+    assert node1.parent == node0
+    assert node2.parent == node0
 
 
 def test_delete(rb_tree):

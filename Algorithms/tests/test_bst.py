@@ -4,6 +4,11 @@ import random
 from Algorithms.python_solutions.bst import BinarySearchTree
 
 
+def test_search_none():
+    bst = BinarySearchTree()
+    bst.search(None)
+
+
 def test_insert_and_search_and_height():
     bst = BinarySearchTree()
     bst.insert(10)

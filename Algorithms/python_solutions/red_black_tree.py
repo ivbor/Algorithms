@@ -18,7 +18,6 @@ class RedBlackTree(BinarySearchTree):
     def insert(self, key):
 
         new_node = self.node_class(data=key, color='red')
-        new_node.children = [None, None]
         self.size += 1
 
         # if no root - insert to the root
@@ -301,17 +300,14 @@ class RedBlackTree(BinarySearchTree):
         left_child0.children[1] = node
         node.parent = left_child0
 
-    def delete(self, key):
-        super().delete(data=key, is_rb=True)
-
-    def _delete_rb(self, node):
+    def _delete(self, node):
 
         if node.children[0] is not None and node.children[1] is not None:
             successor = node.children[1]
             while successor.children[0] is not None:
                 successor = successor.children[0]
             node.data, successor.data = successor.data, node.data
-            self._delete_rb(successor)
+            self._delete(successor)
         elif node.children[0] is not None or node.children[1] is not None:
             child = node.children[0] if node.children[0] is not None \
                 else node.children[1]

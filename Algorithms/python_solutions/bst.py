@@ -52,7 +52,7 @@ class TreeNode(Node):
         """
         super().__init__(data=data)
         # left is 0, right is 1
-        self.children = []
+        self.children = [None, None]
         self.parent = self.next_node
 
 
@@ -80,10 +80,8 @@ class BinarySearchTree:
     _insert(self, root: TreeNode, new_node: TreeNode) -> None
         Recursively inserts a new node into the Binary Search Tree.
 
-    delete(self, data: int | float, is_rb: bool = False) -> None
+    delete(self, data: int | float) -> None
         Deletes the node with the specified data from the Binary Search Tree.
-        If method is called by RedBlackTree class (with is_rb=True) - then
-        redirects to the _delete_rb() method from RedBlackTree.
 
     _delete(self, node: TreeNode) -> None
         Recursively deletes the specified node from the Binary Search Tree.
@@ -165,12 +163,13 @@ class BinarySearchTree:
 
         """
         new_node = self.node_class(data=data)
-        new_node.children = [None, None]
+        self.size += 1
+
         if self.root is None:
             self.root = new_node
-        else:
-            self._insert(self.root, new_node)
-        self.size += 1
+            return
+
+        self._insert(self.root, new_node)
 
     def _insert(self, root: TreeNode, new_node: TreeNode) -> None:
         """
@@ -203,7 +202,7 @@ class BinarySearchTree:
                 root.children[1] = new_node
         new_node.parent = root
 
-    def delete(self, data: int | float, is_rb: bool = False) -> None:
+    def delete(self, data: int | float) -> None:
         """
         Deletes the node with the specified data from the Binary Search Tree.
 
@@ -211,9 +210,6 @@ class BinarySearchTree:
         ----------
         data: int | float
             The data which contains the node to be deleted.
-
-        is_rb: bool
-            Parameter to handle the call from RBTree. Default is False.
 
         Returns
         -------
@@ -224,10 +220,7 @@ class BinarySearchTree:
             raise IndexError('Tree is empty')
         node = self._search(self.root, data)
         if node is not None:
-            if is_rb:
-                self._delete_rb(node)
-            else:
-                self._delete(node)
+            self._delete(node)
         self.size -= 1
 
     def _delete(self, node: TreeNode) -> None:
