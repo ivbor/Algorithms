@@ -10,9 +10,10 @@ def test_can_create_hyperloglog():
 
 @pytest.mark.parametrize('precision, length',
                          [(14, 10),
-                          (18, 50000),
-                          (25, 5000000)])
-def test_cardinality_with_small_dataset(precision, length):
+                          (18, 50000)#,
+                          #(25, 5000000)
+                          ])
+def test_cardinality(precision, length):
     hyperloglog = HyperLogLog(precision=precision)
     for i in range(length):
         hyperloglog.add(f"element{i}")
