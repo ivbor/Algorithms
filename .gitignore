@@ -1,4 +1,3 @@
-Algorithms/C_solutions/test.in
 **_sources**
 .fuse*
 **.ipynb_checkpoints**
@@ -15,3 +14,4 @@ lib64*
 include/*
 pyvenv.cfg
 pytest.log
+/C_solutions/test.in
