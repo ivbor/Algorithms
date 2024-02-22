@@ -14,4 +14,4 @@ lib64*
 include/*
 pyvenv.cfg
 pytest.log
-/C_solutions/test.in
+Algorithms/C_solutions/test.in
