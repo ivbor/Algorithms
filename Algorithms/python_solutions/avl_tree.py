@@ -1,15 +1,76 @@
-import logging
+"""
+AVL Tree Module
 
+This module implements an AVL tree, a self-balancing binary search tree.
+This tree has very fixed height, which is smaller than that of RedBlackTree,
+and is between log2(size) and 2*log2(size).
+
+Classes
+-------
+AVLNode
+    A class representing a node in an AVL tree, extending TreeNode.
+
+AVLTree
+    A class representing an AVL tree,
+    extending RedBlackTree and BinarySearchTree.
+
+"""
 from Algorithms.python_solutions.bst import BinarySearchTree, TreeNode
 from Algorithms.python_solutions.red_black_tree import RedBlackTree
 
 
 class AVLNode(TreeNode):
+    """
+    Node for AVL Tree
 
-    def __init__(self, data):
+    Represents a node in an AVL tree. Inherits from TreeNode and provides
+    methods to calculate height and balance factor.
+
+    Attributes
+    ----------
+    data: any
+        The data stored in the node.
+
+    Methods
+    -------
+    __init__(self, data: int | float) -> None
+        Initialize an AVLNode.
+
+    height(self) -> int
+        Calculate the height of the node.
+
+    balance_factor(self) -> int
+        Calculate the balance factor of the node.
+
+    """
+
+    def __init__(self, data: int | float) -> None:
+        """
+        Initialize an AVLNode object with data.
+
+        Parameters
+        ----------
+        data : int | float
+            The data to be stored in the node.
+
+        Returns
+        -------
+        None
+
+        """
+
         super().__init__(data=data)
 
-    def height(self):
+    def height(self) -> int:
+        """
+        Calculate the height of the node.
+
+        Returns
+        -------
+        int
+            The height of the node.
+
+        """
 
         if self.children[0] is not None:
             if self.children[1] is not None:
@@ -21,7 +82,16 @@ class AVLNode(TreeNode):
                 return 1 + self.children[1].height()
             return 1
 
-    def balance_factor(self):
+    def balance_factor(self) -> int:
+        """
+        Calculate the balance factor of the node.
+
+        Returns
+        -------
+        int
+            The balance factor of the node.
+
+        """
 
         height0 = 0 if self.children[0] is None \
             else self.children[0].height()
@@ -31,15 +101,77 @@ class AVLNode(TreeNode):
 
 
 class AVLTree(RedBlackTree, BinarySearchTree):
+    """
+    AVL Tree Implementation
 
-    def __init__(self):
+    Represents an AVL tree, a self-balancing binary search tree.
+
+    Methods
+    -------
+    __init__(self) -> None
+        Initialize an AVLTree object.
+
+    insert(self, key: int | float) -> None
+        Insert a key into the AVL tree.
+
+    _insert(root: AVLNode, new_node: AVLNode)
+        Helper method to insert a new node into the AVL tree.
+
+    delete(self, key: int | float) -> None
+        Delete a key from the AVL tree.
+
+    _delete(node: AVLNode) -> None
+        Helper method to delete a node from the AVL tree.
+
+    """
+
+    def __init__(self) -> None:
+        """
+        Initialize an AVLTree object.
+
+        Returns
+        -------
+        None
+
+        """
+
         RedBlackTree.__init__(self)
         self.node_class = AVLNode
 
-    def insert(self, key):
+    def insert(self, key: int | float) -> None:
+        """
+        Insert a key into the AVL tree.
+
+        Parameters
+        ----------
+        key : int | float
+            The key to be inserted into the AVL tree.
+
+        Returns
+        -------
+        None
+
+        """
+
         BinarySearchTree.insert(self, key)
 
-    def _insert(self, root: AVLNode, new_node: AVLNode):
+    def _insert(self, root: AVLNode, new_node: AVLNode) -> None:
+        """
+        Helper method to insert a new node into the AVL tree.
+
+        Parameters
+        ----------
+        root : AVLNode
+            The root node of the AVL tree.
+
+        new_node : AVLNode
+            The new node to be inserted into the AVL tree.
+
+        Returns
+        -------
+        None
+
+        """
 
         BinarySearchTree._insert(self, root, new_node)
 
@@ -49,47 +181,52 @@ class AVLTree(RedBlackTree, BinarySearchTree):
         if balance > 1:
             # Left-Left case
             if new_node.data <= root.children[0].data:
-                logging.debug('going ll')
-                logging.debug(f'root before rotation: {root}')
                 self._right_rotate(root)
-                logging.debug(f'root after rotation: {root}')
             # Left-Right case
             else:
-                logging.debug('going lr')
-                logging.debug(f'root before rotation: {root}')
                 self._left_rotate(root.children[0])
-                logging.debug(f'root after rotation: {root}')
                 self._right_rotate(root)
-                logging.debug(f'root after rotation: {root}')
 
         # Right heavy
         if balance < -1:
             # Right-Right case
             if new_node.data >= root.children[1].data:
-                logging.debug('going rr')
-                logging.debug(f'root before rotation: {root}')
                 self._left_rotate(root)
-                logging.debug(f'root after rotation: {root}')
             # Right-Left case
             else:
-                logging.debug('going rl')
-                logging.debug(f'root before rotation: {root}')
                 self._right_rotate(root.children[1])
-                logging.debug(f'root after rotation: {root}')
                 self._left_rotate(root)
-                logging.debug(f'root after rotation: {root}')
 
-        logging.debug(f'at the end current root is {root}')
-        logging.debug(f'at the end current self.root is {self.root}')
+    def delete(self, key: int | float) -> None:
+        """
+        Delete a key from the AVL tree.
 
-    def delete(self, key):
-        logging.debug(f'element {key} to be deleted')
-        if key is not None:
-            count_key = len(
-                [elt for elt in self.in_order_traversal() if elt == int(key)])
-            logging.debug(
-                f'how many elements {key} is in the tree: {count_key}')
+        Parameters
+        ----------
+        key : int | float
+            The key to be deleted from the AVL tree.
+
+        Returns
+        -------
+        None
+
+        """
+
         BinarySearchTree.delete(self, key)
 
-    def _delete(self, node):
+    def _delete(self, node: AVLNode) -> None:
+        """
+        Helper method to delete a node from the AVL tree.
+
+        Parameters
+        ----------
+        node : AVLNode
+            The node to be deleted from the AVL tree.
+
+        Returns
+        -------
+        None
+
+        """
+
         BinarySearchTree._delete(self, node)
