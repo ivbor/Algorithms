@@ -1,3 +1,6 @@
+import logging
+
+
 class UndirectedGraphNode:
 
     def __init__(self, data, edges=[]) -> None:
@@ -41,37 +44,53 @@ class UndirectedGraph:
         return [str(vertex) for vertex in self.vertices]
 
     def add_vertex(self, *args, **kwargs):
-
         new_node = self.node_type(*args, **kwargs)
         self.vertices.append(new_node)
-        edges = self._find_arg({1: 'edges'}, *args, **kwargs)
+        edges = \
+            self._find_arg([], {1: 'edges'}, *args, **kwargs)
         node_nr = len(self.vertices) - 1
-        for edge in edges:
-            self.add_edge(node_nr, edge)
+        for nr, edge in enumerate(edges):
+            kwargs['nr'] = nr
+            logging.info(kwargs)
+            logging.info(args)
+            if 'data' in kwargs and 'edges' in kwargs:
+                self.add_edge(node_nr, edge, *args, **kwargs)
+            else:
+                args = args[2:]
+                self.add_edge(node_nr, edge, *args, **kwargs)
 
-        return edges, node_nr
-
-    def _find_arg(self, arg_dict: dict[int, str], *args, **kwargs):
+    def _find_arg(self, default, arg_dict: dict[int, str], *args, **kwargs):
 
         pos = [i for i in arg_dict.keys()][0]
         string = [i for i in arg_dict.values()][0]
 
-        if len(args) > pos:
-            arg = args[pos]
-        else:
-            arg = kwargs[string]
+        try:
+            if len(args) > pos:
+                arg = args[pos]
+            else:
+                arg = kwargs[string]
+        except KeyError:
+            return default
 
         return arg
 
-    def remove_vertex(self, **kwargs):
+    def _find_index(self, **kwargs):
         if 'data' in kwargs.keys():
-            self.vertices.remove(self.vertices.index(str(kwargs['data'])))
+            index = [vertex.data for vertex in self.vertices].index(
+                kwargs['data'])
         elif 'index' in kwargs.keys():
-            self.vertices.remove(kwargs['index'])
+            index = kwargs['index']
         else:
             raise TypeError('no index or data specified to remove')
+        return index
 
-    def add_edge(self, u: int, v: int):
+    def remove_vertex(self, **kwargs):
+        index = self._find_index(**kwargs)
+        for edge in self.vertices[index].edges:
+            self.remove_edge(index, edge)
+        del self.vertices[index]
+
+    def add_edge(self, u: int, v: int, *args, **kwargs):
         if v not in self.vertices[u].edges:
             self.vertices[u].edges.append(v)
         if u not in self.vertices[v].edges:
@@ -266,15 +285,19 @@ class DirectedGraph(UndirectedGraph):
         self.node_type = DirectedGraphNode
 
     def add_vertex(self, *args, **kwargs):
-        edges, node_nr = super().add_vertex(*args, **kwargs)
+        super().add_vertex(*args, **kwargs)
 
-        directions = self._find_arg({2: 'directions'}, *args, **kwargs)
+    def add_edge(self, u: int, v: int, *args, **kwargs):
+        super().add_edge(u, v)
 
-        for nr, edge in enumerate(edges):
-            self.add_direction_front(node_nr, edge, directions[nr])
-            self.add_direction_back(node_nr, edge, directions[nr])
-
-        return edges, node_nr
+        directions = \
+            self._find_arg(0, {0: 'direction'}, *args, **kwargs)
+        if isinstance(directions, list):
+            self.add_direction_front(u, v, directions[kwargs['nr']])
+            self.add_direction_back(u, v, directions[kwargs['nr']])
+        else:
+            self.add_direction_front(u, v, directions)
+            self.add_direction_back(u, v, directions)
 
     def add_direction_front(self, u: int, v: int, direction: int = 0):
 
@@ -293,9 +316,9 @@ class DirectedGraph(UndirectedGraph):
             self.vertices[v].directions.append(-direction)
 
     def remove_edge(self, u: int, v: int):
+        del self.vertices[u].directions[self.vertices[u].edges.index(v)]
+        del self.vertices[v].directions[self.vertices[v].edges.index(u)]
         super().remove_edge(u, v)
-        self.vertices[u].directions.remove(v)
-        self.vertices[v].directions.remove(u)
 
     def calculate_element(self, vertex, neighbor):
         return self.vertices[vertex].directions[neighbor]
@@ -309,15 +332,22 @@ class WeightedGraph(DirectedGraph):
         self.node_type = WeightedGraphNode
 
     def add_vertex(self, *args, **kwargs):
+        super().add_vertex(*args, **kwargs)
 
-        edges, node_nr = \
-            super().add_vertex(*args, **kwargs)
+    def add_edge(self, u: int, v: int, *args, **kwargs):
+        super().add_edge(u, v, *args, **kwargs)
 
-        weights = self._find_arg({3: 'weights'}, *args, **kwargs)
-
-        for nr, edge in enumerate(edges):
-            self.add_weight_front(node_nr, edge, weights[nr])
-            self.add_weight_back(node_nr, edge)
+        weights = \
+            self._find_arg([], {1: 'weights'}, *args, **kwargs)
+        if len(weights) == 1:
+            self.add_weight_front(u, v, weights[0])
+            self.add_weight_back(u, v)
+        elif len(weights) == 0:
+            self.add_weight_front(u, v)
+            self.add_weight_back(u, v)
+        else:
+            self.add_weight_front(u, v, weights[0])
+            self.add_weight_back(u, v, weights[1])
 
     def add_weight_front(self, u: int, v: int, u_to_v_weight: float = 0):
 
@@ -340,9 +370,9 @@ class WeightedGraph(DirectedGraph):
             self.negative_edge_weight = True
 
     def remove_edge(self, u: int, v: int):
+        del self.vertices[u].weights[self.vertices[u].edges.index(v)]
+        del self.vertices[v].weights[self.vertices[v].edges.index(u)]
         super().remove_edge(u, v)
-        self.vertices[u].weights.remove(v)
-        self.vertices[v].weights.remove(u)
 
     def calculate_element(self, vertex, neighbor):
         return self.vertices[vertex].directions[neighbor] * \
