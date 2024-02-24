@@ -20,7 +20,6 @@ def generate_test_cases_with_output_for_knapsack(
     n_start=5, n_end=100, r_start=10, r_end=1000, t_start=1, t_end=16,
     i_start=0, i_end=200, S_start=100, S_end=2000
 ):
-    ''' some test cases generation and automatic solving'''
 
     # generate text file with problem's conditions
     n = random.randint(n_start, n_end)
