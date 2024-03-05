@@ -3,7 +3,8 @@ import logging
 
 class UndirectedGraphNode:
 
-    def __init__(self, data, edges=[]) -> None:
+    def __init__(self, index, data, edges=[]) -> None:
+        self.index = index
         self.data = data
         self.edges = edges
 
@@ -16,27 +17,35 @@ class UndirectedGraphNode:
 
 class DirectedGraphNode(UndirectedGraphNode):
 
-    def __init__(self, data, edges=[], directions=[]) -> None:
+    def __init__(self, index, data, edges=[], directions=[]) -> None:
         if len(edges) != len(directions):
             raise KeyError('for each edge a direction (-1, 0 or 1) ' +
                            'must be specified')
-        super().__init__(data, edges)
+        super().__init__(index, data, edges)
         self.directions = directions
 
 
 class WeightedGraphNode(DirectedGraphNode):
 
-    def __init__(self, data, edges=[], directions=[], weights=[]) -> None:
-        super().__init__(data, edges, directions)
+    def __init__(self, index, data, edges=[], directions=[], weights=[]) -> None:
+        super().__init__(index, data, edges, directions)
         if len(edges) != len(weights):
             raise KeyError('for each edge a weight must be specified')
         self.weights = weights
 
 
+class VerticesList(list):
+    def __getitem__(self, index):
+        return self[[vertex.index for vertex in self].index(index)]
+
+    def __delitem__(self, index):
+        del self.__getitem__(index)
+
+
 class UndirectedGraph:
 
     def __init__(self):
-        self.vertices = []
+        self.vertices = VerticesList()
         self.has_cycles = False
         self.node_type = UndirectedGraphNode
 
@@ -44,20 +53,23 @@ class UndirectedGraph:
         return [str(vertex) for vertex in self.vertices]
 
     def add_vertex(self, *args, **kwargs):
-        new_node = self.node_type(*args, **kwargs)
+        if len(self.vertices) == 0:
+            index = len(self.vertices)
+        else:
+            index = max([vertex.index for vertex in self.vertices]) + 1
+        new_node = self.node_type(index, *args, **kwargs)
         self.vertices.append(new_node)
         edges = \
             self._find_arg([], {1: 'edges'}, *args, **kwargs)
-        node_nr = len(self.vertices) - 1
         for nr, edge in enumerate(edges):
             kwargs['nr'] = nr
             logging.info(kwargs)
             logging.info(args)
             if 'data' in kwargs and 'edges' in kwargs:
-                self.add_edge(node_nr, edge, *args, **kwargs)
+                self.add_edge(index, edge, *args, **kwargs)
             else:
                 args = args[2:]
-                self.add_edge(node_nr, edge, *args, **kwargs)
+                self.add_edge(index, edge, *args, **kwargs)
 
     def _find_arg(self, default, arg_dict: dict[int, str], *args, **kwargs):
 
@@ -120,6 +132,7 @@ class UndirectedGraph:
         adjacency_matrix = \
             [[0] * matrix_size for _ in range(matrix_size)]
 
+        #TODO rewrite accounting for new self.vertices
         for vertex in self.vertices:
             neighbors = vertex.edges
             for neighbor in neighbors:
