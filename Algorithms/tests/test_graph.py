@@ -1,6 +1,7 @@
 import pytest
 import copy
 import logging
+import random
 
 from Algorithms.python_solutions.graphs import DirectedGraph, \
     DirectedGraphNode, UndirectedGraph, UndirectedGraphNode, \
@@ -254,14 +255,14 @@ def con2(graphs, nodes):
 def test_remove_edge(con2, front, back):
     for graph in con2:
         graph.remove_edge(front, back)
-        assert graph.vertices[0].edges == []
-        assert graph.vertices[1].edges == []
         if isinstance(graph, DirectedGraph):
             assert graph.vertices[0].directions == []
             assert graph.vertices[1].directions == []
         if isinstance(graph, WeightedGraph):
             assert graph.vertices[0].weights == []
             assert graph.vertices[1].weights == []
+        assert graph.vertices[0].edges == []
+        assert graph.vertices[1].edges == []
 
 
 @pytest.mark.parametrize('params', [({'index': 0}),
@@ -281,5 +282,110 @@ def test_remove_vertex(con2, params):
         assert len(graph.vertices) == 0
 
 
-def test_add_and_remove_vertices_and_edges():
-    pass
+def test_add_vertices_manipulate_edges_remove_vertices():
+    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
+             [2, 4, 1, 0], [2, 1, 3, 0]]
+    directions = \
+        [[1, -1, 0, -1], [1, -1, 0, -1], [-1, 1, 0, 0],
+         [1, -1, 1, 1], [0, 0, -1, 1]]
+    weights = [[random.uniform(-100, 100) for _ in range(4)]
+               for _ in range(5)]
+    undir = UndirectedGraph()
+    direc = DirectedGraph()
+    weigh = WeightedGraph()
+    graphs = [undir, direc, weigh]
+    for i in range(5):
+        for graph in graphs:
+            graph.add_vertex(data=10*i)
+            assert len(graph.all_vertices()) == i + 1
+            assert graph.vertices[i].data == 10*i
+    for i in range(5):
+        for graph in graphs:
+            graph.vertices[i].edges = copy.deepcopy(edges[i])
+            if type(graph) == UndirectedGraph:
+                assert graph.vertices[i].edges == edges[i]
+            if type(graph) == DirectedGraph:
+                graph.vertices[i].directions = copy.deepcopy(directions[i])
+                assert graph.vertices[i].edges == edges[i]
+                assert graph.vertices[i].directions == directions[i]
+            if type(graph) == WeightedGraph:
+                graph.vertices[i].directions = copy.deepcopy(directions[i])
+                graph.vertices[i].weights = copy.deepcopy(weights[i])
+                assert graph.vertices[i].edges == edges[i]
+                assert graph.vertices[i].directions == directions[i]
+                assert graph.vertices[i].weights == weights[i]
+    undir.remove_edge(0, 4)
+    assert len(undir.vertices[0].edges) == 3
+    assert undir.vertices[0].edges == [3, 2, 1]
+    assert len(undir.vertices[4].edges) == 3
+    assert undir.vertices[4].edges == [2, 1, 3]
+    direc.remove_edge(1, 3)
+    assert len(direc.vertices[1].edges) == 3
+    assert direc.vertices[1].edges == [0, 2, 4]
+    assert len(direc.vertices[1].directions) == 3
+    assert direc.vertices[1].directions == [1, -1, 0]
+    assert len(direc.vertices[3].edges) == 3
+    assert direc.vertices[3].edges == [2, 4, 0]
+    assert len(direc.vertices[3].directions) == 3
+    assert direc.vertices[3].directions == [1, -1, 1]
+    weigh.remove_edge(2, 0)
+    assert len(weigh.vertices[2].edges) == 3
+    assert weigh.vertices[2].edges == [3, 1, 4]
+    assert len(weigh.vertices[2].directions) == 3
+    assert weigh.vertices[2].directions == [-1, 1, 0]
+    assert len(weigh.vertices[2].weights) == 3
+    assert len(weigh.vertices[0].edges) == 3
+    assert weigh.vertices[0].edges == [4, 3, 1]
+    assert len(weigh.vertices[0].directions) == 3
+    assert weigh.vertices[0].directions == [1, -1, -1]
+    assert len(weigh.vertices[0].weights) == 3
+    undir.add_edge(0, 4)
+    assert len(undir.vertices[0].edges) == 4
+    assert undir.vertices[0].edges == [3, 2, 1, 4]
+    assert len(undir.vertices[4].edges) == 4
+    assert undir.vertices[4].edges == [2, 1, 3, 0]
+    direc.add_edge(1, 3, -1)
+    assert len(direc.vertices[1].edges) == 4
+    assert direc.vertices[1].edges == [0, 2, 4, 3]
+    assert len(direc.vertices[1].directions) == 4
+    assert direc.vertices[1].directions == [1, -1, 0, -1]
+    assert len(direc.vertices[3].edges) == 4
+    assert direc.vertices[3].edges == [2, 4, 0, 1]
+    assert len(direc.vertices[3].directions) == 4
+    assert direc.vertices[3].directions == [1, -1, 1, 1]
+    new_weights = \
+        [random.uniform(-100, 100), random.uniform(-100, 100)]
+    weigh.add_edge(2, 0, -1, new_weights)
+    assert len(weigh.vertices[0].edges) == 4
+    assert len(weigh.vertices[0].directions) == 4
+    assert len(weigh.vertices[0].weights) == 4
+    assert len(weigh.vertices[2].edges) == 4
+    assert len(weigh.vertices[2].directions) == 4
+    assert len(weigh.vertices[2].weights) == 4
+    assert weigh.vertices[2].edges[-1] == 0
+    assert weigh.vertices[2].directions[-1] == -1
+    assert weigh.vertices[2].weights[-1] == new_weights[0]
+    assert weigh.vertices[0].edges[-1] == 2
+    assert weigh.vertices[0].directions[-1] == 1
+    assert weigh.vertices[0].weights[-1] == new_weights[1]
+
+    to_remove = [2, 0, ]
+    after_remove_edges = edges
+    after_remove_directions = directions
+    after_remove_weights = weights
+    for i in range(5):
+        to_remove = random.choice([j for j in undir.all_vertices()])
+        index = [vertex.data for vertex in undir.vertices].index(to_remove)
+        indexes_in_edges = [edges[i].index(index) for i in len(edges)]
+        assert len(indexes_in_edges) == (5 - i)
+        after_remove_weights = [[weight[weight_index] if weight_index !=
+                                 for weight_index, weight in \
+                                 enumerate(weights[i])]]
+        all_vertices = undir.all_vertices()
+        undir.remove_vertex(data=to_remove)
+        all_vertices.remove(str(to_remove))
+        assert undir.all_vertices() == all_vertices
+        direc.remove_vertex(data=to_remove)
+        assert direc.all_vertices() == all_vertices
+        weigh.remove_vertex(data=to_remove)
+        assert weigh.all_vertices() == all_vertices
