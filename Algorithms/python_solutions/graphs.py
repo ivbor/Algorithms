@@ -39,7 +39,7 @@ class VerticesList(list):
         return list.__getitem__(self, [vertex.index for vertex in self].index(index))
 
     def __delitem__(self, index):
-        del self.__getitem__(index)
+        del self[index]
 
 
 class UndirectedGraph:
