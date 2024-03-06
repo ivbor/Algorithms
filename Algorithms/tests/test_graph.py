@@ -13,7 +13,7 @@ def test_can_create_everything():
                   (DirectedGraphNode, DirectedGraph),
                   (WeightedGraphNode, WeightedGraph)]
     for node, graph in structures:
-        node_instance = node(None)
+        node_instance = node(0,None)
         graph_instance = graph()
         assert isinstance(node_instance, node)
         assert isinstance(graph_instance, graph)
@@ -25,7 +25,8 @@ def test_can_create_everything():
 def test_undirected_graph_node_workes_well():
     structures = [UndirectedGraphNode, DirectedGraphNode, WeightedGraphNode]
     for node_type in structures:
-        node = node_type(data=3)
+        node = node_type(index=0,data=3)
+        assert node.index == 0
         assert node.data == 3
         assert node.edges == []
         assert str(node) == '3'
@@ -33,13 +34,13 @@ def test_undirected_graph_node_workes_well():
         if node_type == DirectedGraphNode:
             assert node.directions == []
             with pytest.raises(KeyError):
-                node = node_type(data=3, edges=[], directions=[1])
+                node = node_type(index=0, data=3, edges=[], directions=[1])
         if node_type == WeightedGraphNode:
             assert node.weights == []
             with pytest.raises(KeyError):
-                node = node_type(data=3, edges=[], directions=[1])
+                node = node_type(index=0, data=3, edges=[], directions=[1])
             with pytest.raises(KeyError):
-                node = node_type(data=3, edges=[],
+                node = node_type(index=0, data=3, edges=[],
                                  directions=[], weights=[1, 2])
 
 
