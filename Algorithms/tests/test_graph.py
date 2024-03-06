@@ -402,7 +402,7 @@ def test_add_vertices_manipulate_edges_remove_vertices():
         # the vertex to delete
         index = random.choice([vertex.index for vertex in undir.vertices])
         # index of the vertex to delete in edges of each vertex
-        indexes_in_edges = [edges_changed[i].index(index) for i in range(len(edges_changed)) if i != index else None]
+        indexes_in_edges = [edges_changed[i].index(index) if i != index else None for i in range(len(edges_changed))]
         assert len(indexes_in_edges) == (5 - i)
         # simulation of the vertex removal
         for nr, vertex in enumerate(undir.vertices):
