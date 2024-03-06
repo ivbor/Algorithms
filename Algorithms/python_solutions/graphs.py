@@ -36,10 +36,13 @@ class WeightedGraphNode(DirectedGraphNode):
 
 class VerticesList(list):
     def __getitem__(self, index):
-        return list.__getitem__(self, [vertex.index for vertex in self].index(index))
+        return list.__getitem__(self, self.find_index(index))
+
+    def find_index(self, index):
+        return [vertex.index for vertex in self].index(index)
 
     def __delitem__(self, index):
-        del self[index]
+        super().__delitem__(self.find_index(index))
 
 
 class UndirectedGraph:
