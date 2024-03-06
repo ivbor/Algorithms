@@ -273,7 +273,7 @@ def test_remove_vertex(con2, params):
     for graph in con2:
         graph.remove_vertex(**params)
         assert len(graph.vertices) == 1
-        last_index = [vertex.index for vertex in self.vertices][0]
+        last_index = [vertex.index for vertex in graph.vertices][0]
         if 'index' in params.keys():
             if params['index'] == 0:
                 assert last_index == 1
