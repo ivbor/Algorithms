@@ -13,7 +13,7 @@ def test_can_create_everything():
                   (DirectedGraphNode, DirectedGraph),
                   (WeightedGraphNode, WeightedGraph)]
     for node, graph in structures:
-        node_instance = node(0,None)
+        node_instance = node(0, None)
         graph_instance = graph()
         assert isinstance(node_instance, node)
         assert isinstance(graph_instance, graph)
@@ -25,7 +25,7 @@ def test_can_create_everything():
 def test_undirected_graph_node_workes_well():
     structures = [UndirectedGraphNode, DirectedGraphNode, WeightedGraphNode]
     for node_type in structures:
-        node = node_type(index=0,data=3)
+        node = node_type(index=0, data=3)
         assert node.index == 0
         assert node.data == 3
         assert node.edges == []
@@ -122,34 +122,34 @@ def test_can_remove_vertices_by_index(uncon2, index_rem, all_vertices, first):
     for nr in range(len(graph_instance)):
         graph_instance[nr].remove_vertex(index=index_rem)
         assert graph_instance[nr].all_vertices() == all_vertices
-        assert str(graph_instance[nr].vertices[0]) == first
-        assert graph_instance[nr].vertices[0].edges == []
+        assert str(graph_instance[nr].vertices[int(not index_rem)]) == first
+        assert graph_instance[nr].vertices[int(not index_rem)].edges == []
         with pytest.raises(Exception):
-            graph_instance[nr].vertices[1]
+            graph_instance[nr].vertices[index_rem]
     for nr in range(len(graph_instance)):
-        graph_instance[nr].remove_vertex(index=0)
+        graph_instance[nr].remove_vertex(index=int(not index_rem))
         assert graph_instance[nr].all_vertices() == []
         with pytest.raises(Exception):
-            graph_instance[nr].vertices[0]
+            graph_instance[nr].vertices[index_rem]
 
 
-@pytest.mark.parametrize('data_rem, all_vertices, first, second',
-                         [(3, ['4'], '4', 4), (4, ['3'], '3', 3)])
+@pytest.mark.parametrize('data_rem, all_vertices, first, second, index',
+                         [(3, ['4'], '4', 4, 1), (4, ['3'], '3', 3, 0)])
 def test_can_remove_vertices_by_data(uncon2, data_rem, all_vertices,
-                                     first, second):
+                                     first, second, index):
     graph_instance = uncon2
     for nr in range(len(graph_instance)):
         graph_instance[nr].remove_vertex(data=data_rem)
         assert graph_instance[nr].all_vertices() == all_vertices
-        assert str(graph_instance[nr].vertices[0]) == first
-        assert graph_instance[nr].vertices[0].edges == []
+        assert str(graph_instance[nr].vertices[index]) == first
+        assert graph_instance[nr].vertices[index].edges == []
         with pytest.raises(Exception):
-            graph_instance[nr].vertices[1]
+            graph_instance[nr].vertices[int(not index)]
     for nr in range(len(graph_instance)):
         graph_instance[nr].remove_vertex(data=second)
         assert graph_instance[nr].all_vertices() == []
         with pytest.raises(Exception):
-            graph_instance[nr].vertices[0]
+            graph_instance[nr].vertices[index]
 
 
 def test_raises_when_no_data_or_index_specified_in_remove(uncon2):
@@ -329,13 +329,13 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     for i in range(5):
         for graph in graphs:
             graph.vertices[i].edges = copy.deepcopy(edges[i])
-            if type(graph) == UndirectedGraph:
+            if isinstance(graph, UndirectedGraph):
                 assert graph.vertices[i].edges == edges[i]
-            if type(graph) == DirectedGraph:
+            if isinstance(graph, DirectedGraph):
                 graph.vertices[i].directions = copy.deepcopy(directions[i])
                 assert graph.vertices[i].edges == edges[i]
                 assert graph.vertices[i].directions == directions[i]
-            if type(graph) == WeightedGraph:
+            if isinstance(graph, WeightedGraph):
                 graph.vertices[i].directions = copy.deepcopy(directions[i])
                 graph.vertices[i].weights = copy.deepcopy(weights[i])
                 assert graph.vertices[i].edges == edges[i]
@@ -395,34 +395,91 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     assert weigh.vertices[0].edges[-1] == 2
     assert weigh.vertices[0].directions[-1] == 1
     assert weigh.vertices[0].weights[-1] == new_weights[1]
-    
-    edges_changed = edges
-    directions_changed = directions
-    weights_changed = weights
-    for i in range(5):
-        # the vertex to delete
-        index = random.choice([vertex.index for vertex in undir.vertices])
-        # index of the vertex to delete in edges of each vertex
-        indexes_in_edges = [edges_changed[i].index(index) if i != index else None for i in range(len(edges_changed))]
-        assert len(indexes_in_edges) == (5 - i)
-        # simulation of the vertex removal
-        for nr, vertex in enumerate(undir.vertices):
-            if indexes_in_edges[nr] is None:
-                del edges_changed[nr]
-                del directions_changed[nr]
-                del weights_changed[nr]
-                continue
-            del edges_changed[nr][indexes_in_edges[nr]]
-            del directions_changed[nr][indexes_in_edges[nr]]
-            del weights_changed[nr][indexes_in_edges[nr]]
-        assert len(indexes_in_edges) == (5 - i - 1)
-        # now remove vertex from the graph
-        assert len(undir.vertices) == (5 - i)
-        for graph in [undir, direc, weigh]:
-            graph.remove_vertex(index)
-            assert len(graph.vertices) == (5 - i - 1)
-            assert graph.edges == edges_changed
+
+    for graph in [undir, direc, weigh]:
+        graph_edges = \
+            [vertex.edges for vertex in graph.vertices]
+        if isinstance(graph, DirectedGraph):
+            graph_directions = \
+                [vertex.directions for vertex in graph.vertices]
+        if isinstance(graph, WeightedGraph):
+            graph_weights = \
+                [vertex.weights for vertex in graph.vertices]
+        indexes_changed = [0, 1, 2, 3, 4]
+        for i in range(5):
+            # the vertex to delete
+            index = \
+                random.choice([vertex.index for vertex in graph.vertices])
+            # index of the vertex to delete in edges of each vertex
+            indexes_in_edges = \
+                [graph_edges[j].index(index)
+                    if indexes_changed[j] != index else None
+                    for j in range(len(graph_edges))]
+
+            # simulation of the vertex removal
+            assert len(graph_edges) == (5 - i)
+            logging.info(f'edges_changed={graph_edges}')
             if isinstance(graph, DirectedGraph):
-                assert graph.directions == directions_changed
+                assert len(graph_directions) == (5 - i)
+                logging.info(f'directions_changed={graph_directions}')
             if isinstance(graph, WeightedGraph):
-                assert graph.weights == weights_changed
+                assert len(graph_weights) == (5 - i)
+                logging.info(f'weights_changed={graph_weights}')
+            for nr in range(len(graph.vertices)):
+                assert len(graph_edges[nr]) == (5 - i - 1)
+                if isinstance(graph, DirectedGraph):
+                    assert len(graph_directions[nr]) == (5 - i - 1)
+                if isinstance(graph, WeightedGraph):
+                    assert len(graph_weights[nr]) == (5 - i - 1)
+                if indexes_in_edges[nr] is None:
+                    continue
+                del graph_edges[nr][indexes_in_edges[nr]]
+                assert len(graph_edges[nr]) == (5 - i - 2)
+                if isinstance(graph, DirectedGraph):
+                    del graph_directions[nr][indexes_in_edges[nr]]
+                    assert len(graph_directions[nr]) == (5 - i - 2)
+                if isinstance(graph, WeightedGraph):
+                    del graph_weights[nr][indexes_in_edges[nr]]
+                    assert len(graph_weights[nr]) == (5 - i - 2)
+            del indexes_changed[indexes_changed.index(index)]
+            del graph_edges[indexes_in_edges.index(None)]
+            logging.info(f'edges_changed={graph_edges}')
+            assert len(graph_edges) == (5 - i - 1)
+            if isinstance(graph, DirectedGraph):
+                del graph_directions[indexes_in_edges.index(None)]
+                logging.info(f'directions_changed={graph_directions}')
+                assert len(graph_directions) == (5 - i - 1)
+            if isinstance(graph, WeightedGraph):
+                del graph_weights[indexes_in_edges.index(None)]
+                logging.info(f'weights_changed={graph_weights}')
+                assert len(graph_weights) == (5 - i - 1)
+
+            # now remove vertex from the graph
+            assert len(graph.vertices) == (5 - i)
+            logging.info('edges=' +
+                         str([vertex.edges for vertex in graph.vertices]))
+            if isinstance(graph, DirectedGraph):
+                logging.info(
+                    'directions=' +
+                    str([vertex.directions for vertex in graph.vertices]))
+            if isinstance(graph, WeightedGraph):
+                logging.info('weights=' + str([vertex.weights
+                                               for vertex in graph.vertices]))
+            graph.remove_vertex(index=index)
+            logging.info('edges=' +
+                         str([vertex.edges for vertex in graph.vertices]))
+            if isinstance(graph, DirectedGraph):
+                logging.info(
+                    'directions=' +
+                    str([vertex.directions for vertex in graph.vertices]))
+            if isinstance(graph, WeightedGraph):
+                logging.info('weights=' + str([vertex.weights
+                                               for vertex in graph.vertices]))
+            assert len(graph.vertices) == (5 - i - 1)
+            assert [vertex.edges for vertex in graph.vertices] == graph_edges
+            if isinstance(graph, DirectedGraph):
+                assert [vertex.directions for vertex in graph.vertices] == \
+                    graph_directions
+            if isinstance(graph, WeightedGraph):
+                assert [vertex.weights for vertex in graph.vertices] == \
+                    graph_weights
