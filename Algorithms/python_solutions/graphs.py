@@ -140,42 +140,42 @@ class UndirectedGraph:
         return to_return
 
     def to_adjacency_matrix(self):
+
         matrix_size = len(self.vertices)
         adjacency_matrix = \
             [[0] * matrix_size for _ in range(matrix_size)]
 
-        # TODO rewrite accounting for new self.vertices
         for vertex in self.vertices:
             neighbors = vertex.edges
             for neighbor in neighbors:
-                adjacency_matrix[self.vertices.index(
-                    vertex)][self.vertices.index(neighbor)] = \
-                    self.calculate_element(vertex, neighbor)
+                adjacency_matrix[vertex.index][neighbor] = \
+                    self.calculate_element(vertex.index, neighbor)
 
         return adjacency_matrix
 
     def calculate_element(self, vertex, neighbor):
         return 1 ** (vertex + neighbor)
 
-    def dfs(self, start_vertex, visited=None, end_vertex=None, sort_result=None, to_return=None):
+    def dfs(self, start_vertex, visited=None, end_vertex=None,
+            sort_result=None, to_return=None):
 
         if to_return is None:
             to_return = []
         if visited is None:
             visited = [False] * len(self.vertices)
         visited[start_vertex] = True
-        to_return.append(self.vertices[start_vertex
-            ].data)
+        to_return.append(self.vertices[start_vertex].data)
 
         for neighbor in self.vertices[start_vertex].edges:
             if not visited[neighbor]:
-                self.dfs(neighbor, visited, end_vertex, to_return=to_return, sort_result=sort_result)
+                self.dfs(neighbor, visited, end_vertex,
+                         to_return=to_return, sort_result=sort_result)
             if neighbor is end_vertex:
                 self.detected_cycle = True
 
         if sort_result is not None:
             sort_result.append(start_vertex)
-            
+
         return to_return
 
     def topological_sort(self):
@@ -362,7 +362,8 @@ class DirectedGraph(UndirectedGraph):
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
-        return self.vertices[vertex].directions[neighbor]
+        return self.vertices[vertex].directions[
+            self.vertices[vertex].edges.index(neighbor)]
 
 
 class WeightedGraph(DirectedGraph):
@@ -424,8 +425,10 @@ class WeightedGraph(DirectedGraph):
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
-        return self.vertices[vertex].directions[neighbor] * \
-            self.vertices[vertex].weights[neighbor]
+        return self.vertices[vertex].directions[
+            self.vertices[vertex].edges.index(neighbor)] * \
+            self.vertices[vertex].weights[
+            self.vertices[vertex].edges.index(neighbor)]
 
     def dijkstra(self, start):
 

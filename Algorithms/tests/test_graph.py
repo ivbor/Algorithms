@@ -485,15 +485,18 @@ def test_add_vertices_manipulate_edges_remove_vertices():
                     graph_weights
 
 
+global weights
+weights = [[random.uniform(-100, 100) for _ in range(4)] for _ in range(5)]
+
+
 @pytest.fixture
 def con5():
+    global weights
     edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
              [2, 4, 1, 0], [2, 1, 3, 0]]
     directions = \
         [[1, -1, 0, -1], [1, -1, 0, -1], [-1, 1, 0, 0],
-         [1, -1, 1, 1], [0, 0, -1, 1]]
-    weights = [[random.uniform(-100, 100) for _ in range(4)]
-               for _ in range(5)]
+         [1, -1, 1, 1], [0, 0, 1, -1]]
     undir = UndirectedGraph()
     direc = DirectedGraph()
     weigh = WeightedGraph()
@@ -536,7 +539,7 @@ def bfs_graph():
     graph.vertices[7].edges = [3, 6, 8]
     graph.vertices[8].edges = [4, 7]
     return graph
-      
+
 
 def test_bfs(uncon2, con2, con5, bfs_graph):
     edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
@@ -558,9 +561,10 @@ def test_bfs(uncon2, con2, con5, bfs_graph):
 
 
 def test_dfs(uncon2, con2, con5, bfs_graph):
-      edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
+
+    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
              [2, 4, 1, 0], [2, 1, 3, 0]]
-      for i in range(3):
+    for i in range(3):
         uncon2[i].remove_edge(0, 1)
         assert uncon2[i].vertices[0].edges == []
         assert uncon2[i].vertices[1].edges == []
@@ -572,6 +576,24 @@ def test_dfs(uncon2, con2, con5, bfs_graph):
         assert con2[i].bfs(0) == [3, 4]
         assert con2[i].bfs(1) == [4, 3]
         for j in range(5):
-            assert con5[i].bfs(j) == [j * 10] + [10 * i for i in edges[j]]
-          
-      assert bfs_graph.dfs(0) == [0, 1, 5, 6, 7, 8, 4, 3, 2]
+            assert con5[i].bfs(j) == \
+                [j * 10] + [10 * i for i in edges[j]]
+
+    assert bfs_graph.dfs(0) == [0, 1, 2, 3, 4, 8, 7, 6, 5]
+
+
+def test_adjancency_matrix(con5):
+    global weights
+    for i in range(3):
+        if type(con5[i]) == UndirectedGraph:
+            assert con5[i].to_adjacency_matrix() == [[0, 1, 1, 1, 1],
+                                                     [1, 0, 1, 1, 1],
+                                                     [1, 1, 0, 1, 1],
+                                                     [1, 1, 1, 0, 1],
+                                                     [1, 1, 1, 1, 0]]
+        if type(con5[i]) == DirectedGraph:
+            assert con5[i].to_adjacency_matrix() == [[0, -1, 0, -1, 1],
+                                                     [1, 0, -1, -1, 0],
+                                                     [0, 1, 0, -1, 0],
+                                                     [1, 1, 1, 0, -1],
+                                                     [-1, 0, 0, 1, 0]]
