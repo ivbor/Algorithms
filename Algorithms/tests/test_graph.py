@@ -521,7 +521,24 @@ def con5():
     return graphs
 
 
-def test_bfs(uncon2, con2, con5):
+@pytest.fixture
+def bfs_graph():
+    graph = UndirectedGraph()
+    for i in range(9):
+        graph.add_vertex(index=i, data=i)
+    graph.vertices[0].edges = [1, 2, 3, 4]
+    graph.vertices[1].edges = [0, 2, 5]
+    graph.vertices[2].edges = [0, 1, 3, 6]
+    graph.vertices[3].edges = [0, 2, 4, 7]
+    graph.vertices[4].edges = [0, 3, 8]
+    graph.vertices[5].edges = [1, 6]
+    graph.vertices[6].edges = [2, 5, 7]
+    graph.vertices[7].edges = [3, 6, 8]
+    graph.vertices[8].edges = [4, 7]
+    return graph
+      
+
+def test_bfs(uncon2, con2, con5, bfs_graph):
     edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
              [2, 4, 1, 0], [2, 1, 3, 0]]
     for i in range(3):
@@ -537,3 +554,4 @@ def test_bfs(uncon2, con2, con5):
         assert con2[i].bfs(1) == [4, 3]
         for j in range(5):
             assert con5[i].bfs(j) == [j * 10] + [10 * i for i in edges[j]]
+        assert bfs_graph.bfs(0) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
