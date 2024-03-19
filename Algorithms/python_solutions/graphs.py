@@ -157,11 +157,15 @@ class UndirectedGraph:
     def calculate_element(self, vertex, neighbor):
         return 1 ** (vertex + neighbor)
 
-    def dfs(self, start_vertex, visited, end_vertex=None, sort_result=None):
+    def dfs(self, start_vertex, visited=None, end_vertex=None, sort_result=None):
 
+        to_return = []
+        if visited is None:
+            visited = [False] * len(self.vertices)
         visited[start_vertex] = True
 
         for neighbor in self.vertices[start_vertex].edges:
+            to_return.append(self.vertices[neighbor].data)
             if not visited[neighbor]:
                 self.dfs(neighbor, visited, end_vertex)
             if neighbor is end_vertex:
@@ -169,6 +173,8 @@ class UndirectedGraph:
 
         if sort_result is not None:
             sort_result.append(start_vertex)
+            
+        return to_return
 
     def topological_sort(self):
 
