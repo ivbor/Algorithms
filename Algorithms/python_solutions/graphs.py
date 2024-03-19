@@ -165,7 +165,8 @@ class UndirectedGraph:
         visited[start_vertex] = True
 
         for neighbor in self.vertices[start_vertex].edges:
-            to_return.append(self.vertices[neighbor].data)
+            to_return.append(self.vertices[start_vertex
+            ].data)
             if not visited[neighbor]:
                 self.dfs(neighbor, visited, end_vertex)
             if neighbor is end_vertex:
