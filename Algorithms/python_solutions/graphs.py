@@ -120,18 +120,24 @@ class UndirectedGraph:
 
     def bfs(self, start):
 
-        visited = [False] * len(self.vertices)
+        to_return = []
+        visited = [False] * (
+            max([vertex.index for vertex in self.vertices]) + 1)
         current_row = [start]
         visited[start] = True
 
         while len(current_row) != 0:
+            logging.info(current_row)
             vertex = current_row[0]
+            to_return.append(self.vertices[vertex].data)
+            logging.info(self.vertices[vertex].edges)
             current_row = current_row[1:]
 
             for neighbor in self.vertices[vertex].edges:
                 if not visited[neighbor]:
                     current_row.append(neighbor)
                     visited[neighbor] = True
+        return to_return
 
     def to_adjacency_matrix(self):
         matrix_size = len(self.vertices)

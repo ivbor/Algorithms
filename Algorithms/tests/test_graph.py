@@ -483,3 +483,57 @@ def test_add_vertices_manipulate_edges_remove_vertices():
             if isinstance(graph, WeightedGraph):
                 assert [vertex.weights for vertex in graph.vertices] == \
                     graph_weights
+
+
+@pytest.fixture
+def con5():
+    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
+             [2, 4, 1, 0], [2, 1, 3, 0]]
+    directions = \
+        [[1, -1, 0, -1], [1, -1, 0, -1], [-1, 1, 0, 0],
+         [1, -1, 1, 1], [0, 0, -1, 1]]
+    weights = [[random.uniform(-100, 100) for _ in range(4)]
+               for _ in range(5)]
+    undir = UndirectedGraph()
+    direc = DirectedGraph()
+    weigh = WeightedGraph()
+    graphs = [undir, direc, weigh]
+    for i in range(5):
+        for graph in graphs:
+            graph.add_vertex(data=10*i)
+            assert len(graph.all_vertices()) == i + 1
+            assert graph.vertices[i].data == 10*i
+    for i in range(5):
+        for graph in graphs:
+            graph.vertices[i].edges = copy.deepcopy(edges[i])
+            if isinstance(graph, UndirectedGraph):
+                assert graph.vertices[i].edges == edges[i]
+            if isinstance(graph, DirectedGraph):
+                graph.vertices[i].directions = copy.deepcopy(directions[i])
+                assert graph.vertices[i].edges == edges[i]
+                assert graph.vertices[i].directions == directions[i]
+            if isinstance(graph, WeightedGraph):
+                graph.vertices[i].directions = copy.deepcopy(directions[i])
+                graph.vertices[i].weights = copy.deepcopy(weights[i])
+                assert graph.vertices[i].edges == edges[i]
+                assert graph.vertices[i].directions == directions[i]
+                assert graph.vertices[i].weights == weights[i]
+    return graphs
+
+
+def test_bfs(uncon2, con2, con5):
+    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
+             [2, 4, 1, 0], [2, 1, 3, 0]]
+    for i in range(3):
+        uncon2[i].remove_edge(0, 1)
+        assert uncon2[i].vertices[0].edges == []
+        assert uncon2[i].vertices[1].edges == []
+        assert uncon2[i].bfs(0) == [3]
+        assert uncon2[i].bfs(1) == [4]
+        con2[i].add_edge(0, 1)
+        assert con2[i].vertices[0].edges == [1]
+        assert con2[i].vertices[1].edges == [0]
+        assert con2[i].bfs(0) == [3, 4]
+        assert con2[i].bfs(1) == [4, 3]
+        for j in range(5):
+            assert con5[i].bfs(j) == [j * 10] + [10 * i for i in edges[j]]
