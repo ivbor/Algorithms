@@ -157,18 +157,19 @@ class UndirectedGraph:
     def calculate_element(self, vertex, neighbor):
         return 1 ** (vertex + neighbor)
 
-    def dfs(self, start_vertex, visited=None, end_vertex=None, sort_result=None):
+    def dfs(self, start_vertex, visited=None, end_vertex=None, sort_result=None, to_return=None):
 
-        to_return = []
+        if to_return is None:
+            to_return = []
         if visited is None:
             visited = [False] * len(self.vertices)
         visited[start_vertex] = True
+        to_return.append(self.vertices[start_vertex
+            ].data)
 
         for neighbor in self.vertices[start_vertex].edges:
-            to_return.append(self.vertices[start_vertex
-            ].data)
             if not visited[neighbor]:
-                self.dfs(neighbor, visited, end_vertex)
+                self.dfs(neighbor, visited, end_vertex, to_return=to_return, sort_result=sort_result)
             if neighbor is end_vertex:
                 self.detected_cycle = True
 
