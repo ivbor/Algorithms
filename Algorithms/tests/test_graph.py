@@ -561,10 +561,17 @@ def test_dfs(uncon2, con2, con5, bfs_graph):
       edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
              [2, 4, 1, 0], [2, 1, 3, 0]]
       for i in range(3):
-          assert uncon2[i].dfs(0) == [3]
-          assert uncon2[i].dfs(1) == [4]
-          assert con2[i].dfs(0) == [3, 4]
-          assert con2[i].dfs(1) == [4, 3]
-          for j in range(5):
-            assert con5[i].dfs(j) == [j * 10] + [10 * i for i in edges[j]]
+        uncon2[i].remove_edge(0, 1)
+        assert uncon2[i].vertices[0].edges == []
+        assert uncon2[i].vertices[1].edges == []
+        assert uncon2[i].bfs(0) == [3]
+        assert uncon2[i].bfs(1) == [4]
+        con2[i].add_edge(0, 1)
+        assert con2[i].vertices[0].edges == [1]
+        assert con2[i].vertices[1].edges == [0]
+        assert con2[i].bfs(0) == [3, 4]
+        assert con2[i].bfs(1) == [4, 3]
+        for j in range(5):
+            assert con5[i].bfs(j) == [j * 10] + [10 * i for i in edges[j]]
+          
       assert bfs_graph.dfs(0) == [0, 1, 5, 6, 7, 8, 4, 3, 2]
