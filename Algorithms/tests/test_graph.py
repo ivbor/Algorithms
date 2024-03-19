@@ -525,7 +525,7 @@ def con5():
 def bfs_graph():
     graph = UndirectedGraph()
     for i in range(9):
-        graph.add_vertex(index=i, data=i)
+        graph.add_vertex(data=i)
     graph.vertices[0].edges = [1, 2, 3, 4]
     graph.vertices[1].edges = [0, 2, 5]
     graph.vertices[2].edges = [0, 1, 3, 6]
