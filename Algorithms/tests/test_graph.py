@@ -597,3 +597,8 @@ def test_adjancency_matrix(con5):
                                                      [0, 1, 0, -1, 0],
                                                      [1, 1, 1, 0, -1],
                                                      [-1, 0, 0, 1, 0]]
+        if type(con5[i]) == WeightedGraph:
+            adj_mtx = con5[i].to_adjacency_matrix()
+            for row_nr in range(len(adj_mtx)):
+                for col_nr in range(len(con5[i].vertices) - 1):
+                    assert abs(adj_mtx[row_nr][col_nr] - con5[i].vertices[row_nr].directions[con5[i].vertices[row_nr].edges[col_nr]] * con5[i].vertices[row_nr].weights[con5[i].vertices[row_nr].edges[col_nr]]) <= 10**-6
