@@ -600,8 +600,14 @@ def test_adjancency_matrix(con5):
         if type(con5[i]) == WeightedGraph:
             adj_mtx = con5[i].to_adjacency_matrix()
             for row_nr in range(len(adj_mtx)):
-                for col_nr in range(len(con5[i].vertices) - 1):
+                for col_nr in range(len(con5[i].vertices)):
                     if row_nr != col_nr:
-                        assert abs(adj_mtx[row_nr][col_nr] - con5[i].vertices[row_nr].directions[con5[i].vertices[row_nr].edges[col_nr]] * con5[i].vertices[row_nr].weights[con5[i].vertices[row_nr].edges[col_nr]]) <= 10**-6
+                        index = \
+                            con5[i].vertices[row_nr].edges.index(col_nr)
+                        assert abs(adj_mtx[row_nr][col_nr] -
+                                   con5[i].vertices[row_nr]
+                                   .directions[index] *
+                                   con5[i].vertices[row_nr]
+                                   .weights[index]) <= 10**-6
                     else:
                         assert adj_mtx[row_nr][col_nr] == 0
