@@ -418,13 +418,10 @@ def test_add_vertices_manipulate_edges_remove_vertices():
 
             # simulation of the vertex removal
             assert len(graph_edges) == (5 - i)
-            logging.info(f'edges_changed={graph_edges}')
             if isinstance(graph, DirectedGraph):
                 assert len(graph_directions) == (5 - i)
-                logging.info(f'directions_changed={graph_directions}')
             if isinstance(graph, WeightedGraph):
                 assert len(graph_weights) == (5 - i)
-                logging.info(f'weights_changed={graph_weights}')
             for nr in range(len(graph.vertices)):
                 assert len(graph_edges[nr]) == (5 - i - 1)
                 if isinstance(graph, DirectedGraph):
@@ -443,38 +440,17 @@ def test_add_vertices_manipulate_edges_remove_vertices():
                     assert len(graph_weights[nr]) == (5 - i - 2)
             del indexes_changed[indexes_changed.index(index)]
             del graph_edges[indexes_in_edges.index(None)]
-            logging.info(f'edges_changed={graph_edges}')
             assert len(graph_edges) == (5 - i - 1)
             if isinstance(graph, DirectedGraph):
                 del graph_directions[indexes_in_edges.index(None)]
-                logging.info(f'directions_changed={graph_directions}')
                 assert len(graph_directions) == (5 - i - 1)
             if isinstance(graph, WeightedGraph):
                 del graph_weights[indexes_in_edges.index(None)]
-                logging.info(f'weights_changed={graph_weights}')
                 assert len(graph_weights) == (5 - i - 1)
 
             # now remove vertex from the graph
             assert len(graph.vertices) == (5 - i)
-            logging.info('edges=' +
-                         str([vertex.edges for vertex in graph.vertices]))
-            if isinstance(graph, DirectedGraph):
-                logging.info(
-                    'directions=' +
-                    str([vertex.directions for vertex in graph.vertices]))
-            if isinstance(graph, WeightedGraph):
-                logging.info('weights=' + str([vertex.weights
-                                               for vertex in graph.vertices]))
             graph.remove_vertex(index=index)
-            logging.info('edges=' +
-                         str([vertex.edges for vertex in graph.vertices]))
-            if isinstance(graph, DirectedGraph):
-                logging.info(
-                    'directions=' +
-                    str([vertex.directions for vertex in graph.vertices]))
-            if isinstance(graph, WeightedGraph):
-                logging.info('weights=' + str([vertex.weights
-                                               for vertex in graph.vertices]))
             assert len(graph.vertices) == (5 - i - 1)
             assert [vertex.edges for vertex in graph.vertices] == graph_edges
             if isinstance(graph, DirectedGraph):
@@ -611,3 +587,17 @@ def test_adjancency_matrix(con5):
                                    .weights[index]) <= 10**-6
                     else:
                         assert adj_mtx[row_nr][col_nr] == 0
+
+
+def test_cycles_detector(uncon2, con5):
+
+    for i in range(3):
+        assert uncon2[i].has_cycles is False
+        uncon2[i].cycles_detector(0, 1)
+        assert uncon2[i].has_cycles is False
+        uncon2[i].cycles_detector(1, 0)
+        assert uncon2[i].has_cycles is False
+
+        assert con5[i].has_cycles is False
+        con5[i].cycles_detector(4, 0)
+        assert con5[i].has_cycles is True

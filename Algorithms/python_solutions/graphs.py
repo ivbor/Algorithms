@@ -127,10 +127,8 @@ class UndirectedGraph:
         visited[start] = True
 
         while len(current_row) != 0:
-            logging.info(current_row)
             vertex = current_row[0]
             to_return.append(self.vertices[vertex].data)
-            logging.info(self.vertices[vertex].edges)
             current_row = current_row[1:]
 
             for neighbor in self.vertices[vertex].edges:
@@ -168,10 +166,12 @@ class UndirectedGraph:
 
         for neighbor in self.vertices[start_vertex].edges:
             if not visited[neighbor]:
-                self.dfs(neighbor, visited, end_vertex,
+                self.dfs(neighbor, visited, end_vertex=end_vertex,
                          to_return=to_return, sort_result=sort_result)
-            if neighbor is end_vertex:
-                self.detected_cycle = True
+            if end_vertex is not None:
+                if neighbor == end_vertex:
+                    self.has_cycles = True
+                    return
 
         if sort_result is not None:
             sort_result.append(start_vertex)
@@ -191,17 +191,9 @@ class UndirectedGraph:
 
     def cycles_detector(self, added_vertex, end_vertex):
 
-        visited = [False] * len(self.vertices)
+        self.has_cycles = False
 
-        self.detected_cycle = False
-
-        for end_vertex in self.vertices[added_vertex].edges:
-            if not visited[end_vertex]:
-                self.dfs(added_vertex, visited, end_vertex=end_vertex)
-                if self.detected_cycle:
-                    return True
-
-        return False
+        self.dfs(added_vertex, end_vertex=end_vertex)
 
     def _dijkstra(self, start: int):
 
