@@ -1,4 +1,5 @@
 import logging
+import copy
 
 
 class BaseGraphNode:
@@ -6,7 +7,6 @@ class BaseGraphNode:
     def __init__(self, index, data) -> None:
         self.index = index
         self.data = data
-        self.edges = []
 
     def __str__(self) -> str:
         return str(self.data)
@@ -19,7 +19,7 @@ class UndirectedGraphNode(BaseGraphNode):
 
     def __init__(self, index, data, edges=[]) -> None:
         super().__init__(index, data)
-        self.edges = edges
+        self.edges = copy.deepcopy(edges)
 
 
 class DirectedGraphNode(UndirectedGraphNode):
@@ -29,7 +29,7 @@ class DirectedGraphNode(UndirectedGraphNode):
             raise KeyError('for each edge a direction (-1, 0 or 1) ' +
                            'must be specified')
         super().__init__(index, data, edges)
-        self.directions = directions
+        self.directions = copy.deepcopy(directions)
 
 
 class WeightedGraphNode(DirectedGraphNode):
@@ -217,77 +217,6 @@ class UndirectedGraph:
 
         return distances
 
-    def tarjan_dfs(self, vertex, index, stack, low_link, on_stack, scc):
-
-        # when approach new vertex - assign it the index
-        index[vertex] = self.counter
-        # and the low-link value (the same one)
-        # which will further show node with the lowest index
-        # from which it can be accessible
-        low_link[vertex] = self.counter
-        self.counter += 1
-
-        # add the current node to the current stack
-        # which limits segment currently studied for connectivity
-        stack.append(vertex)
-        # mark the node to be in the current dfs queue
-        on_stack[vertex] = True
-
-        for neighbor in self.vertices[vertex].edges:
-            # if the neighbor has not been visited yet
-            if index[neighbor] == -1:
-                # Recursively call DFS on the neighbor
-                self.tarjan_dfs(
-                    neighbor, index, stack, low_link, on_stack, scc)
-                # after calling dfs to calculate low_link value
-                # for neighbor update low_link value of the current node
-                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
-            # if node is on the stack -
-            # means that it has been visited earlier in the current dfs
-            # but may not be updated as changes may have occurred
-            # to the low_link of its neighbors on the deeper dfs iteration
-            elif on_stack[neighbor]:
-                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
-
-        # now that all nodes which could possibly be visited
-        # on the current dfs have their indexes and we can start
-        # to search for nodes in the current scc segment
-
-        # if for vertex inside current dfs its low_link value equals to
-        # its index - it is the root of the scc segment
-        if low_link[vertex] == index[vertex]:
-            scc_component = []
-            # now - to remove vertices from current stack
-            # until the root vertex is reached
-            # and save them as scc segment
-            while True:
-                last_vertex = stack.pop()
-                on_stack[last_vertex] = False
-                scc_component.append(last_vertex)
-                if last_vertex == vertex:
-                    break
-            scc.append(scc_component)
-
-    def scc(self):
-
-        # counter for indexes
-        self.counter = 0
-        # arrays of indexes and low_link values
-        index = [-1] * len(self.vertices)
-        low_link = [-1] * len(self.vertices)
-        # array showing which of vertices are in the current dfs queue
-        on_stack = [False] * len(self.vertices)
-        # stack limiting segment of the graph being studied for scc
-        stack = []
-        # array with all found scc segments
-        scc = []
-
-        for vertex in range(len(self.vertices)):
-            if index[vertex] == -1:
-                self.tarjan_dfs(vertex, index, stack, low_link, on_stack, scc)
-
-        return scc
-
     def is_cyclic_util(self, vertex, visited, rec_stack):
 
         # Mark the current node as visited
@@ -332,6 +261,93 @@ class UndirectedGraph:
                     return True
 
         return False
+
+    def kosaraju_scc(self):
+        """
+        Finds strongly connected components in the given directed graph using Kosaraju's algorithm.
+
+        Args:
+        - graph (DirectedGraph): The directed graph for which to find SCCs.
+
+        Returns:
+        - List[List[int]]: A list of lists, where each inner list contains the indices of nodes
+                        that form a strongly connected component.
+        """
+        stack = []
+        visited = set()
+
+        # Step 1: Fill vertices in stack according to their finishing times
+        for vertex in self.vertices:
+            if vertex.index not in visited:
+                self.fill_order(vertex.index, visited, stack)
+
+        # Step 2: Reverse graph
+        reversed_graph = self.reverse_graph()
+
+        # Step 3: Process all vertices in order defined by Stack
+        visited.clear()
+        sccs = []
+
+        while stack:
+            vertex = stack.pop()
+            if vertex not in visited:
+                scc = []
+                self.dfs_util(reversed_graph, vertex, visited, scc)
+                sccs.append(scc)
+
+        return sccs
+
+    def fill_order(self, v, visited, stack):
+        """
+        Utility function for DFS and to fill the stack with vertices based on their finishing times.
+
+        Args:
+        - graph (DirectedGraph): The graph to perform DFS on.
+        - v (int): The starting vertex index for DFS.
+        - visited (set): Set of visited vertices.
+        - stack (list): Stack to push vertices according to their finishing times.
+        """
+        visited.add(v)
+
+        # Assuming graph.vertices[v] provides direct access to the DirectedGraphNode by its index
+        for i in self.vertices[v].edges:
+            if i not in visited:
+                self.fill_order(i, visited, stack)
+        stack = stack.append(v)
+
+    def reverse_graph(self):
+        """
+        Reverses the direction of all edges in the graph.
+
+        Args:
+        - graph (DirectedGraph): The graph to reverse.
+
+        Returns:
+        - DirectedGraph: A new graph with reversed edges.
+        """
+        reversed_graph = DirectedGraph()
+        # Assuming a method to initialize an empty DirectedGraph
+        # Logic to reverse the graph based on the user's graph structure
+        # This is a placeholder for the actual implementation
+        return reversed_graph
+
+    def dfs_util(self, v, visited, scc):
+        """
+        A utility function for DFS traversal that tracks the strongly connected component.
+
+        Args:
+        - graph (DirectedGraph): The graph to perform DFS on.
+        - v (int): The starting vertex index for DFS.
+        - visited (set): Set of visited vertices.
+        - scc (list): List to accumulate vertices in the current SCC.
+        """
+        visited.add(v)
+        scc.append(v)
+
+        # Assuming graph.vertices[v] provides direct access to the DirectedGraphNode by its index
+        for i in self.vertices[v].edges:
+            if i not in visited:
+                self.dfs_util(i, visited, scc)
 
 
 class DirectedGraph(UndirectedGraph):
@@ -419,6 +435,84 @@ class DirectedGraph(UndirectedGraph):
                 self.topological_sort_util(i, visited, stack)
 
         return stack
+
+    def tarjan_dfs(self, vertex, index, stack, low_link, on_stack, scc):
+
+        # when approach new vertex - assign it the index
+        index[vertex] = self.counter
+        # and the low-link value (the same one)
+        # which will further show node with the lowest index
+        # from which it can be accessible
+        low_link[vertex] = self.counter
+        self.counter += 1
+
+        # add the current node to the current stack
+        # which limits segment currently studied for connectivity
+        stack.append(vertex)
+        # mark the node to be in the current dfs queue
+        on_stack[vertex] = True
+
+        for neighbor in self.vertices[vertex].edges:
+
+            direction = self.vertices[vertex]\
+                .directions[self.vertices[vertex].edges.index(neighbor)]
+            if direction != 1:
+                continue
+            # if the neighbor has not been visited yet
+            if index[neighbor] == -1:
+                # Recursively call DFS on the neighbor
+                self.tarjan_dfs(
+                    neighbor, index, stack, low_link, on_stack, scc)
+                # after calling dfs to calculate low_link value
+                # for neighbor update low_link value of the current node
+                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
+            # if node is on the stack -
+            # means that it has been visited earlier in the current dfs
+            # but may not be updated as changes may have occurred
+            # to the low_link of its neighbors on the deeper dfs iteration
+            elif on_stack[neighbor]:
+                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
+
+        # now that all nodes which could possibly be visited
+        # on the current dfs have their indexes
+        # and we can start to search for nodes in the current scc segment
+
+        # if for vertex inside current dfs its low_link value equals to
+        # its index - it is the root of the scc segment
+        if low_link[vertex] == index[vertex]:
+            scc_component = []
+            # now - to remove vertices from current stack
+            # until the root vertex is reached
+            # and save them as scc segment
+            while True:
+                last_vertex = stack.pop()
+                on_stack[last_vertex] = False
+                scc_component.append(last_vertex)
+                if last_vertex == vertex:
+                    break
+            scc.append(scc_component)
+
+        logging.info(str(low_link) + ' ' + str(scc))
+
+    def scc(self):
+
+        # counter for indexes
+        self.counter = 0
+        # arrays of indexes and low_link values
+        index = [-1] * len(self.vertices)
+        low_link = [-1] * len(self.vertices)
+        # array showing which of vertices are in the current dfs queue
+        on_stack = [False] * len(self.vertices)
+        # stack limiting segment of the graph being studied for scc
+        stack = []
+        # array with all found scc segments
+        scc = []
+
+        for vertex in range(len(self.vertices)):
+            if index[vertex] == -1:
+                self.tarjan_dfs(vertex, index, stack, low_link, on_stack, scc)
+
+        return scc
 
 
 class WeightedGraph(DirectedGraph):

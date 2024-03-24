@@ -668,3 +668,71 @@ def test_topo_sort(bfs_graph):
     bfs_graph.vertices[2].edges = [3]
     bfs_graph.vertices[2].directions = [-1]
     assert bfs_graph.topological_sort() == [0, 1, 5, 6, 7, 8, 4, 3, 2]
+
+
+def test_single_node():
+    graph = DirectedGraph()
+    graph.add_vertex(data=0)
+    assert graph.scc() == [[0]]
+
+
+def test_two_nodes_no_edge():
+    graph = DirectedGraph()
+    graph.add_vertex(data=0)
+    graph.add_vertex(data=1)
+    assert graph.scc() == [[0], [1]]
+
+
+def test_simple_cycle():
+    graph = DirectedGraph()
+    graph.add_vertex(data=0)
+    graph.add_vertex(data=1)
+    graph.add_vertex(data=2)
+    graph.add_edge(0, 1, 1)
+    graph.add_edge(1, 2, 1)
+    graph.add_edge(2, 0, 1)
+    assert sorted([sorted(scc) for scc in graph.scc()]) == [[0, 1, 2]]
+
+
+def test_multiple_scc():
+    graph = DirectedGraph()
+    graph.add_vertex(0)
+    graph.add_vertex(1)
+    graph.add_vertex(2)
+    graph.add_vertex(3)
+    graph.add_edge(0, 1, 1)
+    graph.add_edge(1, 2, 1)
+    graph.add_edge(2, 0, 1)
+    graph.add_edge(2, 3, -1)  # This creates two SCCs: {0,1,2} and {3}
+    assert sorted([sorted(scc) for scc in graph.scc()],
+                  key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
+
+
+def test_complex_graph():
+    graph = DirectedGraph()
+    # Add a complex series of nodes and edges that form multiple SCCs
+    # and possibly some single-node SCCs
+    # Example setup:
+    graph.add_vertex(0)
+    graph.add_vertex(1)
+    graph.add_vertex(2)
+    graph.add_vertex(3)
+    graph.add_vertex(4)
+    graph.add_vertex(5)
+    graph.add_edge(0, 1, 1)
+    graph.add_edge(1, 2, 1)
+    graph.add_edge(2, 0, 1)
+    graph.add_edge(2, 3, 1)
+    graph.add_edge(3, 4, 1)
+    graph.add_edge(4, 5, 1)
+    graph.add_edge(5, 3, 1)
+    # This creates two SCCs: {0,1,2} and {3,4},
+    # assuming no connections between these groups
+    assert sorted([sorted(scc) for scc in graph.scc()],
+                  key=lambda scc: scc[0]) == [[0, 1, 2], [3, 4, 5]]
+
+
+def test_edge_cases():
+    graph = DirectedGraph()
+    # Test an edge case, such as a graph with no vertices
+    assert graph.scc() == []
