@@ -1,18 +1,25 @@
 import logging
 
 
-class UndirectedGraphNode:
+class BaseGraphNode:
 
-    def __init__(self, index, data, edges=[]) -> None:
+    def __init__(self, index, data) -> None:
         self.index = index
         self.data = data
-        self.edges = edges
+        self.edges = []
 
     def __str__(self) -> str:
         return str(self.data)
 
     def __repr__(self) -> str:
         return str(self)
+
+
+class UndirectedGraphNode(BaseGraphNode):
+
+    def __init__(self, index, data, edges=[]) -> None:
+        super().__init__(index, data)
+        self.edges = edges
 
 
 class DirectedGraphNode(UndirectedGraphNode):
@@ -27,13 +34,11 @@ class DirectedGraphNode(UndirectedGraphNode):
 
 class WeightedGraphNode(DirectedGraphNode):
 
-    def __init__(
-            self, index, data, edges=[],
-            directions=[],
-            weights=[]) -> None:
-        super().__init__(index, data, edges, directions)
+    def __init__(self, index, data,
+                 edges=[], directions=[], weights=[]) -> None:
         if len(edges) != len(weights):
             raise KeyError('for each edge a weight must be specified')
+        super().__init__(index, data, edges, directions)
         self.weights = weights
 
 
@@ -62,7 +67,13 @@ class UndirectedGraph:
         if len(self.vertices) == 0:
             index = len(self.vertices)
         else:
-            index = max([vertex.index for vertex in self.vertices]) + 1
+            present_indexes = [vertex.index for vertex in self.vertices]
+            missing_vals = set(present_indexes).difference(
+                            set([i for i in range(max(present_indexes) + 1)]))
+            if len(missing_vals) != 0:
+                index = min(missing_vals)
+            else:
+                index = max(present_indexes) + 1
         new_node = self.node_type(index, *args, **kwargs)
         self.vertices.append(new_node)
         edges = \
@@ -154,46 +165,21 @@ class UndirectedGraph:
     def calculate_element(self, vertex, neighbor):
         return 1 ** (vertex + neighbor)
 
-    def dfs(self, start_vertex, visited=None, end_vertex=None,
-            sort_result=None, to_return=None):
+    def dfs(self, start_vertex, visited=None, to_return=None):
 
         if to_return is None:
             to_return = []
+        to_return.append(self.vertices[start_vertex].data)
+
         if visited is None:
             visited = [False] * len(self.vertices)
         visited[start_vertex] = True
-        to_return.append(self.vertices[start_vertex].data)
 
         for neighbor in self.vertices[start_vertex].edges:
             if not visited[neighbor]:
-                self.dfs(neighbor, visited, end_vertex=end_vertex,
-                         to_return=to_return, sort_result=sort_result)
-            if end_vertex is not None:
-                if neighbor == end_vertex:
-                    self.has_cycles = True
-                    return
-
-        if sort_result is not None:
-            sort_result.append(start_vertex)
+                self.dfs(neighbor, visited, to_return=to_return)
 
         return to_return
-
-    def topological_sort(self):
-
-        visited = [False] * len(self.vertices)
-        result = []
-
-        for vertex in range(len(self.vertices)):
-            if not visited[vertex]:
-                self.dfs(vertex, visited, sort_result=result)
-
-        return result[::-1]
-
-    def cycles_detector(self, added_vertex, end_vertex):
-
-        self.has_cycles = False
-
-        self.dfs(added_vertex, end_vertex=end_vertex)
 
     def _dijkstra(self, start: int):
 
@@ -302,6 +288,51 @@ class UndirectedGraph:
 
         return scc
 
+    def is_cyclic_util(self, vertex, visited, rec_stack):
+
+        # Mark the current node as visited
+        visited[vertex] = True
+        rec_stack[vertex] = True
+
+        # Recur for all the vertices adjacent to this vertex
+        for i in self.vertices[vertex].edges:
+
+            if hasattr(self.vertices[vertex], 'directions'):
+                # Check if the edge direction is forward;
+                # if not, skip this iteration
+                direction = self.vertices[vertex]\
+                    .directions[self.vertices[vertex].edges.index(i)]
+                if direction != 1:
+                    continue
+
+            # If the node is not visited then recurse on it
+            if not visited[i]:
+                if self.is_cyclic_util(i, visited, rec_stack):
+                    return True
+
+            # If an adjacent vertex is visited and
+            # not parent of current vertex, then there is a cycle
+            elif rec_stack[i]:
+                return True
+
+        rec_stack[vertex] = False
+        return False
+
+    def is_cyclic(self):
+
+        # Mark all the vertices as not visited
+        visited = [False] * len(self.vertices)
+        rec_stack = [False] * len(self.vertices)
+
+        # Call the recursive helper function
+        # to detect cycle in different DFS trees
+        for i in range(len(self.vertices)):
+            if not visited[i]:  # Don't recur for u if it is already visited
+                if self.is_cyclic_util(i, visited, rec_stack):
+                    return True
+
+        return False
+
 
 class DirectedGraph(UndirectedGraph):
 
@@ -356,6 +387,38 @@ class DirectedGraph(UndirectedGraph):
     def calculate_element(self, vertex, neighbor):
         return self.vertices[vertex].directions[
             self.vertices[vertex].edges.index(neighbor)]
+
+    def topological_sort_util(self, vertex, visited, stack):
+
+        visited[vertex] = True
+
+        # Recur for all the vertices adjacent to this vertex
+        for i in self.vertices[vertex].edges:
+            # Check if the edge direction allows moving from v to i
+            index = self.vertices[vertex].edges.index(i)
+            if not visited[i] and \
+                    self.vertices[vertex].directions[index] == 1:
+                self.topological_sort_util(i, visited, stack)
+
+        # Push current vertex to stack which stores the result
+        stack.insert(0, vertex)
+
+    def topological_sort(self):
+
+        # Step 1: Check for cycles
+        if self.is_cyclic():
+            raise RecursionError(
+                "The graph has a cycle. Topological sort not possible.")
+
+        # Step 2: Perform Topological Sort
+        visited = [False] * len(self.vertices)
+        stack = []
+
+        for i in range(len(self.vertices)):
+            if not visited[i]:
+                self.topological_sort_util(i, visited, stack)
+
+        return stack
 
 
 class WeightedGraph(DirectedGraph):

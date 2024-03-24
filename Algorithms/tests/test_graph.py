@@ -502,7 +502,14 @@ def con5():
 
 @pytest.fixture
 def bfs_graph():
-    graph = UndirectedGraph()
+    # 0 - 1-5
+    # \\\ | |
+    #    -2-6
+    #  \\ | |
+    #    -3-7
+    #   \ | |
+    #    -4-8
+    graph = WeightedGraph()
     for i in range(9):
         graph.add_vertex(data=i)
     graph.vertices[0].edges = [1, 2, 3, 4]
@@ -589,15 +596,75 @@ def test_adjancency_matrix(con5):
                         assert adj_mtx[row_nr][col_nr] == 0
 
 
-def test_cycles_detector(uncon2, con5):
+def test_cycles_detector(uncon2, con5, bfs_graph):
 
     for i in range(3):
-        assert uncon2[i].has_cycles is False
-        uncon2[i].cycles_detector(0, 1)
-        assert uncon2[i].has_cycles is False
-        uncon2[i].cycles_detector(1, 0)
-        assert uncon2[i].has_cycles is False
+        assert uncon2[i].is_cyclic() is False
+        assert con5[i].is_cyclic() is True
 
-        assert con5[i].has_cycles is False
-        con5[i].cycles_detector(4, 0)
-        assert con5[i].has_cycles is True
+    bfs_graph.vertices[0].edges = [1]
+    bfs_graph.vertices[0].directions = [1]
+
+    bfs_graph.vertices[1].directions = [-1, -1, 1]
+
+    bfs_graph.vertices[2].edges = [3]
+    bfs_graph.vertices[2].directions = [-1]
+
+    bfs_graph.vertices[3].edges = [2, 4]
+    bfs_graph.vertices[3].directions = [1, -1]
+
+    bfs_graph.vertices[4].edges = [3, 8]
+    bfs_graph.vertices[4].directions = [1, -1]
+
+    bfs_graph.vertices[5].directions = [-1, 1]
+
+    bfs_graph.vertices[6].edges = [5, 7]
+    bfs_graph.vertices[6].directions = [-1, 1]
+
+    bfs_graph.vertices[7].edges = [6, 8]
+    bfs_graph.vertices[7].directions = [-1, 1]
+
+    bfs_graph.vertices[8].directions = [1, -1]
+    assert bfs_graph.is_cyclic() is False
+
+
+def test_topo_sort(bfs_graph):
+
+    # error for cycle
+    # 0 > 1>5
+    #     ^ |
+    #     2 6
+    #     ^ |
+    #     3 7
+    #     ^ |
+    #     4<8
+
+    bfs_graph.vertices[0].edges = [1]
+    bfs_graph.vertices[0].directions = [1]
+
+    bfs_graph.vertices[1].directions = [-1, -1, 1]
+
+    bfs_graph.vertices[2].edges = [1, 3]
+    bfs_graph.vertices[2].directions = [1, -1]
+
+    bfs_graph.vertices[3].edges = [2, 4]
+    bfs_graph.vertices[3].directions = [1, -1]
+
+    bfs_graph.vertices[4].edges = [3, 8]
+    bfs_graph.vertices[4].directions = [1, -1]
+
+    bfs_graph.vertices[5].directions = [-1, 1]
+
+    bfs_graph.vertices[6].edges = [5, 7]
+    bfs_graph.vertices[6].directions = [-1, 1]
+
+    bfs_graph.vertices[7].edges = [6, 8]
+    bfs_graph.vertices[7].directions = [-1, 1]
+
+    bfs_graph.vertices[8].directions = [1, -1]
+    with pytest.raises(RecursionError):
+        bfs_graph.topological_sort()
+
+    bfs_graph.vertices[2].edges = [3]
+    bfs_graph.vertices[2].directions = [-1]
+    assert bfs_graph.topological_sort() == [0, 1, 5, 6, 7, 8, 4, 3, 2]
