@@ -327,10 +327,14 @@ class UndirectedGraph:
         """
         reversed_graph = DirectedGraph()
         for vertex in range(len(self.vertices)):
+          
+            reversed_graph.add_vertex(vertex.data)
 
+        for vertex in range(len(self.vertices)):
             for neighbor in self.vertices[vertex].edges:
 
-                reversed_graph.add_edge(neighbor, vertex)  # Reversing the edge direction
+                index = self.vertices[vertex].edges.index(neighbor)
+                reversed_graph.add_edge(neighbor, vertex, self.vertices[vertex].directions[index])  # Reversing the edge direction
 
         return reversed_graph
 
