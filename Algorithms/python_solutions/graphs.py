@@ -326,12 +326,15 @@ class UndirectedGraph:
         - DirectedGraph: A new graph with reversed edges.
         """
         reversed_graph = DirectedGraph()
-        # Assuming a method to initialize an empty DirectedGraph
-        # Logic to reverse the graph based on the user's graph structure
-        # This is a placeholder for the actual implementation
+        for vertex in range(len(self.vertices)):
+
+            for neighbor in self.vertices[vertex].edges:
+
+                reversed_graph.add_edge(neighbor, vertex)  # Reversing the edge direction
+
         return reversed_graph
 
-    def dfs_util(self, v, visited, scc):
+    def dfs_util(self, reversed_graph, v, visited, scc):
         """
         A utility function for DFS traversal that tracks the strongly connected component.
 
@@ -347,7 +350,7 @@ class UndirectedGraph:
         # Assuming graph.vertices[v] provides direct access to the DirectedGraphNode by its index
         for i in self.vertices[v].edges:
             if i not in visited:
-                self.dfs_util(i, visited, scc)
+                self.dfs_util(reversed_graph, i, visited, scc)
 
 
 class DirectedGraph(UndirectedGraph):
