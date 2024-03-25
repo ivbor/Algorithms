@@ -682,7 +682,7 @@ def test_two_nodes_no_edge():
     graph.add_vertex(data=0)
     graph.add_vertex(data=1)
     assert graph.scc() == [[0], [1]]
-    assert graph.kosaraju_scc() == [[0], [1]]
+    assert sorted([sorted(scc) for scc in graph.kosaraju_scc()]) == [[0], [1]]
 
 
 def test_simple_cycle():
