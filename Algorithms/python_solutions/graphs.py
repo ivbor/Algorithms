@@ -328,7 +328,7 @@ class UndirectedGraph:
         reversed_graph = DirectedGraph()
         for vertex in range(len(self.vertices)):
           
-            reversed_graph.add_vertex(vertex.data)
+            reversed_graph.add_vertex(self.vertices[vertex].data)
 
         for vertex in range(len(self.vertices)):
             for neighbor in self.vertices[vertex].edges:
