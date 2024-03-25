@@ -674,6 +674,7 @@ def test_single_node():
     graph = DirectedGraph()
     graph.add_vertex(data=0)
     assert graph.scc() == [[0]]
+    assert graph.kosaraju_scc() == [[0]]
 
 
 def test_two_nodes_no_edge():
@@ -681,6 +682,7 @@ def test_two_nodes_no_edge():
     graph.add_vertex(data=0)
     graph.add_vertex(data=1)
     assert graph.scc() == [[0], [1]]
+    assert graph.kosaraju_scc() == [[0], [1]]
 
 
 def test_simple_cycle():
@@ -692,6 +694,7 @@ def test_simple_cycle():
     graph.add_edge(1, 2, 1)
     graph.add_edge(2, 0, 1)
     assert sorted([sorted(scc) for scc in graph.scc()]) == [[0, 1, 2]]
+    assert sorted([sorted(scc) for scc in graph.kosaraju_scc()]) == [[0, 1, 2]]
 
 
 def test_multiple_scc():
@@ -705,6 +708,8 @@ def test_multiple_scc():
     graph.add_edge(2, 0, 1)
     graph.add_edge(2, 3, -1)  # This creates two SCCs: {0,1,2} and {3}
     assert sorted([sorted(scc) for scc in graph.scc()],
+                  key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
+    assert sorted([sorted(scc) for scc in graph.kosaraju_scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
 
 
@@ -730,9 +735,12 @@ def test_complex_graph():
     # assuming no connections between these groups
     assert sorted([sorted(scc) for scc in graph.scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3, 4, 5]]
+    assert sorted([sorted(scc) for scc in graph.kosaraju_scc()],
+                  key=lambda scc: scc[0]) == [[0, 1, 2], [3, 4, 5]]
 
 
 def test_edge_cases():
     graph = DirectedGraph()
     # Test an edge case, such as a graph with no vertices
     assert graph.scc() == []
+    assert graph.kosaraju_scc() == []
