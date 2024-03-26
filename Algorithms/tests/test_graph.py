@@ -17,7 +17,7 @@ def test_can_create_everything():
         graph_instance = graph()
         assert isinstance(node_instance, node)
         assert isinstance(graph_instance, graph)
-        assert graph_instance.vertices == []
+        assert graph_instance.vertices == {}
         assert graph_instance.has_cycles is False
         assert node_instance.data is None
 
@@ -525,44 +525,45 @@ def bfs_graph():
 
 
 def test_bfs(uncon2, con2, con5, bfs_graph):
-    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
-             [2, 4, 1, 0], [2, 1, 3, 0]]
     for i in range(3):
         uncon2[i].remove_edge(0, 1)
         assert uncon2[i].vertices[0].edges == []
         assert uncon2[i].vertices[1].edges == []
-        assert uncon2[i].bfs(0) == [3]
-        assert uncon2[i].bfs(1) == [4]
+        assert uncon2[i].bfs(0, 0) == [0]
+        with pytest.raises(IndexError):
+            uncon2[i].bfs(0, 1)
         con2[i].add_edge(0, 1)
         assert con2[i].vertices[0].edges == [1]
         assert con2[i].vertices[1].edges == [0]
-        assert con2[i].bfs(0) == [3, 4]
-        assert con2[i].bfs(1) == [4, 3]
+        assert con2[i].bfs(0, 0) == [0]
+        assert con2[i].bfs(0, 1) == [0, 1]
         for j in range(5):
-            assert con5[i].bfs(j) == [j * 10] + [10 * i for i in edges[j]]
-        assert bfs_graph.bfs(0) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
-
-
-def test_dfs(uncon2, con2, con5, bfs_graph):
-
-    edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
-             [2, 4, 1, 0], [2, 1, 3, 0]]
-    for i in range(3):
-        uncon2[i].remove_edge(0, 1)
-        assert uncon2[i].vertices[0].edges == []
-        assert uncon2[i].vertices[1].edges == []
-        assert uncon2[i].bfs(0) == [3]
-        assert uncon2[i].bfs(1) == [4]
-        con2[i].add_edge(0, 1)
-        assert con2[i].vertices[0].edges == [1]
-        assert con2[i].vertices[1].edges == [0]
-        assert con2[i].bfs(0) == [3, 4]
-        assert con2[i].bfs(1) == [4, 3]
-        for j in range(5):
-            assert con5[i].bfs(j) == \
-                [j * 10] + [10 * i for i in edges[j]]
-
-    assert bfs_graph.dfs(0) == [0, 1, 2, 3, 4, 8, 7, 6, 5]
+            target = random.choice([0, 1, 2, 3, 4])
+            while target == j:
+                target = random.choice([0, 1, 2, 3, 4])
+            assert con5[i].bfs(j, target) == [j, target]
+        bfs_graph.vertices[0].edges = [1, 2, 3, 4]
+        bfs_graph.vertices[0].directions = [1, 1, 1, 1]
+        bfs_graph.vertices[1].directions = [-1, 1, 1]
+        bfs_graph.vertices[2].directions = [-1, -1, 1, -1]
+        bfs_graph.vertices[3].directions = [-1, -1, 1, -1]
+        bfs_graph.vertices[4].directions = [-1, -1, -1]
+        bfs_graph.vertices[5].directions = [-1, 1]
+        bfs_graph.vertices[6].directions = [1, -1, 1]
+        bfs_graph.vertices[7].directions = [1, -1, 1]
+        bfs_graph.vertices[8].directions = [1, -1]
+        assert bfs_graph.bfs(0, 4) == [0, 4]
+        bfs_graph.vertices[0].directions = [1]
+        bfs_graph.vertices[0].edges = [1]
+        bfs_graph.vertices[1].edges = [2, 5]
+        bfs_graph.vertices[2].edges = [1, 3, 6]
+        bfs_graph.vertices[3].edges = [2, 4, 7]
+        bfs_graph.vertices[4].edges = [3, 8]
+        bfs_graph.vertices[1].directions = [1, 1]
+        bfs_graph.vertices[2].directions = [-1, 1, -1]
+        bfs_graph.vertices[3].directions = [-1, 1, -1]
+        bfs_graph.vertices[4].directions = [-1, -1]
+        assert bfs_graph.bfs(0, 4) == [0, 1, 2, 3, 4]
 
 
 def test_adjancency_matrix(con5):
@@ -706,7 +707,7 @@ def test_multiple_scc():
     graph.add_edge(0, 1, 1)
     graph.add_edge(1, 2, 1)
     graph.add_edge(2, 0, 1)
-    graph.add_edge(2, 3, -1)  # This creates two SCCs: {0,1,2} and {3}
+    graph.add_edge(3, 2, 1)  # This creates two SCCs: {0,1,2} and {3}
     assert sorted([sorted(scc) for scc in graph.scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
     assert sorted([sorted(scc) for scc in graph.kosaraju_scc()],
@@ -715,9 +716,6 @@ def test_multiple_scc():
 
 def test_complex_graph():
     graph = DirectedGraph()
-    # Add a complex series of nodes and edges that form multiple SCCs
-    # and possibly some single-node SCCs
-    # Example setup:
     graph.add_vertex(0)
     graph.add_vertex(1)
     graph.add_vertex(2)
@@ -744,3 +742,21 @@ def test_edge_cases():
     # Test an edge case, such as a graph with no vertices
     assert graph.scc() == []
     assert graph.kosaraju_scc() == []
+
+
+def test_dijkstra():
+    graph = UndirectedGraph()
+    graph.add_vertex(0)
+    graph.add_vertex(1)
+    graph.add_vertex(2)
+    graph.add_vertex(3)
+    graph.add_vertex(4)
+    graph.add_vertex(5)
+    graph.add_edge(0, 1)
+    graph.add_edge(1, 2)
+    graph.add_edge(2, 0)
+    graph.add_edge(2, 3)
+    graph.add_edge(3, 4)
+    graph.add_edge(4, 5)
+    graph.add_edge(5, 3)
+    assert graph._dijkstra(0) == [0, 1, 1, 2, 3, 3]

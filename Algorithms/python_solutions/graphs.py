@@ -1,5 +1,6 @@
 import logging
 import copy
+import heapq
 
 
 class BaseGraphNode:
@@ -39,18 +40,28 @@ class WeightedGraphNode(DirectedGraphNode):
         if len(edges) != len(weights):
             raise KeyError('for each edge a weight must be specified')
         super().__init__(index, data, edges, directions)
-        self.weights = weights
+        self.weights = copy.deepcopy(weights)
 
 
-class VerticesList(list):
+class VerticesList(dict):
+
+    def __init__(self):
+        super().__init__()
+
+    def append(self, __object) -> None:
+        self[len(self)] = __object
+
     def __getitem__(self, index):
-        return list.__getitem__(self, self.find_index(index))
+        if index not in self.keys():
+            raise IndexError(f'there is no index {index} in the list')
+        return dict.get(self, index)
 
-    def find_index(self, index):
-        return [vertex.index for vertex in self].index(index)
+    def __iter__(self):
+        for elt in self.values():
+            yield elt
 
     def __delitem__(self, index):
-        super().__delitem__(self.find_index(index))
+        dict.__delitem__(self, index)
 
 
 class UndirectedGraph:
@@ -67,7 +78,8 @@ class UndirectedGraph:
         if len(self.vertices) == 0:
             index = len(self.vertices)
         else:
-            present_indexes = [vertex.index for vertex in self.vertices]
+            present_indexes = \
+                [i for i in self.vertices.keys()]
             missing_vals = set(present_indexes).difference(
                             set([i for i in range(max(present_indexes) + 1)]))
             if len(missing_vals) != 0:
@@ -75,7 +87,7 @@ class UndirectedGraph:
             else:
                 index = max(present_indexes) + 1
         new_node = self.node_type(index, *args, **kwargs)
-        self.vertices.append(new_node)
+        self.vertices[index] = new_node
         edges = \
             self._find_arg([], {1: 'edges'}, *args, **kwargs)
         for nr, edge in enumerate(edges):
@@ -103,8 +115,9 @@ class UndirectedGraph:
 
     def _find_index(self, **kwargs):
         if 'data' in kwargs.keys():
-            index = [vertex.index for vertex in self.vertices
-                     if vertex.data == kwargs['data']][0]
+            index = \
+                [vertex.index for vertex in self.vertices
+                 if vertex.data == kwargs['data']][0]
         elif 'index' in kwargs.keys():
             index = kwargs['index']
         else:
@@ -129,24 +142,34 @@ class UndirectedGraph:
         if u in self.vertices[v].edges:
             self.vertices[v].edges.remove(u)
 
-    def bfs(self, start):
+    def bfs(self, start, target=None):
 
         to_return = []
         visited = [False] * (
+            max([vertex.index for vertex in self.vertices]) + 1)
+        predecessor = [None] * (
             max([vertex.index for vertex in self.vertices]) + 1)
         current_row = [start]
         visited[start] = True
 
         while len(current_row) != 0:
             vertex = current_row[0]
-            to_return.append(self.vertices[vertex].data)
             current_row = current_row[1:]
-
+            if target is not None:
+                if vertex == target:
+                    current = target
+                    while current is not None:
+                        to_return.append(current)
+                        current = predecessor[current]
+                    return to_return[::-1]
             for neighbor in self.vertices[vertex].edges:
                 if not visited[neighbor]:
                     current_row.append(neighbor)
                     visited[neighbor] = True
-        return to_return
+                    predecessor[neighbor] = vertex
+        if target is not None:
+            raise IndexError(
+                f'there is no path between {start} and {target}')
 
     def to_adjacency_matrix(self):
 
@@ -163,23 +186,7 @@ class UndirectedGraph:
         return adjacency_matrix
 
     def calculate_element(self, vertex, neighbor):
-        return 1 ** (vertex + neighbor)
-
-    def dfs(self, start_vertex, visited=None, to_return=None):
-
-        if to_return is None:
-            to_return = []
-        to_return.append(self.vertices[start_vertex].data)
-
-        if visited is None:
-            visited = [False] * len(self.vertices)
-        visited[start_vertex] = True
-
-        for neighbor in self.vertices[start_vertex].edges:
-            if not visited[neighbor]:
-                self.dfs(neighbor, visited, to_return=to_return)
-
-        return to_return
+        return 1
 
     def _dijkstra(self, start: int):
 
@@ -188,34 +195,36 @@ class UndirectedGraph:
             [float('inf') for _ in self.vertices]
         # Set distance to start node as 0
         distances[start] = 0
-        # Priority queue to store nodes to visit,
-        # with their current distances
+        # Priority queue to store nodes to visit
+        priority_queue = [(0, start)]
         current_distances = {start: 0}
 
-        while current_distances:
+        while priority_queue:
+            logging.info('1')
             # Pop the node with the smallest distance from the priority queue
-            current_node = \
-                list(current_distances.keys())[list(
-                    current_distances.values()).index(
-                        min(current_distances.values()))]
-            current_distance = current_distances.pop(current_node)
-
+            current_distance, current_node = heapq.heappop(priority_queue)
+            logging.info(len(priority_queue))
             # If the current distance is greater than the recorded distance,
             # skip
             if current_distance > distances[current_node]:
+                logging.info('3')
                 continue
 
             # Visit each neighbor of the current node
             for neighbor in self.vertices[current_node].edges:
+                logging.info('4')
                 distance = current_distance + \
                     self.calculate_element(current_node, neighbor)
                 # If the new distance is shorter,
                 # update it and add to the priority queue
                 if distance < distances[neighbor]:
+                    logging.info('5')
                     distances[neighbor] = distance
-                    current_distances[neighbor] = distance
+                    current_distances[neighbor] = current_node
+                    heapq.heappush(priority_queue, (distance, neighbor))
+                logging.info('6')
 
-        return distances
+        return distances  # , current_distances
 
     def is_cyclic_util(self, vertex, visited, rec_stack):
 
@@ -261,100 +270,6 @@ class UndirectedGraph:
                     return True
 
         return False
-
-    def kosaraju_scc(self):
-        """
-        Finds strongly connected components in the given directed graph using Kosaraju's algorithm.
-
-        Args:
-        - graph (DirectedGraph): The directed graph for which to find SCCs.
-
-        Returns:
-        - List[List[int]]: A list of lists, where each inner list contains the indices of nodes
-                        that form a strongly connected component.
-        """
-        stack = []
-        visited = set()
-
-        # Step 1: Fill vertices in stack according to their finishing times
-        for vertex in self.vertices:
-            if vertex.index not in visited:
-                self.fill_order(vertex.index, visited, stack)
-
-        # Step 2: Reverse graph
-        reversed_graph = self.reverse_graph()
-
-        # Step 3: Process all vertices in order defined by Stack
-        visited.clear()
-        sccs = []
-
-        while stack:
-            vertex = stack.pop()
-            if vertex not in visited:
-                scc = []
-                self.dfs_util(reversed_graph, vertex, visited, scc)
-                sccs.append(scc)
-
-        return sccs
-
-    def fill_order(self, v, visited, stack):
-        """
-        Utility function for DFS and to fill the stack with vertices based on their finishing times.
-
-        Args:
-        - graph (DirectedGraph): The graph to perform DFS on.
-        - v (int): The starting vertex index for DFS.
-        - visited (set): Set of visited vertices.
-        - stack (list): Stack to push vertices according to their finishing times.
-        """
-        visited.add(v)
-
-        # Assuming graph.vertices[v] provides direct access to the DirectedGraphNode by its index
-        for i in self.vertices[v].edges:
-            if i not in visited:
-                self.fill_order(i, visited, stack)
-        stack = stack.append(v)
-
-    def reverse_graph(self):
-        """
-        Reverses the direction of all edges in the graph.
-
-        Args:
-        - graph (DirectedGraph): The graph to reverse.
-
-        Returns:
-        - DirectedGraph: A new graph with reversed edges.
-        """
-        reversed_graph = DirectedGraph()
-        for vertex in range(len(self.vertices)):
-          
-            reversed_graph.add_vertex(self.vertices[vertex].data)
-
-        for vertex in range(len(self.vertices)):
-            for neighbor in self.vertices[vertex].edges:
-
-                index = self.vertices[vertex].edges.index(neighbor)
-                reversed_graph.add_edge(neighbor, vertex, self.vertices[vertex].directions[index])  # Reversing the edge direction
-
-        return reversed_graph
-
-    def dfs_util(self, reversed_graph, v, visited, scc):
-        """
-        A utility function for DFS traversal that tracks the strongly connected component.
-
-        Args:
-        - graph (DirectedGraph): The graph to perform DFS on.
-        - v (int): The starting vertex index for DFS.
-        - visited (set): Set of visited vertices.
-        - scc (list): List to accumulate vertices in the current SCC.
-        """
-        visited.add(v)
-        scc.append(v)
-
-        # Assuming graph.vertices[v] provides direct access to the DirectedGraphNode by its index
-        for i in self.vertices[v].edges:
-            if i not in visited:
-                self.dfs_util(reversed_graph, i, visited, scc)
 
 
 class DirectedGraph(UndirectedGraph):
@@ -499,8 +414,6 @@ class DirectedGraph(UndirectedGraph):
                     break
             scc.append(scc_component)
 
-        logging.info(str(low_link) + ' ' + str(scc))
-
     def scc(self):
 
         # counter for indexes
@@ -520,6 +433,114 @@ class DirectedGraph(UndirectedGraph):
                 self.tarjan_dfs(vertex, index, stack, low_link, on_stack, scc)
 
         return scc
+
+    def kosaraju_scc(self):
+        """
+        Finds strongly connected components in the given directed graph
+        using Kosaraju's algorithm.
+
+        Args:
+        - graph (DirectedGraph): The directed graph for which to find SCCs.
+
+        Returns:
+        - List[List[int]]: A list of lists, where each inner list contains the indices of nodes
+                        that form a strongly connected component.
+        """
+        stack = []
+        visited = set()
+
+        # Step 1: Fill vertices in stack according to their finishing times
+        for vertex in self.vertices:
+            if vertex.index not in visited:
+                self.fill_order(vertex.index, visited, stack)
+
+        # Step 2: Reverse graph
+        reversed_graph = self.reverse_graph()
+
+        # Step 3: Process all vertices in order defined by Stack
+        visited.clear()
+        sccs = []
+
+        while stack:
+            vertex = stack.pop()
+            if vertex not in visited:
+                scc = []
+                self.dfs_util(reversed_graph, vertex, visited, scc)
+                sccs.append(scc)
+
+        return sccs
+
+    def fill_order(self, vertex, visited, stack):
+        """
+        Utility function for DFS and to fill the stack with vertices
+        based on their finishing times (meaning the time when all not visited
+        vertices accessible from this vertex by transitions with direction 1
+        become visited).
+
+        Args:
+        - graph (DirectedGraph): The graph to perform DFS on.
+        - vertex (int): The starting vertex index for DFS.
+        - visited (set): Set of visited vertices.
+        - stack (list): Stack to push vertices according to their
+        finishing times.
+        """
+
+        visited.add(vertex)
+
+        for neighbor in self.vertices[vertex].edges:
+            direction = self.vertices[vertex]\
+                .directions[self.vertices[vertex].edges.index(neighbor)]
+            if direction != 1:
+                continue
+            if neighbor not in visited:
+                self.fill_order(neighbor, visited, stack)
+        stack.append(vertex)
+
+    def reverse_graph(self):
+        """
+        Reverses the direction of all edges in the graph.
+
+        Args:
+        - graph (DirectedGraph): The graph to reverse.
+
+        Returns:
+        - DirectedGraph: A new graph with reversed edges.
+        """
+        reversed_graph = DirectedGraph()
+        for vertex in range(len(self.vertices)):
+            reversed_graph.add_vertex(data=self.vertices[vertex].data)
+
+        for vertex in self.vertices:
+            for neighbor, direction in zip(vertex.edges,
+                                           vertex.directions):
+
+                reversed_graph.add_edge(neighbor, vertex.index, direction)
+                # Reversing the edge direction
+
+        return reversed_graph
+
+    def dfs_util(self, reversed_graph, vertex, visited, scc):
+        """
+        A utility function for DFS traversal that tracks
+        the strongly connected component.
+
+        Args:
+        - graph (DirectedGraph): The graph to perform DFS on.
+        - vertex (int): The starting vertex index for DFS.
+        - visited (set): Set of visited vertices.
+        - scc (list): List to accumulate vertices in the current SCC.
+        """
+        visited.add(vertex)
+        scc.append(vertex)
+
+        for neighbor in reversed_graph.vertices[vertex].edges:
+            direction = reversed_graph.vertices[vertex]\
+                .directions[reversed_graph.vertices[vertex]
+                            .edges.index(neighbor)]
+            if direction != 1:
+                continue
+            if neighbor not in visited:
+                self.dfs_util(reversed_graph, neighbor, visited, scc)
 
 
 class WeightedGraph(DirectedGraph):
