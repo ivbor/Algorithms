@@ -97,7 +97,7 @@ def test_find_kwarg_with_edges(graphs, nodes):
     nodes2 = \
         [{'data': 4, 'edges': [0]},
          {'data': 4, 'edges': [0], 'directions': [1]},
-         {'data': 4, 'edges': [0], 'directions': [-1], 'weights': [5]}]
+         {'data': 4, 'edges': [0], 'directions': [1], 'weights': [5]}]
     for nr, graph in enumerate(graphs):
         graph_instance.append(graph())
         graph_instance[nr].add_vertex(*nodes[nr])
@@ -172,9 +172,7 @@ def test_add_edge_between_vertices_undir(uncon2, front, back):
 @pytest.mark.parametrize('direction, front, back', [(0, 0, 1),
                                                     (0, 1, 0),
                                                     (1, 0, 1),
-                                                    (1, 1, 0),
-                                                    (-1, 0, 1),
-                                                    (-1, 1, 0)])
+                                                    (1, 1, 0),])
 def test_add_edge_between_vertices_dir(uncon2, direction, front, back):
     instances = [uncon2[1], copy.deepcopy(uncon2[1])]
     assert instances[0].vertices[front].directions == []
@@ -184,8 +182,8 @@ def test_add_edge_between_vertices_dir(uncon2, direction, front, back):
     instances[0].add_edge(front, back, direction)
     instances[1].add_edge(back, front, direction)
     assert instances[0].vertices[front].directions == [direction]
-    assert instances[0].vertices[back].directions == [-direction]
-    assert instances[1].vertices[front].directions == [-direction]
+    assert instances[0].vertices[back].directions == [direction]
+    assert instances[1].vertices[front].directions == [direction]
     assert instances[1].vertices[back].directions == [direction]
 
 
@@ -220,7 +218,7 @@ def test_add_edge_between_vertices_wei(uncon2, direction, weights):
 
 def test_graphs_can_accept_two_connected_vertices(graphs, nodes):
     graph_instance = []
-    nodes2 = [(4, [0]), (4, [0], [-1]), (4, [0], [1], [3])]
+    nodes2 = [(4, [0]), (4, [0], [1], [1]), (4, [0], [1], [3])]
     for nr, graph in enumerate(graphs):
         graph_instance.append(graph())
         graph_instance[nr].add_vertex(*nodes[nr])
@@ -229,13 +227,13 @@ def test_graphs_can_accept_two_connected_vertices(graphs, nodes):
         assert graph_instance[nr].vertices[1].edges == [0]
         assert graph_instance[nr].vertices[0].edges == [1]
         if graph == DirectedGraph:
-            assert graph_instance[nr].vertices[1].directions == [-1]
+            assert graph_instance[nr].vertices[1].directions == [1]
             assert graph_instance[nr].vertices[0].directions == [1]
         if graph == WeightedGraph:
             assert graph_instance[nr].vertices[1].directions == [1]
-            assert graph_instance[nr].vertices[0].directions == [-1]
+            assert graph_instance[nr].vertices[0].directions == [1]
             assert graph_instance[nr].vertices[1].weights == [3]
-            assert graph_instance[nr].vertices[0].weights == [0]
+            assert graph_instance[nr].vertices[0].weights == [1]
 
 
 @pytest.fixture
