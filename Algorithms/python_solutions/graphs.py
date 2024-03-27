@@ -187,7 +187,7 @@ class UndirectedGraph:
     def calculate_element(self, vertex, neighbor):
         return 1
 
-    def _dijkstra(self, start: int):
+    def dijkstra(self, start: int):
 
         # Initialize distances to all nodes as infinity
         distances = \
@@ -223,7 +223,7 @@ class UndirectedGraph:
                     heapq.heappush(priority_queue, (distance, neighbor))
                 logging.info('6')
 
-        return distances  # , current_distances
+        return distances, current_distances
 
     def is_cyclic_util(self, vertex, visited, rec_stack):
 
@@ -271,23 +271,35 @@ class UndirectedGraph:
         return False
 
     def bellman_ford(self, start):
-        # Step 1: Initialize distances from src to all other vertices as INFINITE and src to itself as 0. Also, create a parent array to store the shortest path tree
+
+        # Step 1: Initialize distances from start
+        # to all other vertices as INFINITE and target to itself as 0.
+        # Also, create a parent array to store the shortest path tree
+
         dist = [float("Inf")] * len(self.vertices)
         dist[start] = 0
-        parent = [-1] * len(self.vertices)  # Parent array to store the path
+        # Parent array to store the path
+        parent = [-1] * len(self.vertices)
 
         # Step 2: Relax all edges |V| - 1 times
         for _ in range(len(self.vertices) - 1):
             for vertex in self.vertices:
                 for neighbor in vertex.edges:
-                    if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
-                        dist[neighbor] = dist[vertex.index] + self.calculate_element(vertex.index, neighbor)
+                    if dist[vertex.index] != float("Inf") and \
+                            dist[vertex.index] + \
+                            self.calculate_element(vertex.index, neighbor) < \
+                            dist[neighbor]:
+                        dist[neighbor] = dist[vertex.index] + \
+                            self.calculate_element(vertex.index, neighbor)
                         parent[neighbor] = vertex.index
 
         # Step 3: Check for negative-weight cycles
         for vertex in self.vertices:
             for neighbor in vertex.edges:
-                if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
+                if dist[vertex.index] != float("Inf") and \
+                        dist[vertex.index] + \
+                        self.calculate_element(vertex.index, neighbor) < \
+                        dist[neighbor]:
                     print("Graph contains negative weight cycle")
                     return None, None
 
@@ -300,8 +312,10 @@ class UndirectedGraph:
             path.reverse()
             return path if path[0] == src else []
 
-        # Reconstruct paths from src to all other vertices
-        paths = {vertex.index: reconstruct_path(start, v, parent) for v in self.vertices}
+        # Reconstruct paths from target to all other vertices
+        paths = \
+            {vertex.index: reconstruct_path(start, vertex.index, parent)
+             for vertex in self.vertices}
 
         return dist, paths
 
