@@ -583,7 +583,7 @@ class WeightedGraph(DirectedGraph):
         elif len(weights) == 0:
             self.add_weight(u, v)
 
-    def add_weight(self, u: int, v: int, u_to_v_weight: float = 0):
+    def add_weight(self, u: int, v: int, u_to_v_weight: float = 1):
 
         if v == self.vertices[u].edges[-1] and \
                 len(self.vertices[u].edges) > \
