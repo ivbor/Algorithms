@@ -128,8 +128,9 @@ class UndirectedGraph:
 
     def remove_vertex(self, **kwargs):
         index = self._find_index(**kwargs)
-        while len(self.vertices[index].edges) != 0:
-            self.remove_edge(index, self.vertices[index].edges[0])
+        for vertex in self.vertices:
+            if index in vertex.edges:
+                self.remove_edge(vertex.index, index)
         del self.vertices[index]
 
     def add_edge(self, u: int, v: int, *args, **kwargs):
@@ -271,10 +272,10 @@ class UndirectedGraph:
 
     def bellman_ford(self, start):
         # Step 1: Initialize distances from src to all other vertices as INFINITE and src to itself as 0. Also, create a parent array to store the shortest path tree
-        dist = [float("Inf")] * len(self.vertices) 
+        dist = [float("Inf")] * len(self.vertices)
         dist[start] = 0
         parent = [-1] * len(self.vertices)  # Parent array to store the path
-        
+
         # Step 2: Relax all edges |V| - 1 times
         for _ in range(len(self.vertices) - 1):
             for vertex in self.vertices:
@@ -301,7 +302,7 @@ class UndirectedGraph:
 
         # Reconstruct paths from src to all other vertices
         paths = {vertex.index: reconstruct_path(start, v, parent) for v in self.vertices}
-        
+
         return dist, paths
 
 
@@ -322,7 +323,7 @@ class DirectedGraph(UndirectedGraph):
         if isinstance(directions, list):
             self.add_direction(u, v, directions[kwargs['nr']])
         else:
-            self.add_direction(u, v, directions) 
+            self.add_direction(u, v, directions)
 
     def add_direction(self, u: int, v: int, direction: int = 0):
 
@@ -606,4 +607,4 @@ class WeightedGraph(DirectedGraph):
         return self.vertices[vertex].directions[index] * \
             self.vertices[vertex].weights[index]
 
-    
+

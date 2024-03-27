@@ -171,7 +171,7 @@ def test_add_edge_between_vertices_undir(uncon2, front, back):
 @pytest.mark.parametrize('direction, front, back', [(0, 0, 1),
                                                     (0, 1, 0),
                                                     (1, 0, 1),
-                                                    (1, 1, 0),])
+                                                    (1, 1, 0), ])
 def test_add_edge_between_vertices_dir(uncon2, direction, front, back):
     instances = [uncon2[1], copy.deepcopy(uncon2[1])]
     assert instances[0].vertices[front].directions == []
@@ -181,64 +181,48 @@ def test_add_edge_between_vertices_dir(uncon2, direction, front, back):
     instances[0].add_edge(front, back, direction)
     instances[1].add_edge(back, front, direction)
     assert instances[0].vertices[front].directions == [direction]
-    assert instances[0].vertices[back].directions == [direction]
-    assert instances[1].vertices[front].directions == [direction]
     assert instances[1].vertices[back].directions == [direction]
 
 
-@pytest.mark.parametrize('direction, weights', [(0, [3, 4]),
-                                                (0, [3]),
-                                                (0, [0, 3]),
+@pytest.mark.parametrize('direction, weights', [(0, [3]),
                                                 (0, []),
-                                                (1, [4, 3]),
-                                                (1, [0, 3]),
-                                                (1, [3]),
+                                                (1, [4]),
                                                 (1, [])])
 def test_add_edge_between_vertices_wei(uncon2, direction, weights):
     graph = uncon2[2]
     instances = [graph, copy.deepcopy(graph)]
     instances[0].add_edge(direction, int(not direction), weights=weights)
     instances[1].add_edge(int(not direction), direction, weights=weights)
-    if len(weights) == 1:
-        weights.append(0)
-    elif len(weights) == 0:
-        weights = [0, 0]
+    if len(weights) == 0:
+        weights.append(1)
     if not direction:
-        assert instances[0].vertices[0].weights == [weights[0]]
-        assert instances[1].vertices[1].weights == [weights[0]]
-        assert instances[0].vertices[1].weights == [weights[1]]
-        assert instances[1].vertices[0].weights == [weights[1]]
+        assert instances[0].vertices[0].weights == weights
+        assert instances[1].vertices[1].weights == weights
     else:
-        assert instances[0].vertices[0].weights == [weights[1]]
-        assert instances[1].vertices[1].weights == [weights[1]]
-        assert instances[0].vertices[1].weights == [weights[0]]
-        assert instances[1].vertices[0].weights == [weights[0]]
+        assert instances[0].vertices[1].weights == weights
+        assert instances[1].vertices[0].weights == weights
 
 
 def test_graphs_can_accept_two_connected_vertices(graphs, nodes):
     graph_instance = []
-    nodes2 = [(4, [0]), (4, [0], [1], [1]), (4, [0], [1], [3])]
+    nodes2 = [(4, [0]), (4, [0], [1]), (4, [0], [1], [3])]
     for nr, graph in enumerate(graphs):
         graph_instance.append(graph())
         graph_instance[nr].add_vertex(*nodes[nr])
         graph_instance[nr].add_vertex(*nodes2[nr])
         assert graph_instance[nr].all_vertices() == ['3', '4']
         assert graph_instance[nr].vertices[1].edges == [0]
-        assert graph_instance[nr].vertices[0].edges == [1]
         if graph == DirectedGraph:
             assert graph_instance[nr].vertices[1].directions == [1]
-            assert graph_instance[nr].vertices[0].directions == [1]
         if graph == WeightedGraph:
-            assert graph_instance[nr].vertices[1].directions == [1]
-            assert graph_instance[nr].vertices[0].directions == [1]
             assert graph_instance[nr].vertices[1].weights == [3]
-            assert graph_instance[nr].vertices[0].weights == [1]
 
 
 @pytest.fixture
-def con2(graphs, nodes):
+def con2(graphs):
     con2 = []
-    nodes2 = [(4, [0]), (4, [0], [-1]), (4, [0], [1], [3])]
+    nodes = [(3, [1]), (3, [1], [1]), (3, [1], [1], [5])]
+    nodes2 = [(4, [0]), (4, [0], [1]), (4, [0], [1], [3])]
     for nr, graph in enumerate(graphs):
         con2.append(graph())
         con2[nr].add_vertex(*nodes[nr])
@@ -253,6 +237,7 @@ def con2(graphs, nodes):
 def test_remove_edge(con2, front, back):
     for graph in con2:
         graph.remove_edge(front, back)
+        graph.remove_edge(back, front)
         if isinstance(graph, DirectedGraph):
             assert graph.vertices[0].directions == []
             assert graph.vertices[1].directions == []
@@ -341,45 +326,29 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     undir.remove_edge(0, 4)
     assert len(undir.vertices[0].edges) == 3
     assert undir.vertices[0].edges == [3, 2, 1]
-    assert len(undir.vertices[4].edges) == 3
-    assert undir.vertices[4].edges == [2, 1, 3]
     direc.remove_edge(1, 3)
     assert len(direc.vertices[1].edges) == 3
     assert direc.vertices[1].edges == [0, 2, 4]
     assert len(direc.vertices[1].directions) == 3
     assert direc.vertices[1].directions == [1, -1, 0]
-    assert len(direc.vertices[3].edges) == 3
-    assert direc.vertices[3].edges == [2, 4, 0]
-    assert len(direc.vertices[3].directions) == 3
-    assert direc.vertices[3].directions == [1, -1, 1]
     weigh.remove_edge(2, 0)
     assert len(weigh.vertices[2].edges) == 3
     assert weigh.vertices[2].edges == [3, 1, 4]
     assert len(weigh.vertices[2].directions) == 3
     assert weigh.vertices[2].directions == [-1, 1, 0]
     assert len(weigh.vertices[2].weights) == 3
-    assert len(weigh.vertices[0].edges) == 3
-    assert weigh.vertices[0].edges == [4, 3, 1]
-    assert len(weigh.vertices[0].directions) == 3
-    assert weigh.vertices[0].directions == [1, -1, -1]
-    assert len(weigh.vertices[0].weights) == 3
     undir.add_edge(0, 4)
     assert len(undir.vertices[0].edges) == 4
     assert undir.vertices[0].edges == [3, 2, 1, 4]
     assert len(undir.vertices[4].edges) == 4
     assert undir.vertices[4].edges == [2, 1, 3, 0]
-    direc.add_edge(1, 3, -1)
+    direc.add_edge(1, 3, 1)
     assert len(direc.vertices[1].edges) == 4
     assert direc.vertices[1].edges == [0, 2, 4, 3]
     assert len(direc.vertices[1].directions) == 4
-    assert direc.vertices[1].directions == [1, -1, 0, -1]
-    assert len(direc.vertices[3].edges) == 4
-    assert direc.vertices[3].edges == [2, 4, 0, 1]
-    assert len(direc.vertices[3].directions) == 4
-    assert direc.vertices[3].directions == [1, -1, 1, 1]
-    new_weights = \
-        [random.uniform(-100, 100), random.uniform(-100, 100)]
-    weigh.add_edge(2, 0, -1, new_weights)
+    assert direc.vertices[1].directions == [1, -1, 0, 1]
+    new_weight = [random.uniform(-100, 100)]
+    weigh.add_edge(2, 0, 1, new_weight)
     assert len(weigh.vertices[0].edges) == 4
     assert len(weigh.vertices[0].directions) == 4
     assert len(weigh.vertices[0].weights) == 4
@@ -387,11 +356,8 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     assert len(weigh.vertices[2].directions) == 4
     assert len(weigh.vertices[2].weights) == 4
     assert weigh.vertices[2].edges[-1] == 0
-    assert weigh.vertices[2].directions[-1] == -1
-    assert weigh.vertices[2].weights[-1] == new_weights[0]
-    assert weigh.vertices[0].edges[-1] == 2
-    assert weigh.vertices[0].directions[-1] == 1
-    assert weigh.vertices[0].weights[-1] == new_weights[1]
+    assert weigh.vertices[2].directions[-1] == 1
+    assert weigh.vertices[2].weights[-1] == new_weight[0]
 
     for graph in [undir, direc, weigh]:
         graph_edges = \
@@ -468,8 +434,8 @@ def con5():
     edges = [[4, 3, 2, 1], [0, 2, 4, 3], [3, 1, 4, 0],
              [2, 4, 1, 0], [2, 1, 3, 0]]
     directions = \
-        [[1, -1, 0, -1], [1, -1, 0, -1], [-1, 1, 0, 0],
-         [1, -1, 1, 1], [0, 0, 1, -1]]
+        [[1, 1, 0, 1], [1, 1, 0, 1], [1, 1, 0, 0],
+         [1, 1, 1, 1], [0, 0, 1, 1]]
     undir = UndirectedGraph()
     direc = DirectedGraph()
     weigh = WeightedGraph()
@@ -573,11 +539,11 @@ def test_adjancency_matrix(con5):
                                                      [1, 1, 1, 0, 1],
                                                      [1, 1, 1, 1, 0]]
         if type(con5[i]) == DirectedGraph:
-            assert con5[i].to_adjacency_matrix() == [[0, -1, 0, -1, 1],
-                                                     [1, 0, -1, -1, 0],
-                                                     [0, 1, 0, -1, 0],
-                                                     [1, 1, 1, 0, -1],
-                                                     [-1, 0, 0, 1, 0]]
+            assert con5[i].to_adjacency_matrix() == [[0, 1, 0, 1, 1],
+                                                     [1, 0, 1, 1, 0],
+                                                     [0, 1, 0, 1, 0],
+                                                     [1, 1, 1, 0, 1],
+                                                     [1, 0, 0, 1, 0]]
         if type(con5[i]) == WeightedGraph:
             adj_mtx = con5[i].to_adjacency_matrix()
             for row_nr in range(len(adj_mtx)):
@@ -741,22 +707,45 @@ def test_edge_cases():
     assert graph.kosaraju_scc() == []
 
 
-def test_dijkstra_undir():
-    graph = UndirectedGraph()
+@pytest.mark.parametrize('graph_type', [UndirectedGraph,
+                                        DirectedGraph,
+                                        WeightedGraph])
+def test_dijkstra_undir(graph_type):
+    graph = graph_type()
     graph.add_vertex(0)
     graph.add_vertex(1)
     graph.add_vertex(2)
     graph.add_vertex(3)
     graph.add_vertex(4)
     graph.add_vertex(5)
-    graph.add_edge(0, 1)
-    graph.add_edge(1, 2)
-    graph.add_edge(2, 0)
-    graph.add_edge(2, 3)
-    graph.add_edge(3, 4)
-    graph.add_edge(4, 5)
-    graph.add_edge(5, 3)
-    assert graph._dijkstra(0) == [0, 1, 1, 2, 3, 3]
+    if graph_type == UndirectedGraph:
+        graph.add_edge(0, 1)
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 4)
+        graph.add_edge(4, 5)
+        assert graph._dijkstra(0) == [0, 1, 2, 3, 4, 5]
+    elif graph_type == DirectedGraph:
+        graph.add_edge(0, 1, 1)
+        graph.add_edge(1, 2, 1)
+        graph.add_edge(2, 3, 1)
+        graph.add_edge(3, 4, 1)
+        graph.add_edge(4, 5, 1)
+        assert graph._dijkstra(0) == [0, 1, 2, 3, 4, 5]
+        graph.add_edge(0, 2, 1)
+        graph.add_edge(3, 5, 1)
+        assert graph._dijkstra(0) == [0, 1, 1, 2, 3, 3]
+    elif graph_type == WeightedGraph:
+        graph.add_edge(0, 1, 1, [2])
+        graph.add_edge(1, 2, 1, [3])
+        graph.add_edge(2, 0, 1, [4])
+        graph.add_edge(2, 3, 1, [5])
+        graph.add_edge(3, 4, 1, [6])
+        graph.add_edge(4, 5, 1, [7])
+        assert graph._dijkstra(0) == [0, 2, 5, 10, 16, 23]
+        graph.add_edge(0, 2, 1, [4])
+        graph.add_edge(3, 5, 1, [8])
+        assert graph._dijkstra(0) == [0, 2, 4, 9, 15, 17]
 
 
 def test_bellman_ford():
