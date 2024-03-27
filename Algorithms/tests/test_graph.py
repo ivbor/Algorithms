@@ -164,8 +164,8 @@ def test_add_edge_between_vertices_undir(uncon2, front, back):
     instances = [graph, copy.deepcopy(graph)]
     instances[0].add_edge(front, back)
     instances[1].add_edge(back, front)
-    assert instance[0].vertices[front].edges == [back]
-    assert instance[1].vertices[back].edges == [front]
+    assert instances[0].vertices[front].edges == [back]
+    assert instances[1].vertices[back].edges == [front]
 
 
 @pytest.mark.parametrize('direction, front, back', [(0, 0, 1),
