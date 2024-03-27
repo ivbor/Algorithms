@@ -744,7 +744,7 @@ def test_edge_cases():
     assert graph.kosaraju_scc() == []
 
 
-def test_dijkstra():
+def test_dijkstra_undir():
     graph = UndirectedGraph()
     graph.add_vertex(0)
     graph.add_vertex(1)
@@ -760,3 +760,7 @@ def test_dijkstra():
     graph.add_edge(4, 5)
     graph.add_edge(5, 3)
     assert graph._dijkstra(0) == [0, 1, 1, 2, 3, 3]
+
+
+def test_bellman_ford():
+    pass
