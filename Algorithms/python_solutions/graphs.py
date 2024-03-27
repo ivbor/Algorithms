@@ -27,8 +27,10 @@ class DirectedGraphNode(UndirectedGraphNode):
 
     def __init__(self, index, data, edges=[], directions=[]) -> None:
         if len(edges) != len(directions):
-            raise KeyError('for each edge a direction (-1, 0 or 1) ' +
+            raise KeyError('for each edge a direction (0 or 1) ' +
                            'must be specified')
+        if any(direction < 0 for direction in directions):
+            raise ValueError('direction can only be 0 or 1')
         super().__init__(index, data, edges)
         self.directions = copy.deepcopy(directions)
 
@@ -133,14 +135,10 @@ class UndirectedGraph:
     def add_edge(self, u: int, v: int, *args, **kwargs):
         if v not in self.vertices[u].edges:
             self.vertices[u].edges.append(v)
-        if u not in self.vertices[v].edges:
-            self.vertices[v].edges.append(u)
 
     def remove_edge(self, u: int, v: int):
         if v in self.vertices[u].edges:
             self.vertices[u].edges.remove(v)
-        if u in self.vertices[v].edges:
-            self.vertices[v].edges.remove(u)
 
     def bfs(self, start, target=None):
 
@@ -322,14 +320,14 @@ class DirectedGraph(UndirectedGraph):
         directions = \
             self._find_arg(0, {0: 'direction'}, *args, **kwargs)
         if isinstance(directions, list):
-            self.add_direction_front(u, v, directions[kwargs['nr']])
-            self.add_direction_back(u, v, directions[kwargs['nr']])
+            self.add_direction(u, v, directions[kwargs['nr']])
         else:
-            self.add_direction_front(u, v, directions)
-            self.add_direction_back(u, v, directions)
+            self.add_direction(u, v, directions) 
 
-    def add_direction_front(self, u: int, v: int, direction: int = 0):
+    def add_direction(self, u: int, v: int, direction: int = 0):
 
+        if direction < 0:
+            raise ValueError('direction cannot be less than 0')
         # from u to v
         if v == self.vertices[u].edges[-1] and \
                 len(self.vertices[u].edges) > \
@@ -339,22 +337,9 @@ class DirectedGraph(UndirectedGraph):
             self.vertices[u].directions[self.vertices[u].edges.index(v)] = \
                 direction
 
-    def add_direction_back(self, u: int, v: int, direction: int = 0):
-
-        # from v to u
-        if u == self.vertices[v].edges[-1] and \
-                len(self.vertices[v].edges) > \
-                len(self.vertices[v].directions):
-            self.vertices[v].directions.append(-direction)
-        else:
-            self.vertices[v].directions[self.vertices[v].edges.index(u)] = \
-                -direction
-
     def remove_edge(self, u: int, v: int):
         if v in self.vertices[u].edges:
             del self.vertices[u].directions[self.vertices[u].edges.index(v)]
-        if u in self.vertices[v].edges:
-            del self.vertices[v].directions[self.vertices[v].edges.index(u)]
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
@@ -594,16 +579,11 @@ class WeightedGraph(DirectedGraph):
         weights = \
             self._find_arg([], {1: 'weights'}, *args, **kwargs)
         if len(weights) == 1:
-            self.add_weight_front(u, v, weights[0])
-            self.add_weight_back(u, v)
+            self.add_weight(u, v, weights[0])
         elif len(weights) == 0:
-            self.add_weight_front(u, v)
-            self.add_weight_back(u, v)
-        else:
-            self.add_weight_front(u, v, weights[0])
-            self.add_weight_back(u, v, weights[1])
+            self.add_weight(u, v)
 
-    def add_weight_front(self, u: int, v: int, u_to_v_weight: float = 0):
+    def add_weight(self, u: int, v: int, u_to_v_weight: float = 0):
 
         if v == self.vertices[u].edges[-1] and \
                 len(self.vertices[u].edges) > \
@@ -616,24 +596,9 @@ class WeightedGraph(DirectedGraph):
         if u_to_v_weight < 0:
             self.negative_edge_weight = True
 
-    def add_weight_back(self, u: int, v: int, v_to_u_weight: float = 0):
-
-        if u == self.vertices[v].edges[-1] and \
-                len(self.vertices[v].edges) > \
-                len(self.vertices[v].weights):
-            self.vertices[v].weights.append(v_to_u_weight)
-        else:
-            self.vertices[v].weights[self.vertices[v].edges.index(u)] = \
-                v_to_u_weight
-
-        if v_to_u_weight < 0:
-            self.negative_edge_weight = True
-
     def remove_edge(self, u: int, v: int):
         if v in self.vertices[u].edges:
             del self.vertices[u].weights[self.vertices[u].edges.index(v)]
-        if u in self.vertices[v].edges:
-            del self.vertices[v].weights[self.vertices[v].edges.index(u)]
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
