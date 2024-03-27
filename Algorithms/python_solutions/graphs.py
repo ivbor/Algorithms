@@ -281,9 +281,9 @@ class UndirectedGraph:
         for _ in range(len(self.vertices) - 1):
             for vertex in self.vertices:
                 for neighbor in vertex.edges:
-                if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
-                    dist[neighbor] = dist[vertex.index] + self.calculate_element(vertex.index, neighbor)
-                    parent[neighbor] = vertex.index
+                    if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
+                        dist[neighbor] = dist[vertex.index] + self.calculate_element(vertex.index, neighbor)
+                        parent[neighbor] = vertex.index
 
         # Step 3: Check for negative-weight cycles
         for vertex in self.vertices:
