@@ -637,7 +637,7 @@ class WeightedGraph(DirectedGraph):
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
-        index = self.vertices[vertex].index(neighbor)
+        index = self.vertices[vertex].edges.index(neighbor)
         return self.vertices[vertex].directions[index] * \
             self.vertices[vertex].weights[index]
 
