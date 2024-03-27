@@ -271,6 +271,41 @@ class UndirectedGraph:
 
         return False
 
+    def bellman_ford(self, start):
+        # Step 1: Initialize distances from src to all other vertices as INFINITE and src to itself as 0. Also, create a parent array to store the shortest path tree
+        dist = [float("Inf")] * len(self.vertices) 
+        dist[start] = 0
+        parent = [-1] * len(self.vertices)  # Parent array to store the path
+        
+        # Step 2: Relax all edges |V| - 1 times
+        for _ in range(len(self.vertices) - 1):
+            for vertex in self.vertices:
+                for neighbor in vertex.edges:
+                if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
+                    dist[neighbor] = dist[vertex.index] + self.calculate_element(vertex.index, neighbor)
+                    parent[neighbor] = vertex.index
+
+        # Step 3: Check for negative-weight cycles
+        for vertex in self.vertices:
+            for neighbor in vertex.edges:
+                if dist[vertex.index] != float("Inf") and dist[vertex.index] + self.calculate_element(vertex.index, neighbor) < dist[neighbor]:
+                    print("Graph contains negative weight cycle")
+                    return None, None
+
+        # Function to reconstruct path from source to j using parent array
+        def reconstruct_path(src, j, parent):
+            path = []
+            while j != -1:
+                path.append(j)
+                j = parent[j]
+            path.reverse()
+            return path if path[0] == src else []
+
+        # Reconstruct paths from src to all other vertices
+        paths = {vertex.index: reconstruct_path(start, v, parent) for v in self.vertices}
+        
+        return dist, paths
+
 
 class DirectedGraph(UndirectedGraph):
 
@@ -602,15 +637,8 @@ class WeightedGraph(DirectedGraph):
         super().remove_edge(u, v)
 
     def calculate_element(self, vertex, neighbor):
-        return self.vertices[vertex].directions[
-            self.vertices[vertex].edges.index(neighbor)] * \
-            self.vertices[vertex].weights[
-            self.vertices[vertex].edges.index(neighbor)]
+        index = self.vertices[vertex].index(neighbor)
+        return self.vertices[vertex].directions[index] * \
+            self.vertices[vertex].weights[index]
 
-    def dijkstra(self, start):
-
-        if self.negative_edge_weight:
-            raise ValueError("Dijkstra's algorithm does not work on " +
-                             "graphs where negative_edge_weight exists")
-
-        self._dijkstra(start)
+    
