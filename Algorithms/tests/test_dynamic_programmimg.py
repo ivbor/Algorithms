@@ -27,12 +27,13 @@ def generate_test_cases_with_output_for_knapsack(
     t = random.randint(t_start, t_end)
     i = random.randint(i_start, i_end)
     S = random.randint(S_start, S_end)
-    subprocess.run(['./Algorithms/C_solutions/genhard', f'{n}',
-                    f'{r}', f'{t}', '{i}', f'{S}'])
+    subprocess.run(['./Algorithms/C_solutions/dp_solutions_from_page/genhard',
+                    f'{n}', f'{r}', f'{t}', '{i}', f'{S}'])
 
     # read generated text file
     test_values = []
-    file = open('./Algorithms/C_solutions/test.in')
+    file = \
+        open('./Algorithms/C_solutions/dp_solutions_from_page/test.in')
     line = '1'  # non-empty line so that while would start
     while line != '':
         line = file.readline().split('\n')[0]
@@ -50,7 +51,8 @@ def generate_test_cases_with_output_for_knapsack(
     solutions = [0 for _ in test_values]
 
     # initialize c interface and convert parsed data to the appropriate c_types
-    c_lib = CDLL('./Algorithms/C_solutions/minknap.so')
+    c_lib = \
+        CDLL('./Algorithms/C_solutions/dp_solutions_from_page/minknap.so')
     c_lib.minknap.argtypes = [c_int, POINTER(c_int), POINTER(c_int),
                               POINTER(c_int), c_int]
     seq = c_int * len(test_values)
@@ -117,7 +119,8 @@ def generate_test_cases_with_output_for_damerau_levenstein(
 
     # initialize c interface and convert parsed data
     # to the appropriate c_types
-    c_lib = CDLL('./Algorithms/C_solutions/damerau_levenstein')
+    c_lib = CDLL(
+        './Algorithms/C_solutions/dp_solutions_from_page/damerau_levenstein')
     c_lib.DamerauLevensteinDistance.argtypes = \
         [POINTER(c_char), POINTER(c_char)]
     seq_str1 = c_char * len(str1)
@@ -127,15 +130,12 @@ def generate_test_cases_with_output_for_damerau_levenstein(
 
     # solve the problem
     res = c_lib.DamerauLevensteinDistance(c_str1, c_str2)
-    # TODO leave as a crutch for now
-    if str1[0] == str2[1] and str2[0] == str1[1]:
-        res -= 1
 
     return ((str1, str2), res) if res > 0 else \
         generate_test_cases_with_output_for_damerau_levenstein()
 
 
-@ pytest.mark.parametrize(
+@pytest.mark.parametrize(
     "test_input, test_output",
     generate_test_cases(
                     generate_test_cases_with_output_for_damerau_levenstein,
@@ -144,13 +144,14 @@ def generate_test_cases_with_output_for_damerau_levenstein(
                         # transpositional check
                         (('10', '01'), 1),
                         (('011', '101'), 1),
-                        (('1023456789', '01wertyuio'), 9)
+                        (('1023456789', '01wertyuio'), 9),
+                        (('abcdef', 'abcfad'), 2)
                     ])
 def test_damerau_levenstein(test_input, test_output):
     # test_input = (str1, str2)
     instance = DamerauLevensteinDistance(*test_input)
-    assert abs(instance.solve() - test_output) <= 1
-    assert abs(instance.solve_optimized() - test_output) <= 1
+    assert instance.solve() == test_output
+    assert instance.solve_optimized() == test_output
 
 
 def test_lcs_symmetry():

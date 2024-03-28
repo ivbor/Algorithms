@@ -188,7 +188,7 @@ long long generator(int n, int *pp, int *ww, int type, int r, int v, int tests)
       case 16: w = randm(r)+1; p = 2*sqrt(4*r*r - (w-2*r)*(w-2*r))/3;
                break;
 
-      default: error("undefined problem type");
+      default: perror("undefined problem type");
     }
     pp[i] = p; ww[i] = w; i++; 
   }
@@ -218,7 +218,7 @@ long long generator(int n, int *pp, int *ww, int type, int r, int v, int tests)
     case 15: return c;
     case 16: return c;
 
-    default: error("undefined capacity type");
+    default: perror("undefined capacity type");
   }
 }
 
@@ -230,11 +230,10 @@ long long generator(int n, int *pp, int *ww, int type, int r, int v, int tests)
 void showitems(int n, int *pp, int *ww, long long c)
 {
   int i;
-  long long ps, ws;
   FILE *out;
 
   out = fopen("./Algorithms/C_solutions/test.in", "w");
-  if (out == NULL) error("no file");
+  if (out == NULL) perror("no file");
   fprintf(out,"%d\n", n);
   for (i = 0; i < n; i++) {
     fprintf(out, "%5d %5d %5d\n", i, pp[i], ww[i]);
@@ -248,7 +247,7 @@ void showitems(int n, int *pp, int *ww, long long c)
                                 main
    ====================================================================== */
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   int *pp, *ww;
   int n, r, type, i, S;
@@ -282,6 +281,7 @@ void main(int argc, char *argv[])
   showitems(n, pp, ww, c);
   free(pp);
   free(ww);
+  return 0;
 }
 
 
