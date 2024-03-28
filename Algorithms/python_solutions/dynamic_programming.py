@@ -1,6 +1,5 @@
 # TODO
 # travelling salesman (bitmask dynamic programming etc.)
-import logging
 
 
 class DynamicProgrammingProblem:
@@ -266,30 +265,34 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
             The Damerau-Levenshtein distance.
 
         """
-        self.dp = [[0] * (self.n + 1) for _ in range(self.m + 1)]
+        self.dp = [[0] * (self.n + 1)
+                   for _ in range(self.m + 1)]
         for i in range(self.m + 1):
             self.dp[i][0] = i
         for j in range(self.n + 1):
             self.dp[0][j] = j
 
-        for i in range(1, self.m + 1):
-            for j in range(1, self.n + 1):
+        for i in range(self.m):
+            for j in range(self.n):
                 cost = 0 \
-                    if self.str1[i - 1] == self.str2[j - 1] else 1
-                self.dp[i][j] = min(
-                    self.dp[i - 1][j] + 1,  # Deletion
-                    self.dp[i][j - 1] + 1,  # Insertion
-                    self.dp[i - 1][j - 1] + cost  # Substitution
+                    if self.str1[i] == self.str2[j] else 1
+                self.dp[i + 1][j + 1] = min(
+                    self.dp[i][j + 1] + 1,  # Deletion
+                    self.dp[i + 1][j] + 1,  # Insertion
+                    self.dp[i][j] + cost  # Substitution
                 )
-                if (self.str1[j - 1] == self.str2[i - 2]) \
-                        and (self.str1[j - 2] == self.str2[i - 1]):
-                    self.dp[i][j] = min(
-                        self.dp[i][j],
-                        self.dp[i - 2][j - 2] + 1)  # Transposition
-        logging.info('simple solve\n')
-        for i in range(len(self.dp)):
-            to_log = self.dp[i]
-            logging.info(f'{to_log}\n')
+                if (i >= 1 and j >= 1
+                        and self.str1[j] == self.str2[i - 1]) \
+                        and (self.str1[j - 1] == self.str2[i]):
+                    self.dp[i + 1][j + 1] = min(
+                        self.dp[i + 1][j + 1],
+                        self.dp[i - 1][j - 1] + 1)  # Transposition
+                if (i > 1 and j > 1
+                        and self.str1[j] == self.str2[i - 2]) \
+                        and (self.str1[j - 2] == self.str2[i]):
+                    self.dp[i + 1][j + 1] = min(
+                        self.dp[i + 1][j + 1],
+                        self.dp[i - 1][j - 1] + 1)  # Transposition
         return self.dp[self.m][self.n]
 
     def solve_optimized(self):
@@ -322,42 +325,40 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
             self.dp[0][i] = i
 
         current_row = 0
-        for j in range(1, len2 + 1):
-            logging.debug(' j = ' + f'{j}')
-
-            # Go to the next row inside the table
-            logging.debug('current_row = ' + f'{current_row}')
-            current_row = 1 + current_row if current_row < 2 else 0
-
-            logging.debug('current_row = ' + f'{current_row}')
+        next_row = 1
+        for i in range(len2):
 
             # Update the first element in the current row
-            self.dp[current_row][0] = j
+            self.dp[current_row][0] = i
+            self.dp[next_row][0] = i + 1
 
-            for i in range(1, len1 + 1):
-                logging.debug(' i = ' + f'{i}')
+            for j in range(len1):
                 cost = \
-                    0 if self.str1[i - 1] == self.str2[j - 1] else 1
+                    0 if self.str1[j] == self.str2[i] else 1
 
-                insert_cost = self.dp[current_row][i - 1] + 1
-                delete_cost = self.dp[current_row - 1][i] + 1
-                replace_cost = self.dp[current_row - 1][i - 1] + cost
-                transposition_cost = self.dp[current_row - 2][i - 2] + 1
-                logging.debug(f''' costs: {insert_cost}, {delete_cost}, ''' +
-                              f'''{replace_cost}, ''' +
-                              f'''{transposition_cost}''')
+                # fix current_row + 1
+                insert_cost = self.dp[next_row][j] + 1
+                delete_cost = self.dp[current_row][j + 1] + 1
+                replace_cost = self.dp[current_row][j] + cost
 
-                logging.debug(f'{self.dp}')
-                self.dp[current_row][i] = \
+                self.dp[next_row][j + 1] = \
                     min(insert_cost, delete_cost, replace_cost)
-                logging.debug(f'before transposition\n {self.dp}')
-                if (self.str1[i - 1] == self.str2[j - 2] and
-                        self.str1[i - 2] == self.str2[j - 1]):
-                    self.dp[current_row][i] = \
-                        min(self.dp[current_row][i],
-                            self.dp[current_row - 2][i - 2] + 1)
-                logging.debug(f'after transposition\n {self.dp}')
-        logging.debug(f'simple solve\n {self.dp}')
+                if (i >= 1 and j >= 1
+                    and self.str1[j] == self.str2[i - 1]
+                        and self.str1[j - 1] == self.str2[i]):
+                    self.dp[next_row][j + 1] = \
+                        min(self.dp[next_row][j + 1],
+                            self.dp[current_row - 1][j - 1] + 1)
+                if (i > 1 and j > 1
+                        and self.str1[j] == self.str2[i - 2]) \
+                        and (self.str1[j - 2] == self.str2[i]):
+                    self.dp[next_row][j + 1] = \
+                        min(self.dp[next_row][j + 1],
+                            self.dp[current_row - 1][j - 1] + 1)
+
+            # Go to the next row inside the table
+            current_row = 1 + current_row if current_row < 2 else 0
+            next_row = current_row + 1 if current_row < 2 else 0
 
         return self.dp[current_row][len1]
 
@@ -585,30 +586,24 @@ class maxSubarraySum(DynamicProgrammingProblem):
         for query in self.queries:
             l, r = query
             r += 1
-            logging.debug(f'query_sum before query\n {currentSum}')
 
             # Adjust the pointers to the range of the query
             while right < r:
                 currentSum += arr[right]
                 right += 1
-                logging.debug(f'currentSum\n {currentSum}')
 
             while right > r:
                 right -= 1
                 currentSum -= arr[right]
-                logging.debug(f'currentSum\n {currentSum}')
 
             while left < l:
                 currentSum -= arr[left]
                 left += 1
-                logging.debug(f'currentSum\n {currentSum}')
 
             while left > l:
                 left -= 1
                 currentSum += arr[left]
-                logging.debug(f'currentSum\n {currentSum}')
 
-            logging.info(f'query_sum\n {currentSum}')
             maxSum = max(maxSum, currentSum)
 
         return maxSum
