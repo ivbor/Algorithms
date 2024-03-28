@@ -1,4 +1,3 @@
-import logging
 import copy
 import heapq
 
@@ -199,29 +198,23 @@ class UndirectedGraph:
         current_distances = {start: 0}
 
         while priority_queue:
-            logging.info('1')
             # Pop the node with the smallest distance from the priority queue
             current_distance, current_node = heapq.heappop(priority_queue)
-            logging.info(len(priority_queue))
             # If the current distance is greater than the recorded distance,
             # skip
             if current_distance > distances[current_node]:
-                logging.info('3')
                 continue
 
             # Visit each neighbor of the current node
             for neighbor in self.vertices[current_node].edges:
-                logging.info('4')
                 distance = current_distance + \
                     self.calculate_element(current_node, neighbor)
                 # If the new distance is shorter,
                 # update it and add to the priority queue
                 if distance < distances[neighbor]:
-                    logging.info('5')
                     distances[neighbor] = distance
                     current_distances[neighbor] = current_node
                     heapq.heappush(priority_queue, (distance, neighbor))
-                logging.info('6')
 
         return distances, current_distances
 

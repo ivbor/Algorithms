@@ -23,8 +23,6 @@ jaro_distance(str1: str, str2: str) -> float
 
 """
 
-import logging
-
 from Algorithms.python_solutions.dynamic_programming \
     import LongestCommonSubsequence, DamerauLevensteinDistance
 
@@ -173,13 +171,10 @@ def jaro_distance(str1, str2):
     for i in range(min(len1, len2)):
         if matched2[k] != -1:
             if str1[i] != str2[i]:
-                logging.debug(f'{str1[i]} {str2[i]}')
                 transpositions += 1
             k += 1
 
     transpositions /= 2
-    logging.debug(f'transpositions: {transpositions}')
-    logging.debug(f'matches: {matches}')
     jaro_sim = (matches / len1 +
                 matches / len2 +
                 (matches - transpositions) / matches) / 3
