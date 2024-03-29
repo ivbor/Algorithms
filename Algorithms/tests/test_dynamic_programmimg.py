@@ -28,7 +28,7 @@ def generate_test_cases_with_output_for_knapsack(
     i = random.randint(i_start, i_end)
     S = random.randint(S_start, S_end)
     subprocess.run(['./Algorithms/C_solutions/dp_solutions_from_page/genhard',
-                    f'{n}', f'{r}', f'{t}', '{i}', f'{S}'])
+                    f'{n}', f'{r}', f'{t}', '{i}', f'{S}'], shell=True)
 
     # read generated text file
     test_values = []
