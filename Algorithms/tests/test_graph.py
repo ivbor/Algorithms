@@ -3,9 +3,11 @@ import copy
 import logging
 import random
 
-from Algorithms.python_solutions.graphs import DirectedGraph, \
-    DirectedGraphNode, UndirectedGraph, UndirectedGraphNode, \
-    WeightedGraph, WeightedGraphNode
+from Algorithms.python_solutions.graph_nodes \
+    import DirectedGraphNode, UndirectedGraphNode, WeightedGraphNode
+from Algorithms.python_solutions.undirected_graph import UndirectedGraph
+from Algorithms.python_solutions.directed_graph import DirectedGraph
+from Algorithms.python_solutions.weighted_graph import WeightedGraph
 
 
 def test_can_create_everything():
