@@ -8,7 +8,7 @@ from ctypes import c_int, POINTER, CDLL, c_char
 from Algorithms.python_solutions.dynamic_programming \
     import DynamicProgrammingProblem,  KnapsackProblem, \
     DamerauLevensteinDistance, LongestCommonSubsequence, \
-    LongestIncreasingSubsequence, maxSubarraySum
+    LongestIncreasingSubsequence, maxSubarraySum, TravellingSalesmanProblem
 
 
 def test_dp_class_solve_raises():
@@ -28,7 +28,7 @@ def generate_test_cases_with_output_for_knapsack(
     i = random.randint(i_start, i_end)
     S = random.randint(S_start, S_end)
     subprocess.run(['./Algorithms/C_solutions/dp_solutions_from_page/genhard',
-                    f'{n}', f'{r}', f'{t}', '{i}', f'{S}'])
+                    f'{n}', f'{r}', f'{t}', '{i}', f'{S}'], shell=True)
 
     # read generated text file
     test_values = []
@@ -244,3 +244,11 @@ def test_max_subarray_sum_one(arr, queries):
     result_opt = maxSubarray.solve_optimized()
     assert result == 5
     assert result_opt == 5
+
+
+def test_travelling_salesman():
+    cities = [f'City {i}' for i in range(4)]
+    edges = [(0, 1, [10]), (1, 2, [15]), (2, 3, [20]),
+             (3, 0, [25]), (0, 2, [35]), (1, 3, [30])]
+    tsp = TravellingSalesmanProblem(cities, edges)
+    assert tsp.solve() == 70

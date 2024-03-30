@@ -1,5 +1,4 @@
-# TODO
-# travelling salesman (bitmask dynamic programming etc.)
+from Algorithms.python_solutions.weighted_graph import WeightedGraph
 
 
 class DynamicProgrammingProblem:
@@ -607,3 +606,57 @@ class maxSubarraySum(DynamicProgrammingProblem):
             maxSum = max(maxSum, currentSum)
 
         return maxSum
+
+
+class TravellingSalesmanProblem(DynamicProgrammingProblem):
+
+    def __init__(self, cities, edges):
+        super().__init__()
+
+        # Make a graph to store the cities and distances between them
+        self.graph = WeightedGraph()
+        self.n = len(cities)
+        for city in cities:
+            self.graph.add_vertex(data=city)
+        for u, v, weight in edges:
+            self.graph.add_edge(u, v, 1, weight)
+
+        # Initialize dp to store a minimum distance to visit the subset
+        # of cities represented by using bitmask, where the bit at
+        # position i is 1 if the city has been visited and 0 otherwise,
+        # and ending in the city i (dp[mask][i], mask = 1 << i)
+        self.dp = [[float('inf')] * self.n
+                   for _ in range(1 << self.n)]
+        self.dp[1][0] = 0
+
+    def solve(self):
+        for mask in range(1, 1 << self.n):
+            for last in range(self.n):
+                # check if `last` city is the last in the mask
+                # if it is not - there is no point in this iteration
+                # and we are skipping it
+                if mask & (1 << last):
+                    # get the subset of the cities before the last
+                    prev_mask = mask ^ (1 << last)
+                    # iterate through the subset of predecessors
+                    for k in range(self.n):
+                        # if city `k` gets to be visited in this subset -
+                        # add its weight to the appropriate dp cell
+                        if prev_mask & (1 << k) \
+                                and last in self.graph.vertices[k].edges:
+                            weight = self.graph.vertices[k].\
+                                weights[self.graph.vertices[k].
+                                        edges.index(last)]
+                            self.dp[mask][last] = \
+                                min(self.dp[mask][last],
+                                    self.dp[prev_mask][k] + weight)
+        min_cost = float('inf')
+        for j in range(1, self.n):
+            if 0 in self.graph.vertices[j].edges:
+                return_path_weight = \
+                    self.graph.vertices[j].weights[\
+                        self.graph.vertices[j].edges.index(0)]
+                min_cost = min(min_cost,
+                               self.dp[(1 << self.n) - 1][j] +
+                               return_path_weight)
+        return min_cost
