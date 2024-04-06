@@ -145,7 +145,7 @@ def generate_test_cases_with_output_for_damerau_levenstein(
                         (('10', '01'), 1),
                         (('011', '101'), 1),
                         (('1023456789', '01wertyuio'), 9),
-                        (('abcdef', 'abcfad'), 2)
+                        (('abcdef', 'abcfad'), 3)
                     ])
 def test_damerau_levenstein(test_input, test_output):
     # test_input = (str1, str2)
@@ -248,7 +248,11 @@ def test_max_subarray_sum_one(arr, queries):
 
 def test_travelling_salesman():
     cities = [f'City {i}' for i in range(4)]
-    edges = [(0, 1, [10]), (1, 2, [15]), (2, 3, [20]),
-             (3, 0, [25]), (0, 2, [35]), (1, 3, [30])]
+    edges = [(0, 1, 10),
+             (1, 2, 15),
+             (2, 3, 20),
+             (3, 0, 25),
+             (0, 2, 35),
+             (1, 3, 30)]
     tsp = TravellingSalesmanProblem(cities, edges)
     assert tsp.solve() == 70
