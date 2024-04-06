@@ -286,12 +286,12 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[i + 1][j + 1] = min(
                         self.dp[i + 1][j + 1],
                         self.dp[i - 1][j - 1] + 1)  # Transposition
-                if (i > 1 and j > 1
-                        and self.str1[j] == self.str2[i - 2]) \
-                        and (self.str1[j - 2] == self.str2[i]):
-                    self.dp[i + 1][j + 1] = min(
-                        self.dp[i + 1][j + 1],
-                        self.dp[i - 1][j - 1] + 1)  # Transposition
+                # if (i > 1 and j > 1
+                #         and self.str1[j] == self.str2[i - 2]) \
+                #         and (self.str1[j - 2] == self.str2[i]):
+                #     self.dp[i + 1][j + 1] = min(
+                #         self.dp[i + 1][j + 1],
+                #         self.dp[i - 1][j - 1] + 1)  # Transposition
         return self.dp[self.m][self.n]
 
     def solve_optimized(self):
@@ -348,12 +348,12 @@ class DamerauLevensteinDistance(DynamicProgrammingProblem):
                     self.dp[next_row][j + 1] = \
                         min(self.dp[next_row][j + 1],
                             self.dp[current_row - 1][j - 1] + 1)
-                if (i > 1 and j > 1
-                        and self.str1[j] == self.str2[i - 2]) \
-                        and (self.str1[j - 2] == self.str2[i]):
-                    self.dp[next_row][j + 1] = \
-                        min(self.dp[next_row][j + 1],
-                            self.dp[current_row - 1][j - 1] + 1)
+                # if (i > 1 and j > 1
+                #         and self.str1[j] == self.str2[i - 2]) \
+                #         and (self.str1[j - 2] == self.str2[i]):
+                #     self.dp[next_row][j + 1] = \
+                #         min(self.dp[next_row][j + 1],
+                #             self.dp[current_row - 1][j - 1] + 1)
 
             # Go to the next row inside the table
             current_row = 1 + current_row if current_row < 2 else 0
@@ -619,7 +619,7 @@ class TravellingSalesmanProblem(DynamicProgrammingProblem):
         for city in cities:
             self.graph.add_vertex(data=city)
         for u, v, weight in edges:
-            self.graph.add_edge(u, v, 1, weight)
+            self.graph.add_edge(u, v, weight=weight)
 
         # Initialize dp to store a minimum distance to visit the subset
         # of cities represented by using bitmask, where the bit at
@@ -643,19 +643,17 @@ class TravellingSalesmanProblem(DynamicProgrammingProblem):
                         # if city `k` gets to be visited in this subset -
                         # add its weight to the appropriate dp cell
                         if prev_mask & (1 << k) \
-                                and last in self.graph.vertices[k].edges:
-                            weight = self.graph.vertices[k].\
-                                weights[self.graph.vertices[k].
-                                        edges.index(last)]
+                            and last in self.graph.vertices[k].edges.keys():
+                            weight = self.graph.vertices[k]\
+                                .edges[last].weight
                             self.dp[mask][last] = \
                                 min(self.dp[mask][last],
                                     self.dp[prev_mask][k] + weight)
         min_cost = float('inf')
         for j in range(1, self.n):
-            if 0 in self.graph.vertices[j].edges:
+            if 0 in self.graph.vertices[j].edges.keys():
                 return_path_weight = \
-                    self.graph.vertices[j].weights[\
-                        self.graph.vertices[j].edges.index(0)]
+                    self.graph.vertices[j].edges[0].weight
                 min_cost = min(min_cost,
                                self.dp[(1 << self.n) - 1][j] +
                                return_path_weight)
