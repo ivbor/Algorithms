@@ -633,7 +633,8 @@ def test_bellman_ford():
     assert graph.bellman_ford(0) == (None, None)
 
 
-def test_simple_flow(graph):
+@pytest.mark.parametrize('algo', ['dinics', 'gt'])
+def test_simple_flow(graph, algo):
 
     graph.add_edge(0, 1, capacity=1)
     graph.add_edge(1, 0, capacity=1)
@@ -642,12 +643,16 @@ def test_simple_flow(graph):
     graph.add_edge(2, 3, capacity=1)
     graph.add_edge(3, 2, capacity=1)
 
-    max_flow = graph.dinics_algorithm(0, 3)
+    if algo == 'dinics':
+        dinics_max_flow = graph.dinics_algorithm(0, 3)
+        assert dinics_max_flow == 1
+    else:
+        gt_max_flow = graph.goldberg_tarjan(0, 3)
+        assert gt_max_flow == 1
 
-    assert max_flow == 1
 
-
-def test_multiple_flows(graph):
+@pytest.mark.parametrize('algo', ['dinics', 'gt'])
+def test_multiple_flows(graph, algo):
 
     graph.add_edge(0, 1, capacity=1)
     graph.add_edge(1, 0, capacity=1)
@@ -658,72 +663,90 @@ def test_multiple_flows(graph):
     graph.add_edge(2, 3, capacity=2)
     graph.add_edge(3, 2, capacity=2)
 
-    max_flow = graph.dinics_algorithm(0, 3)
+    if algo == 'dinics':
+        dinics_max_flow = graph.dinics_algorithm(0, 3)
+        assert dinics_max_flow == 3
+    else:
+        gt_max_flow = graph.goldberg_tarjan(0, 3)
+        assert gt_max_flow == 3
 
-    assert max_flow == 3
 
-
-def test_no_flow():
+@pytest.mark.parametrize('algo', ['dinics', 'gt'])
+def test_no_flow(algo):
 
     graph = Graph()
     graph.add_vertex(0)
     graph.add_vertex(1)
 
-    max_flow = graph.dinics_algorithm(0, 1)
-    assert max_flow == 0
+    if algo == 'dinics':
+        dinics_max_flow = graph.dinics_algorithm(0, 1)
+        assert dinics_max_flow == 0
+    else:
+        gt_max_flow = graph.goldberg_tarjan(0, 1)
+        assert gt_max_flow == 0
 
 
-def test_max_flow(graph):
-    
+@pytest.mark.parametrize('algo', ['dinics', 'gt'])
+def test_max_flow(graph, algo):
+
     graph.add_vertex(4)
     graph.add_vertex(5)
 
     graph.add_edge(0, 1, capacity=10)
     graph.add_edge(1, 0, capacity=10)
-    
+
     graph.add_edge(1, 2, capacity=4)
     graph.add_edge(2, 1, capacity=4)
-    
+
     graph.add_edge(2, 5, capacity=10)
     graph.add_edge(5, 2, capacity=10)
-    
+
     graph.add_edge(0, 3, capacity=8)
     graph.add_edge(3, 0, capacity=8)
-    
+
     graph.add_edge(3, 5, capacity=8)
     graph.add_edge(5, 3, capacity=8)
-    
+
     graph.add_edge(1, 3, capacity=6)
     graph.add_edge(3, 1, capacity=6)
-    
+
     graph.add_edge(1, 4, capacity=6)
     graph.add_edge(4, 1, capacity=6)
-    
+
     graph.add_edge(4, 5, capacity=12)
     graph.add_edge(5, 4, capacity=12)
 
-    max_flow = graph.dinics_algorithm(0, 5)
-    assert max_flow == 18
+    if algo == 'dinics':
+        dinics_max_flow = graph.dinics_algorithm(0, 5)
+        assert dinics_max_flow == 18
+    else:
+        gt_max_flow = graph.goldberg_tarjan(0, 5)
+        assert gt_max_flow == 18
 
 
-def test_backflow(graph):
+@pytest.mark.parametrize('algo', ['dinics', 'gt'])
+def test_backflow(graph, algo):
 
     graph.add_vertex(4)
 
     graph.add_edge(0, 1, capacity=10)
     graph.add_edge(1, 0, capacity=10)
-    
+
     graph.add_edge(1, 2, capacity=4)
     graph.add_edge(2, 1, capacity=4)
-    
+
     graph.add_edge(2, 4, capacity=12)
     graph.add_edge(4, 2, capacity=12)
-    
+
     graph.add_edge(0, 3, capacity=8)
     graph.add_edge(3, 0, capacity=8)
-    
+
     graph.add_edge(3, 2, capacity=6)
     graph.add_edge(2, 3, capacity=6)
-    
-    max_flow = graph.dinics_algorithm(0, 4)
-    assert max_flow == 10
+
+    if algo == 'dinics':
+        dinics_max_flow = graph.dinics_algorithm(0, 4)
+        assert dinics_max_flow == 10
+    else:
+        gt_max_flow = graph.goldberg_tarjan(0, 4)
+        assert gt_max_flow == 10

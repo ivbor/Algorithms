@@ -36,10 +36,9 @@ class WeightedGraphNode(GraphNode):
 class Edge():
 
     def __init__(self, first_node: int, second_node: int, weight=1,
-                 capacity=0, flow=0, height=0, direction=1, *args, **kwargs) -> None:
+                 capacity=0, flow=0, *args, **kwargs) -> None:
         self.first_node = first_node
         self.second_node = second_node
         self.weight = weight
         self.capacity = capacity
         self.flow = flow
-        self.height = height

@@ -1,6 +1,8 @@
 import heapq
+import logging
 
 from collections import deque
+import re
 
 from Algorithms.python_solutions.graph_nodes import GraphNode, Edge
 
@@ -486,7 +488,8 @@ class Graph:
             vertex = queue.popleft()
             for _, edge in self.vertices[vertex].edges.items():
                 # Check capacity and if the level is set
-                if edge.capacity > 0 and levels[edge.second_node] < 0:
+                if edge.capacity - edge.flow > 0 and \
+                        levels[edge.second_node] < 0:
                     levels[edge.second_node] = levels[vertex] + 1
                     queue.append(edge.second_node)
         return levels
@@ -495,19 +498,26 @@ class Graph:
         if source == sink:
             return flow
         for _, edge in self.vertices[source].edges.items():
-            if edge.capacity > 0 \
+            remaining_capacity = edge.capacity - edge.flow
+            if remaining_capacity > 0 \
                     and levels[edge.second_node] == levels[source] + 1:
                 # Min flow in path
-                path_flow = min(flow, edge.capacity)
+                path_flow = min(flow, remaining_capacity)
                 result_flow = \
                     self.dfs_blocking_flow(edge.second_node, sink,
                                            path_flow, levels)
                 if result_flow > 0:
                     # Update capacities in the direction TO the sink
-                    edge.capacity -= result_flow
+                    edge.flow += result_flow
                     # and FROM the sink
-                    self.vertices[edge.second_node].edges[source]\
-                        .capacity += result_flow
+                    if source in [i for i in self.vertices[edge.second_node]
+                                                 .edges.keys()]:
+                        self.vertices[edge.second_node].edges[source]\
+                            .flow -= result_flow
+                    else:
+                        raise KeyError(
+                            f'no reverse edge from {edge.second_node} to \
+                            {source}')
                     return result_flow
         return 0
 
@@ -517,9 +527,100 @@ class Graph:
             levels = self.bfs_level_graph(source)
             if levels[sink] == -1:
                 break  # No path
-            flow = float('inf')
-            while flow:
+            while True:
                 flow = \
                     self.dfs_blocking_flow(source, sink, float('inf'), levels)
+                if flow == 0:
+                    break
                 max_flow += flow
         return max_flow
+
+    def initialize_preflow(self, source):
+        # Height initialization
+        for vertex in self.vertices.keys():
+            self.vertices[vertex].height = 0
+            self.vertices[vertex].excess_flow = 0
+        self.vertices[source].height = len(self.vertices)
+
+        # Preflow initialization
+        for edge in self.vertices[source].edges.keys():
+            # Send max flow
+            self.vertices[source].edges[edge].flow = \
+                self.vertices[source].edges[edge].capacity
+            logging.info(
+                f'{source}, {edge}, {self.vertices[source].edges[edge].flow}')
+            logging.info(
+                f'{source}, {edge}, {self.vertices[source].edges[edge].capacity}')
+            self.vertices[edge].excess_flow += \
+                self.vertices[source].edges[edge].flow
+            self.vertices[source].excess_flow -= \
+                self.vertices[source].edges[edge].flow
+
+    def push_flow(self, u, v):
+
+        edge = self.vertices[u].edges[v]
+        flow = min(self.vertices[u].excess_flow,
+                   edge.capacity - edge.flow)
+        logging.info(f'{flow}, {self.vertices[u].height}, {self.vertices[v].height}')
+        logging.info(f'{u}, {v}')
+        if flow > 0 and \
+                self.vertices[u].height == self.vertices[v].height + 1:
+            self.vertices[u].edges[v].flow += flow
+            logging.info(
+                f'{u}, {v}, {self.vertices[u].edges[v].flow}')
+            self.vertices[u].excess_flow -= flow
+            logging.info(
+                f'{u}, {self.vertices[u].excess_flow}')
+            self.vertices[v].excess_flow += flow
+            logging.info(
+                f'{v}, {self.vertices[v].excess_flow}')
+            return True
+        return False
+
+    def lift_vertex(self, u):
+        min_height = float('inf')
+        for edge in self.vertices[u].edges.keys():
+            if self.vertices[u].edges[edge].capacity > \
+                    self.vertices[u].edges[edge].flow:
+                min_height = \
+                    min(min_height, self.vertices[edge].height)
+        if min_height < float('inf'):
+            self.vertices[u].height = min_height + 1
+
+    def discharge_excess_flow(self, u):
+        logging.info(f'{u}, {self.vertices[u].excess_flow}')
+        while self.vertices[u].excess_flow > 0:
+            for neighbor in self.vertices[u].edges.keys():
+                if self.push_flow(u, neighbor):
+                    break
+            else:
+                # No push occurred, lift the vertex
+                self.lift_vertex(u)
+                # Necessary to prevent infinite loop if no push is possible
+                break
+
+    def goldberg_tarjan(self, source, sink):
+        self.initialize_preflow(source)
+
+        active_vertices = \
+            [u for u in self.vertices.keys() if u != source and u != sink]
+        excess_vertices = \
+            [u for u in self.vertices.keys() if u != source and u != sink
+             and self.vertices[u].excess_flow != 0]
+        while active_vertices or excess_vertices:
+            logging.info(active_vertices)
+            if len(active_vertices) == 0:
+                u = excess_vertices.pop(0)
+            else:
+                u = active_vertices.pop(0)
+            old_height = self.vertices[u].height
+            self.discharge_excess_flow(u)
+            if self.vertices[u].height > old_height:
+                # Re-add to the list if the height was increased
+                active_vertices = [u] + active_vertices
+            excess_vertices = \
+                [u for u in self.vertices.keys() if u != source and u != sink
+                    and self.vertices[u].excess_flow != 0]
+            logging.info(active_vertices)
+
+        return self.vertices[sink].excess_flow
