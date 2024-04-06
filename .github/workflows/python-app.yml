@@ -42,7 +42,7 @@ jobs:
         coverage report -m
     - name: Check docs coverage
       run: |
-        interrogate ./Algorithms/python_solutions -vv --fail-under 80
+        interrogate ./Algorithms/python_solutions -e ./Algorithms/python_solutions/tests -vv --fail-under 80
     - name: Check issues with bandit
       run: |
         bandit -r ./Algorithms/python_solutions -b bandit.json
