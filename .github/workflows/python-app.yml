@@ -45,4 +45,4 @@ jobs:
         interrogate ./Algorithms/python_solutions -e ./Algorithms/python_solutions/tests -vv --fail-under 80
     - name: Check issues with bandit
       run: |
-        bandit ./Algorithms/python_solutions/* -b bandit.json
+        bandit ./Algorithms/python_solutions/* -b bandit.json -ll
