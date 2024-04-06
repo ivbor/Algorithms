@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2023-09-09T03:59:02Z",
+  "generated_at": "2024-04-06T13:00:38Z",
   "metrics": {
     "./Algorithms/python_solutions/CyclicLinkedList.py": {
       "CONFIDENCE.HIGH": 0,
@@ -11,7 +11,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 102,
+      "loc": 208,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -24,7 +24,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 21,
+      "loc": 88,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -37,7 +37,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 33,
+      "loc": 126,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -50,7 +50,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 150,
+      "loc": 367,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -63,7 +63,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 40,
+      "loc": 146,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -76,7 +76,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 26,
+      "loc": 70,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -89,7 +89,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 43,
+      "loc": 120,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -102,7 +102,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 0,
+      "loc": 43,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -115,7 +115,20 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 75,
+      "loc": 54,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/avl_tree.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 164,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -128,7 +141,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 72,
+      "loc": 87,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -141,7 +154,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 235,
+      "loc": 349,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -154,7 +167,20 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 49,
+      "loc": 97,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/bst.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 466,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -167,7 +193,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22,
+      "loc": 46,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -180,7 +206,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 38,
+      "loc": 122,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -193,7 +219,46 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22,
+      "loc": 475,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/edit_distance.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 144,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/graph.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 353,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/graph_nodes.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 33,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -206,7 +271,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 285,
+      "loc": 762,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -219,7 +284,20 @@
       "SEVERITY.LOW": 2,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 115,
+      "loc": 325,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/hyperloglog.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 121,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -232,7 +310,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 12,
+      "loc": 67,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -245,7 +323,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 28,
+      "loc": 73,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -258,7 +336,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 41,
+      "loc": 135,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -271,7 +349,7 @@
       "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 54,
+      "loc": 252,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -284,20 +362,46 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 37,
+      "loc": 74,
       "nosec": 0,
       "skipped_tests": 0
     },
-    "./Algorithms/python_solutions/speed_analysis.py": {
-      "CONFIDENCE.HIGH": 7,
+    "./Algorithms/python_solutions/red_black_tree.py": {
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 7,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 51,
+      "loc": 428,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/segment_tree.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 539,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "./Algorithms/python_solutions/sparse_table.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 179,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -310,7 +414,7 @@
       "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 31,
+      "loc": 113,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -323,7 +427,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 46,
+      "loc": 90,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -336,7 +440,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 49,
+      "loc": 53,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -349,27 +453,40 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 90,
+      "loc": 284,
       "nosec": 0,
       "skipped_tests": 0
     },
-    "_totals": {
-      "CONFIDENCE.HIGH": 11,
+    "./Algorithms/python_solutions/weighted_graph.py": {
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 11,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 1767,
+      "loc": 30,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "_totals": {
+      "CONFIDENCE.HIGH": 4,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 4,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 7083,
       "nosec": 0,
       "skipped_tests": 0
     }
   },
   "results": [
     {
-      "code": "1 from Algorithms.python_solutions.vector import Vector\n2 import subprocess\n3 \n",
+      "code": "37 \"\"\"\n38 import subprocess\n39 from collections.abc import Iterator\n",
       "col_offset": 0,
       "end_col_offset": 17,
       "filename": "./Algorithms/python_solutions/heap.py",
@@ -380,16 +497,16 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Consider possible security implications associated with the subprocess module.",
-      "line_number": 2,
+      "line_number": 38,
       "line_range": [
-        2
+        38
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_imports.html#b404-import-subprocess",
       "test_id": "B404",
       "test_name": "blacklist"
     },
     {
-      "code": "8 def get_terminal_width():\n9     out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)\n10     out = out.communicate()[0]\n",
+      "code": "58     # hence, have to write this function\n59     out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)\n60     out = out.communicate()[0]\n",
       "col_offset": 10,
       "end_col_offset": 75,
       "filename": "./Algorithms/python_solutions/heap.py",
@@ -400,18 +517,18 @@
       },
       "issue_severity": "LOW",
       "issue_text": "subprocess call - check for execution of untrusted input.",
-      "line_number": 9,
+      "line_number": 59,
       "line_range": [
-        9
+        59
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.7.5/plugins/b603_subprocess_without_shell_equals_true.html",
       "test_id": "B603",
       "test_name": "subprocess_without_shell_equals_true"
     },
     {
-      "code": "63     if faster:\n64         x = a[random.randint(left+1, r-1)]\n65     else:\n",
-      "col_offset": 14,
-      "end_col_offset": 41,
+      "code": "262     if pivot_str == 'random':\n263         pivot = array[random.randint(left_edge + 1, right_edge - 1)]\n264     elif pivot_str == 'clst_avg':\n",
+      "col_offset": 22,
+      "end_col_offset": 67,
       "filename": "./Algorithms/python_solutions/quick_sort.py",
       "issue_confidence": "HIGH",
       "issue_cwe": {
@@ -420,158 +537,18 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 64,
+      "line_number": 263,
       "line_range": [
-        64
+        263
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
       "test_id": "B311",
       "test_name": "blacklist"
     },
     {
-      "code": "42         size_of_2_dim_range=(10, 100)):\n43     return [[random.randint(*elts_range)\n44              for i in range(random.randint(*size_of_1_dim_range))]\n",
-      "col_offset": 13,
-      "end_col_offset": 40,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 43,
-      "line_range": [
-        43
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "43     return [[random.randint(*elts_range)\n44              for i in range(random.randint(*size_of_1_dim_range))]\n45             for i in range(random.randint(*size_of_2_dim_range))]\n",
-      "col_offset": 28,
-      "end_col_offset": 64,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 44,
-      "line_range": [
-        44
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "44              for i in range(random.randint(*size_of_1_dim_range))]\n45             for i in range(random.randint(*size_of_2_dim_range))]\n46 \n",
-      "col_offset": 27,
-      "end_col_offset": 63,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 45,
-      "line_range": [
-        45
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "49         elts_range=(-100, 100), size_of_1_dim_range=(100, 1000)):\n50     return [random.randint(*elts_range)\n51             for i in range(random.randint(*size_of_1_dim_range))]\n",
-      "col_offset": 12,
-      "end_col_offset": 39,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 50,
-      "line_range": [
-        50
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "50     return [random.randint(*elts_range)\n51             for i in range(random.randint(*size_of_1_dim_range))]\n52 \n",
-      "col_offset": 27,
-      "end_col_offset": 63,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 51,
-      "line_range": [
-        51
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "55         elts_range=(-100, 100), size_of_1_dim_range=(100, 1000)):\n56     return [random.uniform(*elts_range)\n57             for i in range(random.randint(*size_of_1_dim_range))]\n",
-      "col_offset": 12,
-      "end_col_offset": 39,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 56,
-      "line_range": [
-        56
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "56     return [random.uniform(*elts_range)\n57             for i in range(random.randint(*size_of_1_dim_range))]\n58 \n",
-      "col_offset": 27,
-      "end_col_offset": 63,
-      "filename": "./Algorithms/python_solutions/speed_analysis.py",
-      "issue_confidence": "HIGH",
-      "issue_cwe": {
-        "id": 330,
-        "link": "https://cwe.mitre.org/data/definitions/330.html"
-      },
-      "issue_severity": "LOW",
-      "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 57,
-      "line_range": [
-        57
-      ],
-      "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
-      "test_id": "B311",
-      "test_name": "blacklist"
-    },
-    {
-      "code": "21 def _split_find(a, l, r, k):\n22     x = a[random.randint(l, r-1)]\n23     m, n = split(a, x, l, r)\n",
-      "col_offset": 10,
-      "end_col_offset": 32,
+      "code": "105     \"\"\"\n106     pivot = array[random.randint(left_edge, right_edge - 1)]\n107     new_left_edge, new_right_edge = split(array, pivot, left_edge, right_edge)\n",
+      "col_offset": 18,
+      "end_col_offset": 59,
       "filename": "./Algorithms/python_solutions/split_find.py",
       "issue_confidence": "HIGH",
       "issue_cwe": {
@@ -580,9 +557,9 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
-      "line_number": 22,
+      "line_number": 106,
       "line_range": [
-        22
+        106
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.7.5/blacklists/blacklist_calls.html#b311-random",
       "test_id": "B311",
