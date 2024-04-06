@@ -1,6 +1,3 @@
-import copy
-
-
 class BaseGraphNode:
 
     def __init__(self, index, data) -> None:
@@ -14,32 +11,35 @@ class BaseGraphNode:
         return str(self)
 
 
-class UndirectedGraphNode(BaseGraphNode):
+class GraphNode(BaseGraphNode):
 
     def __init__(self, index, data, edges=[], capacities=[]) -> None:
         super().__init__(index, data)
-        self.edges = copy.deepcopy(edges)
-        self.capacities = copy.deepcopy(capacities)
+        self.edges = dict()
+        if len(capacities) != 0 and len(edges) == len(capacities):
+            for nr, edge in enumerate(edges):
+                self.edges[edge] = Edge(self.index, edge,
+                                        capacity=capacities[nr])
+        elif len(capacities) != 0:
+            raise KeyError('for each edge a capacity must be specified')
 
 
-class DirectedGraphNode(UndirectedGraphNode):
-
-    def __init__(self, index, data,
-                 edges=[], directions=[], capacities=[]) -> None:
-        if len(edges) != len(directions):
-            raise KeyError('for each edge a direction (0 or 1) ' +
-                           'must be specified')
-        if any(direction < 0 for direction in directions):
-            raise ValueError('direction can only be 0 or 1')
-        super().__init__(index, data, edges, capacities)
-        self.directions = copy.deepcopy(directions)
-
-
-class WeightedGraphNode(DirectedGraphNode):
+class WeightedGraphNode(GraphNode):
 
     def __init__(self, index, data,
-                 edges=[], directions=[], weights=[], capacities=[]) -> None:
+                 edges=[], weights=[], capacities=[]) -> None:
         if len(edges) != len(weights):
             raise KeyError('for each edge a weight must be specified')
-        super().__init__(index, data, edges, directions, capacities)
-        self.weights = copy.deepcopy(weights)
+        super().__init__(index, data, edges, capacities)
+
+
+class Edge():
+
+    def __init__(self, first_node: int, second_node: int, weight=1,
+                 capacity=0, flow=0, height=0, direction=1, *args, **kwargs) -> None:
+        self.first_node = first_node
+        self.second_node = second_node
+        self.weight = weight
+        self.capacity = capacity
+        self.flow = flow
+        self.height = height
