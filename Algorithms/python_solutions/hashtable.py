@@ -177,7 +177,8 @@ class HashTable_closed():
 
     """
 
-    def __init__(self, capacity=30, hashfunc='md5'):
+    def __init__(self, capacity=30, hashfunc='md5',
+                 load_factor_threshold=0.75):
         """
         Initializes a HashTable_closed object with specified capacity
         and hash function.
@@ -192,6 +193,13 @@ class HashTable_closed():
             for storing keys. Supported values: 'poly' (polynomial hash),
             'md5', 'sha1', or a custom callable function.
 
+        load_factor_threshold : float
+            The maximum size / capacity ratio. When the actual value
+            excesses this factor - the hashtable increases its size.
+            When the actual value < this / 4 - the hashtable decreases its
+            size. Can be set to any between 0 and 1, but is recommended to be
+            set around 0.7 - 0.9.
+
         Returns
         -------
         None
@@ -204,7 +212,7 @@ class HashTable_closed():
         # left inside vector
         self._pairs.elements = self._pairs.elements[:self._capacity]
         self._size = 0
-        self._max_deque_len = self._capacity // 2
+        self._load_factor_threshold = load_factor_threshold
         self._hashfunc = hashfunc
 
     def get_hash(self, x):
@@ -380,7 +388,8 @@ class HashTable_closed():
             self._size -= 1
         self._pairs[hashed_key].append(Pair(key, x))
         self._size += 1
-        if len(self._pairs[hashed_key]) > self._max_deque_len:
+        if len(self._pairs[hashed_key]) / self.capacity > \
+                self._load_factor_threshold:
             self.increase_capacity()
 
     def __getitem__(self, i):
@@ -507,7 +516,8 @@ class HashTable_closed():
         if str(index) != 'False':
             del self._pairs[hashed_key][index]
             self._size -= 1
-            if len(self._pairs[hashed_key]) < 1:
+            if len(self._pairs[hashed_key]) / self.capacity < \
+                    self._load_factor_threshold / 4 and self.capacity > 31:
                 self.decrease_capacity()
 
     def to_dict(self):

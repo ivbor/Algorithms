@@ -60,9 +60,9 @@ def test_ht_handles_collisions(ht):
 # TODO replace to the separated file with stress tests
 # @pytest.mark.skip
 def test_stress_ht_closed(ht):
-    for i in range(1000):
+    for i in range(10000):
         ht[chr(i)] = chr(i)
-    for i in range(1000):
+    for i in range(10000):
         assert ht[chr(i)] == chr(i), \
             'ht_open does not stand stress test'
         del ht[chr(i)]
