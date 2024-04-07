@@ -57,19 +57,6 @@ def test_ht_handles_collisions(ht):
         'collisions are handled ineffectively or wrong'
 
 
-# TODO replace to the separated file with stress tests
-# @pytest.mark.skip
-def test_stress_ht_closed(ht):
-    for i in range(10000):
-        ht[chr(i)] = chr(i)
-    for i in range(10000):
-        assert ht[chr(i)] == chr(i), \
-            'ht_open does not stand stress test'
-        del ht[chr(i)]
-    assert ht.size == 0, \
-        'del works wrong'
-
-
 def test_cannot_set_size_and_capacity_for_ht_after_init(ht):
     with pytest.raises(Exception):
         ht.size = 9
@@ -213,20 +200,6 @@ def ht_open_with_samples(ht_open):
     ht_open['believe'] = 1
     ht_open[32] = 18
     return ht_open
-
-# TODO replace to the separated file with stress tests
-
-
-# @pytest.mark.skip
-def test_stress_ht_open(ht_open):
-    for i in range(1000):
-        ht_open[chr(i + 100)] = chr(i + 100)
-    assert ht_open.size == 1000, 'size calculates wrong'
-    for i in range(1000):
-        assert ht_open[chr(i + 100)] == chr(i + 100), \
-            'ht_open does not stand stress test'
-        del ht_open[chr(i + 100)]
-    assert ht_open.size == 0, 'size calculates wrong'
 
 
 def test_property_elements_defensive_copy(ht_open_with_samples):

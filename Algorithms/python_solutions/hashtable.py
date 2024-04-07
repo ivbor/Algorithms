@@ -109,6 +109,10 @@ def poly_hash(x):
                 enumerate(str.__repr__(str(x)).lstrip("'"), 1)])
 
 
+def simple_hash(x):
+    return sum(ord(c) for c in str(x))
+
+
 class PairsVector(Vector):
 
     def __setitem__(self, key, value):
@@ -177,7 +181,7 @@ class HashTable_closed():
 
     """
 
-    def __init__(self, capacity=30, hashfunc='md5',
+    def __init__(self, capacity=30, hashfunc=simple_hash,
                  load_factor_threshold=0.75):
         """
         Initializes a HashTable_closed object with specified capacity
@@ -696,7 +700,8 @@ class HashTable_open(HashTable_closed):
 
     """
 
-    def __init__(self, capacity=30, hashfuncs=['md5', 'sha1']):
+    def __init__(self, capacity=30, hashfuncs=[hash, simple_hash],
+                 max_displasements=16):
         """
         Initializes a HashTable_open instance with the given capacity
         and hash functions.
@@ -728,6 +733,7 @@ class HashTable_open(HashTable_closed):
             self._elements.append([
                     None for _ in range(self.one_table_capacity())])
         self._size = 0
+        self._max_displacements = max_displasements
 
     def one_table_capacity(self):
         """
@@ -821,7 +827,8 @@ class HashTable_open(HashTable_closed):
         # fix the index of current table if
         # Cuckoo hashing will start to work
         index = 0
-        while True:
+        displacements = 0
+        while displacements < self._max_displacements:
             # multiple hashing
             for table_index, hashed_key in enumerate(self.get_hashes(key)):
                 if self._elements[table_index][hashed_key] is None:
@@ -854,6 +861,9 @@ class HashTable_open(HashTable_closed):
             key = new_key
             value = new_value
             logging.debug(f'new key: {key}, value: {value}\n')
+            displacements += 1
+        super().increase_capacity()
+        self.__setitem__(key, value)
 
     def update(self, key, value):
         """
