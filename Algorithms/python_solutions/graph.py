@@ -2,7 +2,6 @@ import heapq
 import logging
 
 from collections import deque
-import re
 
 from Algorithms.python_solutions.graph_nodes import GraphNode, Edge
 
@@ -547,10 +546,6 @@ class Graph:
             # Send max flow
             self.vertices[source].edges[edge].flow = \
                 self.vertices[source].edges[edge].capacity
-            logging.info(
-                f'{source}, {edge}, {self.vertices[source].edges[edge].flow}')
-            logging.info(
-                f'{source}, {edge}, {self.vertices[source].edges[edge].capacity}')
             self.vertices[edge].excess_flow += \
                 self.vertices[source].edges[edge].flow
             self.vertices[source].excess_flow -= \
@@ -561,19 +556,11 @@ class Graph:
         edge = self.vertices[u].edges[v]
         flow = min(self.vertices[u].excess_flow,
                    edge.capacity - edge.flow)
-        logging.info(f'{flow}, {self.vertices[u].height}, {self.vertices[v].height}')
-        logging.info(f'{u}, {v}')
         if flow > 0 and \
                 self.vertices[u].height == self.vertices[v].height + 1:
             self.vertices[u].edges[v].flow += flow
-            logging.info(
-                f'{u}, {v}, {self.vertices[u].edges[v].flow}')
             self.vertices[u].excess_flow -= flow
-            logging.info(
-                f'{u}, {self.vertices[u].excess_flow}')
             self.vertices[v].excess_flow += flow
-            logging.info(
-                f'{v}, {self.vertices[v].excess_flow}')
             return True
         return False
 
@@ -588,7 +575,6 @@ class Graph:
             self.vertices[u].height = min_height + 1
 
     def discharge_excess_flow(self, u):
-        logging.info(f'{u}, {self.vertices[u].excess_flow}')
         while self.vertices[u].excess_flow > 0:
             for neighbor in self.vertices[u].edges.keys():
                 if self.push_flow(u, neighbor):
@@ -608,7 +594,6 @@ class Graph:
             [u for u in self.vertices.keys() if u != source and u != sink
              and self.vertices[u].excess_flow != 0]
         while active_vertices or excess_vertices:
-            logging.info(active_vertices)
             if len(active_vertices) == 0:
                 u = excess_vertices.pop(0)
             else:
@@ -621,6 +606,5 @@ class Graph:
             excess_vertices = \
                 [u for u in self.vertices.keys() if u != source and u != sink
                     and self.vertices[u].excess_flow != 0]
-            logging.info(active_vertices)
 
         return self.vertices[sink].excess_flow
