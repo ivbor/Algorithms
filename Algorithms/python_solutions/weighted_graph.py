@@ -58,14 +58,11 @@ class WeightedGraph(Graph):
         edges = \
             [(edge.weight, edge.first_node, edge.second_node)
              for edge in self.vertices[start].edges.values()]
-        logging.info(edges)
         heapq.heapify(edges)
         mst_edges = []
 
         # Main loop to process all vertices
         while edges and len(visited) < len(self.vertices):
-            logging.info('vis' + str(visited))
-            logging.info('turn' + str(mst_edges))
             weight, frm, to = heapq.heappop(edges)
             if to not in visited:
                 visited.add(to)
@@ -75,7 +72,64 @@ class WeightedGraph(Graph):
                     next_weight = edge.weight
                     if next_to not in visited:
                         heapq.heappush(edges, (next_weight, to, next_to))
-            logging.info('endcycle' + str(mst_edges))
 
-        logging.info('endfunc' + str(mst_edges))
         return mst_edges
+
+    def find(self, parent, i):
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+
+    def union(self, parent, rank, x, y):
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+
+        if rank[xroot] < rank[yroot]:
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+        else:
+            parent[yroot] = xroot
+            rank[xroot] += 1
+
+    def kruskals_mst(self):
+        result = []  # This will store the resultant MST
+        i = 0  # An index variable, used for sorted edges
+        e = 0  # An index variable, used for result[]
+
+        all_edges = []
+        for vertex in self.vertices:
+            for _, edge in vertex.edges.items():
+                first = edge.first_node
+                second = edge.second_node
+                weight = edge.weight
+                if (weight, first, second) not in all_edges:
+                    all_edges.append((weight, first, second))
+        all_edges.sort(key=lambda item: item[0])
+
+        parent = []
+        rank = []
+
+        # Create V subsets with single elements
+        for node in range(len(self.vertices)):
+            parent.append(node)
+            rank.append(0)
+
+        # Number of edges to be taken is equal to V-1
+        while e < len(self.vertices) - 1:
+
+            # Step 2: Pick the smallest edge and increment the index
+            # for next iteration
+            w, v, u = all_edges[i]
+            i = i + 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            # If including this edge does't cause cycle,
+            # include it in result and increment the index of result
+            # for next edge
+            if x != y:
+                e = e + 1
+                result.append((v, u, w))
+                self.union(parent, rank, x, y)
+        return result

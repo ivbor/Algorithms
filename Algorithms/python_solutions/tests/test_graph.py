@@ -752,7 +752,8 @@ def test_backflow(graph, algo):
         assert gt_max_flow == 10
 
 
-def test_prims_algorithm_mst_correctness():
+@pytest.mark.parametrize('algo', ['prims', 'kruskals'])
+def test_algorithm_mst_correctness(algo):
     graph = WeightedGraph()
     # Triangle graph with weights
     graph.add_vertex(0)
@@ -764,13 +765,17 @@ def test_prims_algorithm_mst_correctness():
     graph.add_edge(2, 1, weight=2)
     graph.add_edge(0, 2, weight=3)
     graph.add_edge(2, 0, weight=3)
-    mst_edges = graph.prims_algorithm_mst()
+    if algo == 'prims':
+        mst_edges = graph.prims_algorithm_mst()
+    else:
+        mst_edges = graph.kruskals_mst()
     assert len(mst_edges) == 2
     total_weight = sum(weight for _, _, weight in mst_edges)
     assert total_weight == 3
 
 
-def test_prims_algorithm_mst_disconnected_graph():
+@pytest.mark.parametrize('algo', ['prims'])
+def test_algorithm_mst_disconnected_graph(algo):
     graph = WeightedGraph()
     graph.add_vertex(0)
     graph.add_vertex(1)
@@ -780,17 +785,25 @@ def test_prims_algorithm_mst_disconnected_graph():
     graph.add_edge(1, 0, weight=1)
     graph.add_edge(2, 3, weight=2)
     graph.add_edge(3, 2, weight=2)
-    mst_edges = graph.prims_algorithm_mst()
+    if algo == 'prims':
+        mst_edges = graph.prims_algorithm_mst()
+    else:
+        mst_edges = graph.kruskals_mst()
     assert len(mst_edges) == 1
 
 
-def test_prims_algorithm_mst_empty_graph():
+@pytest.mark.parametrize('algo', ['prims', 'kruskals'])
+def test_algorithm_mst_empty_graph(algo):
     graph = WeightedGraph()
-    mst_edges = graph.prims_algorithm_mst()
+    if algo == 'prims':
+        mst_edges = graph.prims_algorithm_mst()
+    else:
+        mst_edges = graph.kruskals_mst()
     assert len(mst_edges) == 0, "MST of an empty graph should be an empty list"
 
 
-def test_prims_algorithm_mst_uniform_weights():
+@pytest.mark.parametrize('algo', ['prims', 'kruskals'])
+def test_algorithm_mst_uniform_weights(algo):
     graph = WeightedGraph()
     # Creating a square graph where all edge weights are the same
     vertices = ['A', 'B', 'C', 'D']
@@ -807,6 +820,33 @@ def test_prims_algorithm_mst_uniform_weights():
     # Adding a diagonal with the same weight
     graph.add_edge(0, 2, weight=1)
     graph.add_edge(2, 0, weight=1)
-    mst_edges = graph.prims_algorithm_mst()
+    if algo == 'prims':
+        mst_edges = graph.prims_algorithm_mst()
+    else:
+        mst_edges = graph.kruskals_mst()
     assert len(mst_edges) == 3
 
+
+def test_mst_complex_graph():
+    graph = WeightedGraph()
+    vertices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    for v in vertices:
+        graph.add_vertex(v)
+    for i in range(10):
+        for _ in range(2):
+            second = random.choice(vertices)
+            while second == i:
+                second = random.choice(vertices)
+                continue
+            weight = random.randint(1, 101)
+            graph.add_edge(i, second, weight=weight)
+            graph.add_edge(second, i, weight=weight)
+    prims_mst = graph.prims_algorithm_mst()
+    kruskals_mst = graph.kruskals_mst()
+    prims_weights = sum([weight for _, _, weight in prims_mst])
+    kruskals_weights = sum([weight for _, _, weight in kruskals_mst])
+    assert prims_weights == kruskals_weights
+
+
+def test_graph_coloring():
+    pass
