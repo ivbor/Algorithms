@@ -608,3 +608,71 @@ class Graph:
                     and self.vertices[u].excess_flow != 0]
 
         return self.vertices[sink].excess_flow
+
+    def color_vertices(self):
+        # Initialize all vertices as unassigned
+        vertex_colors = \
+            {vertex.index: -1 for vertex in self.vertices}
+        available_colors = [False] * len(self.vertices)
+
+        # Assign colors to the remaining vertices
+        for vertex in self.vertices:
+            # Process all adjacent vertices
+            # and flag their colors as unavailable
+            for adj in vertex.edges.keys():
+                if vertex_colors[adj] != -1:
+                    available_colors[vertex_colors[adj]] = True
+
+            # Find the first available color
+            color = 0
+            while color < len(self.vertices):
+                if not available_colors[color]:
+                    break
+                color += 1
+
+            # Assign the found color
+            vertex_colors[vertex.index] = color
+
+            # Reset the availability for the next iteration
+            for adj in vertex.edges.keys():
+                if vertex_colors[adj] != -1:
+                    available_colors[vertex_colors[adj]] = False
+
+        # Apply assigned colors
+        for vertex in self.vertices:
+            vertex.color = vertex_colors[vertex.index]
+
+        return max([i for i in vertex_colors.values()]) + 1
+
+    def all_edges(self):
+        all_edges = []
+        for vertex in self.vertices:
+            for _, edge in vertex.edges.items():
+                all_edges.append(edge.__dict__)
+        return all_edges
+
+    def color_edges(self):
+        # Initial implementation based on provided descriptions
+        all_edges = self.all_edges()
+        available_colors = [True] * len(all_edges)
+
+        for vertex in self.vertices:
+            for edge in vertex.edges.values():
+                # Reset availability for each edge
+                available_colors = \
+                    [True] * len(available_colors)
+                # Check colors of adjacent edges
+                for adj_vertex in self.vertices:
+                    # first_node is vertex
+                    if adj_vertex.index == edge.second_node:
+                        for adj_edge in adj_vertex.edges.values():
+                            if adj_edge.color != 0:
+                                available_colors[adj_edge.color - 1] = False
+                # Find the first available color
+                for color, available in enumerate(available_colors, start=1):
+                    if available:
+                        edge.color = color
+                        break
+
+        return max([edge.color for vertex in self.vertices
+                    for edge in vertex.edges.values()])

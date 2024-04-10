@@ -848,5 +848,52 @@ def test_mst_complex_graph():
     assert prims_weights == kruskals_weights
 
 
-def test_graph_coloring():
-    pass
+def test_graph_vertices_and_edges_coloring():
+    vertices = [0, 1, 2]
+    edges = [(0, 1), (1, 2), (2, 0), (1, 0), (2, 1), (0, 2)]
+    graph = Graph()
+    for v in vertices:
+        graph.add_vertex(v)
+    for edge in edges:
+        graph.add_edge(*edge)
+    assert graph.color_vertices() == 3
+    assert graph.color_edges() == 3
+
+    # Verify vertex coloring
+    vertex_colors = set(v.color for v in graph.vertices)
+    assert len(vertex_colors) == 3
+
+    # Verify edge coloring
+    assert len(set(e.color for v in graph.vertices
+                   for _, e in v.edges.items())) == 3
+
+
+def test_complex_graph_coloring():
+    # Initialize the complex graph
+    vertices = [i for i in range(8)]  # 8 vertices
+    edges = [(0, 1), (1, 2), (2, 3), (3, 0),
+             (1, 0), (2, 1), (3, 2), (0, 3), # Cycle
+             (4, 5), (5, 6), (6, 4),
+             (5, 4), (6, 5), (4, 6), # Clique
+             (7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6),
+             (0, 7), (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7),
+             # Additional connections
+             (0, 4), (4, 0)  # Additional edge for complexity
+             ]
+
+    g = Graph()
+    for v in vertices:
+        g.add_vertex(v)
+    for u, v in edges:
+        g.add_edge(u, v)
+
+    assert g.color_vertices() >= 4
+    assert g.color_edges() >= 3
+
+    # Verify vertex coloring
+    vertex_colors = set(v.color for v in g.vertices)
+    assert len(vertex_colors) >= 4
+
+    # Verify edge coloring
+    assert len(set(e.color for v in g.vertices for _, e in v.edges.items())) \
+        >= 3

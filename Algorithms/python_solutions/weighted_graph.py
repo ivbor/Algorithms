@@ -1,6 +1,5 @@
 import heapq
 import random
-import logging
 
 from Algorithms.python_solutions.graph_nodes import WeightedGraphNode
 from Algorithms.python_solutions.graph import Graph
@@ -97,14 +96,8 @@ class WeightedGraph(Graph):
         i = 0  # An index variable, used for sorted edges
         e = 0  # An index variable, used for result[]
 
-        all_edges = []
-        for vertex in self.vertices:
-            for _, edge in vertex.edges.items():
-                first = edge.first_node
-                second = edge.second_node
-                weight = edge.weight
-                if (weight, first, second) not in all_edges:
-                    all_edges.append((weight, first, second))
+        all_edges = [(edge['weight'], edge['first_node'], edge['second_node'])
+                     for edge in self.all_edges()]
         all_edges.sort(key=lambda item: item[0])
 
         parent = []
@@ -120,7 +113,7 @@ class WeightedGraph(Graph):
 
             # Step 2: Pick the smallest edge and increment the index
             # for next iteration
-            w, v, u = all_edges[i]
+            w, v, u = all_edges[i][:3]
             i = i + 1
             x = self.find(parent, u)
             y = self.find(parent, v)
