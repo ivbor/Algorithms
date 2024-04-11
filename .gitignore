@@ -4,7 +4,7 @@
 share/**
 etc/**
 **coverage**
-**/.pytest_cache
+**.pytest_cache
 Lectures
 **__pycache__**
 pyrightconfig.json
