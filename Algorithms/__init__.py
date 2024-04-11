@@ -7,6 +7,7 @@ and sorting algorithms.
 
 Contains
 --------
-- Module 'python_solutions' with implementations
-- Module 'tests' with tests for implementations
+- Folder 'python_solutions' with implementations on Python,
+more info inside __init__.py file within the folder.
+- Folder 'C_solutions' with implementations on C.
 '''

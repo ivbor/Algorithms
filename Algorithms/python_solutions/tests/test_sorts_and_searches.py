@@ -5,7 +5,7 @@ import pytest
 import random
 # import better view function for 2dim arrays
 from Algorithms.python_solutions.matrix_view import Matrix2dim
-# import sorting algorythms
+# import sorting algorithms
 from Algorithms.python_solutions.array_count_sort import array_count_sort
 from Algorithms.python_solutions.count_sort import count_sort
 from Algorithms.python_solutions.insert_sort \
@@ -16,7 +16,7 @@ from Algorithms.python_solutions.quick_sort import quick_sort
 from Algorithms.python_solutions.digit_sort import digit_sort, digit_sort_opt
 from Algorithms.python_solutions.two_dim_array_count_sort \
     import two_dim_array_count_sort
-# import searching algorythms
+# import searching algorithms
 from Algorithms.python_solutions.bin_search import bin_search
 from Algorithms.python_solutions.real_bin_search import real_bin_search
 from Algorithms.python_solutions.ternary_search_extremum \

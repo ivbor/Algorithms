@@ -2,14 +2,15 @@
 python_solutions
 ----------------
 
-This module contains implementations of various sorting algorithms
-and basic data structures.
+This module contains implementations of various sorting algorithms,
+basic data structures and tests providing not only coverage for code,
+but also examples of usage.
 
 Contents
 --------
 - Sorting Algorithms
   ------------------
-  - insertion_sort (insert_sort.py)
+  - insertion_sorts (insert_sort.py)
   - merge_sort (merge_sort.py)
   - quick_sort (quick_sort.py)
   - heap_sort (heap.py)
