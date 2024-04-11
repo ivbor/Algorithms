@@ -25,7 +25,7 @@ insert_sort_opt(array: list[float]) -> list[float]
 def insert_sort(array: list[float]) -> list[float]:
     """
     This function implements the Insertion Sort algorithm
-    to sort a list of elements.
+    to sort a list of elements in-place.
 
     The Insertion Sort algorithm works by iterating through the input list,
     and for each element, it compares it with the elements
@@ -43,7 +43,7 @@ def insert_sort(array: list[float]) -> list[float]:
     Returns
     -------
     list
-        A new list containing the elements of the input list in sorted order.
+        A list containing the elements of the input list in sorted order.
 
     """
 
@@ -55,10 +55,21 @@ def insert_sort(array: list[float]) -> list[float]:
     return array
 
 
+def bin_search_fl(array: list[float], value: float,
+                  start: int, end: int) -> int:
+    while start < end:
+        mid = (start + end) // 2
+        if array[mid] < value:
+            start = mid + 1
+        else:
+            end = mid
+    return start
+
+
 def insert_sort_opt(array: list[float]) -> list[float]:
     """
-    This function implements the Insertion sort algorithm enhanced by
-    binary search.
+    This function implements the in-place Insertion sort algorithm
+    enhanced by binary search.
 
     Sorts a list of elements using the optimized Insertion Sort algorithm.
     This version uses binary search to find the correct position for each
@@ -72,21 +83,17 @@ def insert_sort_opt(array: list[float]) -> list[float]:
     Returns
     -------
     list
-        A new list containing the elements of the input list in sorted order.
+        A list containing the elements of the input list in sorted order.
 
     """
 
     for i in range(1, len(array)):
         current_element = array[i]
-        j = i - 1
+        correct_pos = bin_search_fl(array, current_element, 0, i)
 
-        # Find the correct position for the current element
-        # using binary search
-        while j >= 0 and current_element < array[j]:
-            array[j + 1] = array[j]
-            j -= 1
+        # Shift elements to make space for the current_element
+        array[correct_pos + 1:i + 1] = array[correct_pos:i]
 
-        # Place the current element in its correct position
-        array[j + 1] = current_element
+        array[correct_pos] = current_element
 
     return array
