@@ -11,3 +11,4 @@ mmh3
 coverage
 debugpy
 psutil
+mock
