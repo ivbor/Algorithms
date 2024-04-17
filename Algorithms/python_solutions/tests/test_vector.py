@@ -106,9 +106,42 @@ def test_vector_with_cap_lt_size():
 
 def test_cap_lt_0():
     with pytest.raises(Exception):
-       vector.Vector(capacity=-1)
+        vector.Vector(capacity=-1)
 
 
 def test_size_lt_0():
     with pytest.raises(Exception):
         vector.Vector(size=-1)
+
+
+def test_vector_pop():
+    vec = vector.Vector()
+    for i in range(10):
+        vec.append(i)
+    for i in range(10):
+        assert vec.pop() == 10 - i - 1
+        assert len(vec) == 10 - i - 1
+
+
+def test_empty_vector_extend():
+    vec = vector.Vector()
+    vec.extend([i for i in range(10)])
+    for i in range(10):
+        assert vec[i] == i
+
+
+def test_vector_extend():
+    vec = vector.Vector()
+    for i in range(10):
+        vec.append(i)
+    vec.extend([i for i in range(10, 20)])
+    for i in range(20):
+        assert vec[i] == i
+
+
+def test_vector_iter():
+    vec = vector.Vector()
+    assert [i for i in vec] == []
+    for i in range(10):
+        vec.append(i)
+    assert [i for i in vec] == [i for i in range(10)]

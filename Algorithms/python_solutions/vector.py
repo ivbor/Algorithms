@@ -1,5 +1,6 @@
 """
 Vector Class Module
+===================
 
 This module defines a Python class, `Vector`, which implements a
 self-expanding array, also known as a dynamic array. A dynamic array can
@@ -10,6 +11,12 @@ Class
 Vector
     A self-expanding array implementation.
 """
+
+
+import copy
+
+
+from typing import Any, Generator, Iterable, Sized
 
 
 class Vector:
@@ -34,51 +41,62 @@ class Vector:
 
     Methods
     -------
-    __init__(self, elements=None, size=0, capacity=1) -> None
+    __init__(self, elements: list[Any] | None = None, size: int = 0,
+             capacity: int = 1) -> None
         Initializes a new Vector instance with optional initial elements,
         size, and capacity.
 
     __len__(self) -> int
         Returns the number of elements in the vector.
 
-    __contains__(self, x) -> bool
+    __contains__(self, x: Any) -> bool
         Checks if a given element is present in the vector.
 
-    __setitem__(self, i, x) -> None
+    __setitem__(self, i: int, x: Any) -> None
         Sets the element at the specified index in the vector.
 
-    __getitem__(self, i) -> any
+    __getitem__(self, i: int) -> Any
         Retrieves the element at the specified index from the vector.
 
-    __delitem__(self, i) -> None
+    __delitem__(self, i: int) -> None
         Deletes the element at the specified index from the vector.
 
     copy_to_new_vector(self) -> None
         Creates a new vector and copies elements from the current vector
         to the new one.
 
-    increaseCapacity(self) -> None
+    increase_capacity(self) -> None
         Increases the capacity of the vector and copies elements
         to the new vector.
 
-    decreaseCapacity(self) -> None
+    decrease_capacity(self) -> None
         Decreases the capacity of the vector and copies elements
         to the new vector.
 
-    erase(self, i) -> None
+    erase(self, i: int) -> None
         Removes the element at the specified index from the vector.
 
-    append(self, x) -> None
+    append(self, x: Any) -> None
         Appends an element to the end of the vector.
 
-    insert(self, x, i) -> None
+    insert(self, x: Any, i: int) -> None
         Inserts an element at the specified index in the vector.
+
+    pop(self) -> Any
+        Pops the last element from the vector.
+
+    extend(self, elements: Sized and Iterable) -> None
+        Appends to the vector all elements provided in `elements`.
+
+    __iter__(self) -> Generator
+        Iterates over all elements in the vector.
 
     """
     # self-expanding array
     # define a vector by defining its starting capacity
     # (and elements in list-like form if necessary)
-    def __init__(self, elements=None, size=0, capacity=1):
+    def __init__(self, elements: list[Any] | None = None,
+                 size: int = 0, capacity: int = 1) -> None:
         """
         Creates an instance of vector.
 
@@ -119,7 +137,6 @@ class Vector:
             self.size = size
             self.capacity = capacity
             self.elements = [None] * self.capacity
-            # if in C - have to do malloc on self.capacity here
 
     # len in its essential will not lead to expected result
     # since by default vector is organized with non-null
@@ -129,7 +146,7 @@ class Vector:
     # usual cases, but for explained above it is manually
     # corrected to recognize vector's size as expected
     # inside __init__
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Returns the number of elements in the vector.
 
@@ -141,7 +158,7 @@ class Vector:
         """
         return self.size
 
-    def __contains__(self, x):
+    def __contains__(self, x: Any) -> bool:
         """
         Checks if a given element is present in the vector.
 
@@ -161,7 +178,7 @@ class Vector:
         else:
             return False
 
-    def __setitem__(self, i, x):
+    def __setitem__(self, i: int, x: Any) -> None:
         """
         Sets the element at the specified index in the vector.
 
@@ -198,9 +215,9 @@ class Vector:
 
         # some memory work
         if self.size + 1 >= self.capacity:
-            self.increaseCapacity()
+            self.increase_capacity()
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: int) -> Any:
         """
         Retrieves the element at the specified index from the vector.
 
@@ -229,7 +246,7 @@ class Vector:
             return self.elements[self.size + i]
         return self.elements[i]
 
-    def __delitem__(self, i):
+    def __delitem__(self, i: int) -> None:
         """
         Deletes the element at the specified index from the vector.
 
@@ -245,7 +262,7 @@ class Vector:
         """
         del self.elements[i]
 
-    def copy_to_new_vector(self):
+    def copy_to_new_vector(self) -> None:
         """
         Change the size of the vector and copies elements from the current
         vector to the new one.
@@ -257,7 +274,7 @@ class Vector:
         self.elements = self.elements[:self.size] + \
             [None] * (self.capacity - self.size)
 
-    def increaseCapacity(self):
+    def increase_capacity(self) -> None:
         """
         Increases the capacity of the vector and copies elements
         to the new vector.
@@ -269,7 +286,7 @@ class Vector:
         self.capacity *= 2
         self.copy_to_new_vector()
 
-    def decreaseCapacity(self):
+    def decrease_capacity(self) -> None:
         """
         Decreases the capacity of the vector and copies elements
         to the new vector.
@@ -282,7 +299,7 @@ class Vector:
         self.capacity //= 2
         self.copy_to_new_vector()
 
-    def erase(self, i):
+    def erase(self, i: int) -> None:
         """
         Removes the element at the specified index from the vector.
 
@@ -305,14 +322,14 @@ class Vector:
 
         """
         if self.size <= self.capacity / 4:
-            self.decreaseCapacity()
+            self.decrease_capacity()
         if i < 0 or i >= self.size:
             raise IndexError('list index out of range')
         self.size -= 1
         if self.size != 0:
             del self[i]
 
-    def append(self, x):
+    def append(self, x: Any) -> None:
         """
         Appends an element to the end of the vector.
 
@@ -330,11 +347,11 @@ class Vector:
 
         """
         if self.size + 1 >= self.capacity:
-            self.increaseCapacity()
+            self.increase_capacity()
         self.elements[self.size] = x
         self.size += 1
 
-    def insert(self, x, i):
+    def insert(self, x: Any, i: int) -> None:
         """
         Inserts an element at the specified index in the vector.
 
@@ -363,37 +380,62 @@ class Vector:
         if i < 0 or i > self.size:
             raise IndexError('list index out of range')
 
-        # handle addition of the first
-        # element using insertion
-        if self.size == 0:
-            self.elements[0] = x
-            self.size += 1
-            return None
-
         # append using insertion
         if i == self.size:
             self.append(x)
-            return None
+            return
 
         # insertion in its essential
         # some memory work
-        if self.size + 1 >= self.capacity:
-            self.increaseCapacity()
-
-        # first create dump and drop item with index to be inserted by
-        buff = self.elements[i]
+        if self.size + 1 >= self.capacity or i + 1 == self.size:
+            self.increase_capacity()
+        # Move elements to make space for the new item
+        self.elements[i+1:self.size+1] = self.elements[i:self.size]
         # insert by index
         self.elements[i] = x
-
-        # if inserted index was the last -
-        # append dumped item
-        if i + 1 == self.size:
-            self.elements[i + 1], buff = buff, self.elements[i + 1]
-            self.size += 1
-            return None
-
-        # move all other items and append the last
-        for j in range(i+1, self.size):
-            self.elements[j], buff = buff, self.elements[j]
-        self.elements[self.size] = buff
         self.size += 1
+
+    def pop(self) -> Any:
+        """
+        Pops the last element in the vector.
+
+        Returns
+        -------
+        Any
+            The popped element.
+
+        """
+        to_pop = copy.deepcopy(self.elements[self.size - 1])
+        self.erase(self.size - 1)
+        return to_pop
+
+    def extend(self, elements: Sized and Iterable) -> None:
+        """
+        Appends all provided elements.
+
+        Parameters
+        ----------
+        elements: Sized and Iterable
+            Data structure supporting slices and containing elements
+            to be appended
+
+        Returns
+        -------
+        None
+
+        """
+        while self.size + len(elements) >= self.capacity:
+            self.increase_capacity()
+        self.elements[self.size:self.size + len(elements)] = elements
+
+    def __iter__(self) -> Generator:
+        """
+        Iterates over all vector's elements.
+
+        Returns
+        -------
+        Generator
+
+        """
+        for i in self.elements[:self.size]:
+            yield i
