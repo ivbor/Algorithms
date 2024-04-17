@@ -25,7 +25,10 @@ def two_dim_array_count_sort(
 
     This function sorts the 1-dimensional arrays inside a 2-dimensional array
     in ascending order by all indexes (by default) or by exact indexes
-    in the order they are presented.
+    in the order they are presented. Be mindful that this sort populates
+    an array with absent places in each row's key position with sentinel
+    values (-inf). In this case the ascending sort will always lead to rows
+    with absent values being put higher than ones without them.
 
     Parameters
     ----------
@@ -50,10 +53,12 @@ def two_dim_array_count_sort(
 
     """
     if keys == 'all' or isinstance(keys, list):
-        m = max(len(row) for row in a)
-        keys = list(range(m)) if keys == 'all' else keys
-
         max_len = max(len(row) for row in a)
+        keys = list(range(max_len)) if keys == 'all' else keys
+
+        # Here the sentinel values are introduced into array
+        # If you want them to be under all rows with present values -
+        # you can change -inf to inf
         a_padded = [row + [float('-inf')] * (max_len - len(row)) for row in a]
 
         # Sort the padded array

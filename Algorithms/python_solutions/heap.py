@@ -24,10 +24,6 @@ heap_sort(array: list[float]) -> list[float]
     Heap sort is an efficient comparison-based sorting algorithm that uses
     a binary heap to perform the sorting.
 
-get_terminal_width() -> int
-    Retrieves the width of the terminal window using a subprocess to
-    execute 'tput cols' command.
-
 sift_up(array: list[float], element_index: int, size: int) -> None
     Performs the sift-up operation to maintain the heap property.
 
@@ -35,32 +31,9 @@ sift_down(array: list[float], element_index: int) -> None
     Performs the sift-down operation to maintain the heap property.
 
 """
-import subprocess
-from collections.abc import Iterator
+
 
 from Algorithms.python_solutions.vector import Vector
-
-
-def get_terminal_width() -> int:
-    """
-    Retrieve the width of the terminal window.
-
-    This function uses a subprocess to execute the 'tput cols' command
-    to obtain the terminal width.
-
-    Returns
-    -------
-    int
-        The width of the terminal window in pixels.
-
-    """
-    # neither os.get_terminal_size() nor shutil give right terminal size
-    # hence, have to write this function
-    out = subprocess.Popen('''tput cols'''.split(), stdout=subprocess.PIPE)
-    out = out.communicate()[0]
-    out = out.split(b'\n')[0]
-    out = out.decode()
-    return int(out) if out != '' else 0
 
 
 class Heap(Vector):
@@ -85,6 +58,10 @@ class Heap(Vector):
 
     Methods
     -------
+    __init__(self, elements: list[float] | None = None,
+             size: int = 0, capacity: int = 1) -> None
+        Initialize the heap.
+
     append(self, x: float) -> None
         Append an element to the heap.
 
@@ -96,9 +73,6 @@ class Heap(Vector):
 
     insert(self, x: float) -> None
         Insert an element into the heap.
-
-    __iter__(self) -> Generator
-        Iterate through the elements in the heap.
 
     remove_min(self) -> float
         Remove and return the minimum element from the heap.
@@ -217,26 +191,13 @@ class Heap(Vector):
 
         """
         if self.size + 1 >= self.capacity:
-            self.increaseCapacity()
+            self.increase_capacity()
 
         i = self.size
         self.elements[i] = x
         self.size += 1
 
         sift_up(self.elements, i)
-
-    def __iter__(self) -> Iterator[float]:
-        """
-        Iterate through the elements in the heap.
-
-        Yields
-        ------
-        float
-            The next element in the heap.
-
-        """
-        for i in self.elements[:self.size]:
-            yield i
 
     def remove_min(self) -> float:
         """
@@ -257,7 +218,7 @@ class Heap(Vector):
 
         """
         if self.size <= self.capacity / 4:
-            self.decreaseCapacity()
+            self.decrease_capacity()
 
         if self.size == 0:
             raise IndexError('list assignment index out of range')
@@ -336,9 +297,10 @@ def sift_up(a: list[float], i: int) -> None:
     None
     """
     while i > 0:
-        if a[i] < a[int((i-1)/2)]:
-            a[i], a[int((i - 1) / 2)] = a[int((i - 1) / 2)], a[i]
-            i = int((i-1)/2)
+        parent = int((i-1)/2)
+        if a[i] < a[parent]:
+            a[i], a[parent] = a[parent], a[i]
+            i = parent
         else:
             break
 
@@ -364,18 +326,20 @@ def sift_down(a: list[float], i: int, size: int) -> None:
 
     """
     while True:
-        if size > 2*i+2:
-            if (a[i] > a[2*i+2] and a[2*i+1] >= a[2*i+2]):
-                a[i], a[2 * i + 2] = a[2 * i + 2], a[i]
-                i = 2*i+2
-            elif (a[i] > a[2*i+1] and a[2*i+2] >= a[2*i+1]):
-                a[i], a[2 * i + 1] = a[2 * i + 1], a[i]
-                i = 2*i+1
+        right_child = 2 * i + 2
+        left_child = 2 * i + 1
+        if size > right_child:
+            if (a[i] > a[right_child] and a[left_child] >= a[right_child]):
+                a[i], a[right_child] = a[right_child], a[i]
+                i = right_child
+            elif (a[i] > a[left_child] and a[right_child] >= a[left_child]):
+                a[i], a[left_child] = a[left_child], a[i]
+                i = left_child
             else:
                 break
-        elif size > 2*i+1:
-            if a[i] > a[2*i+1]:
-                a[i], a[2 * i + 1] = a[2 * i + 1], a[i]
+        elif size > left_child:
+            if a[i] > a[left_child]:
+                a[i], a[left_child] = a[left_child], a[i]
                 break
             break
         else:

@@ -47,6 +47,10 @@ def to_m_based(number: int, base: int) -> list[int]:
             of the decimal number.
 
     """
+    if base <= 2 and not isinstance(base, int):
+        raise ValueError('base is not a positive integer greater than or ' +
+                         'equal to 2')
+
     m_based = []
     while number != 0:
         number, remainder = divmod(number, base)
@@ -79,9 +83,10 @@ def restore_to_nums(array: list[int], base: int = 10) -> int:
             The decimal number restored from the M-based representation.
 
     """
-
-    return sum(multiplier * base**(len(array) - power - 1)
-               for power, multiplier in enumerate(array))
+    number = 0
+    for digit in array:
+        number = number * base + digit
+    return number
 
 
 def digit_sort(array: list[int], base: int = 10) -> list[int]:
@@ -125,7 +130,7 @@ def digit_sort(array: list[int], base: int = 10) -> list[int]:
     max_length_of_a_i = max([len(i) for i in array])
     array = [[0] * (max_length_of_a_i - len(m)) + m for m in array]
 
-    # use written above func to sort 2-dim arrays
+    # use imported func to sort 2-dim arrays
     array = two_dim_array_count_sort(array)
 
     # restore numbers from arrays

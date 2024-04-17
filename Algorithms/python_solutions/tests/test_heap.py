@@ -2,8 +2,7 @@ import random
 import logging
 import pytest
 
-from Algorithms.python_solutions.heap \
-        import Heap, heap_sort, get_terminal_width
+from Algorithms.python_solutions.heap import Heap, heap_sort
 
 
 def test_can_create_heap():
@@ -55,8 +54,3 @@ def test_heap_sort():
 def test_repr():
     h = Heap(elements=[random.uniform(-100, 100) for _ in range(40)])
     logging.info(h)
-
-
-def test_get_terminal_width():
-    terminal_width = get_terminal_width()
-    assert isinstance(terminal_width, int)

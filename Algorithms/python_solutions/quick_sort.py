@@ -31,9 +31,11 @@ median_of_medians(array: list[float], left: int, right: int) -> int
     Finds the index of median of medians for a given array within specified
     indices.
 
-partition_small(array: list[float], left: int, right: int) -> int
+partition_small(array: list[float], left: int, right: int, opt: bool = True)
+    -> int
     Sorts a small portion of the array using a bubble sort to find a
     median inside this array portion.
+    Optimised version (opt=True) calls Insertion Sort for small arrays.
 
 median_of_three(array: list[float], left: int, right: int) -> float
     Finds the median of three elements in a given array within specified
@@ -42,6 +44,7 @@ median_of_three(array: list[float], left: int, right: int) -> float
 """
 
 
+import logging
 import random
 
 
@@ -120,7 +123,18 @@ def clst_avg(a: list[float], left_edge: int, right_edge: int) -> float:
     return a[idx]
 
 
-def partition_small(array: list[float], left: int, right: int) -> int:
+try:
+    from Algorithms.python_solutions.insert_sort import insert_sort_opt
+    QUICK_OPT = True
+except ImportError:
+    logging.info('insert_sort_opt function cannot be imported, ' +
+                 'defaulting to the slower version of merge_sort with ' +
+                 'opt=False parameter')
+    QUICK_OPT = False
+
+
+def partition_small(array: list[float], left: int, right: int,
+                    opt: bool = QUICK_OPT) -> int:
     '''
     Partition a small portion of the array using a bubble sort algorithm.
 
@@ -141,10 +155,13 @@ def partition_small(array: list[float], left: int, right: int) -> int:
         The index representing the partitioned element.
     '''
 
-    for i in range(left, right):
-        for j in range(i, right):
-            if array[j] < array[i]:
-                array[i], array[j] = array[j], array[i]
+    if opt:
+        array[left:right] = insert_sort_opt(array[left:right])
+    else:
+        for i in range(left, right):
+            for j in range(i, right):
+                if array[j] < array[i]:
+                    array[i], array[j] = array[j], array[i]
     return (left + right) // 2
 
 
@@ -214,7 +231,7 @@ def median_of_three(array: list[float], left: int, right: int) -> float:
 
 
 def _quick_sort(array: list[float], left_edge: int, right_edge: int,
-                pivot_str: str = 'random') -> list[float]:
+                pivot_str: str = 'random', no_recursion=False) -> list[float]:
     """
     Quick Sort Function
 
@@ -250,33 +267,61 @@ def _quick_sort(array: list[float], left_edge: int, right_edge: int,
         'mm' of median of medians or introselect performs well consistently
         regardless of the input data
 
+    no_recursion: bool
+        Switcher between recursive and non-recursive algorithms.
+
     Returns
     -------
     list
         The sorted array.
 
     """
-
-    if len(array[left_edge:right_edge]) <= 1:
-        return array[left_edge:right_edge]
-    if pivot_str == 'random':
-        pivot = array[random.randint(left_edge + 1, right_edge - 1)]
-    elif pivot_str == 'clst_avg':
-        pivot = clst_avg(array, left_edge, right_edge)
-    elif pivot_str == 'm3':
-        pivot = median_of_three(array, left_edge, right_edge - 1)
-    elif pivot_str == 'mm':
-        pivot = array[median_of_medians(array, left_edge, right_edge)]
+    if no_recursion:
+        stack = [(left_edge, right_edge)]
+        while stack:
+            left_edge, right_edge = stack.pop()
+            if left_edge >= right_edge or left_edge + 1 == right_edge:
+                continue
+            if pivot_str == 'random':
+                pivot = array[random.randint(
+                    left_edge + 1, right_edge - 1)]
+            elif pivot_str == 'clst_avg':
+                pivot = clst_avg(array, left_edge, right_edge)
+            elif pivot_str == 'm3':
+                pivot = median_of_three(
+                    array, left_edge, right_edge - 1)
+            elif pivot_str == 'mm':
+                raise AttributeError('median of medians with no recursion' +
+                                     ' is not available')
+            else:
+                raise AttributeError('Cannot parse pivot option')
+            new_left_edge, new_right_edge, = \
+                split(array, pivot, left_edge, right_edge)
+            stack.append((left_edge, new_left_edge))
+            stack.append((new_right_edge, right_edge))
+        return array
     else:
-        raise AttributeError('Cannot parse pivot option')
-    new_left_edge, new_right_edge, = \
-        split(array, pivot, left_edge, right_edge)
-    _quick_sort(array, left_edge, new_left_edge)
-    _quick_sort(array, new_right_edge, right_edge)
-    return array[left_edge:right_edge]
+        if len(array[left_edge:right_edge]) <= 1:
+            return array[left_edge:right_edge]
+        if pivot_str == 'random':
+            pivot = array[random.randint(left_edge + 1, right_edge - 1)]
+        elif pivot_str == 'clst_avg':
+            pivot = clst_avg(array, left_edge, right_edge)
+        elif pivot_str == 'm3':
+            pivot = median_of_three(array, left_edge, right_edge - 1)
+        elif pivot_str == 'mm':
+            pivot = array[median_of_medians(array, left_edge, right_edge)]
+        else:
+            raise AttributeError('Cannot parse pivot option')
+        new_left_edge, new_right_edge, = \
+            split(array, pivot, left_edge, right_edge)
+        _quick_sort(array, left_edge, new_left_edge)
+        _quick_sort(array, new_right_edge, right_edge)
+        return array[left_edge:right_edge]
 
 
-def quick_sort(array: list[float], pivot_str: str = 'random') -> list[float]:
+def quick_sort(array: list[float], pivot_str: str = 'random',
+               no_recursion: bool = False) -> list[float]:
     """
     Quick Sort Function (Wrapper)
 
@@ -320,6 +365,9 @@ def quick_sort(array: list[float], pivot_str: str = 'random') -> list[float]:
         'mm' of median of medians or introselect performs well consistently
         regardless of the input data
 
+    no_recursion: bool
+        Switcher between recursive and non-recursive algorithms.
+
     Returns
     -------
     list
@@ -327,4 +375,4 @@ def quick_sort(array: list[float], pivot_str: str = 'random') -> list[float]:
 
     """
     return _quick_sort(array, left_edge=0, right_edge=len(array),
-                       pivot_str=pivot_str)
+                       pivot_str=pivot_str, no_recursion=no_recursion)

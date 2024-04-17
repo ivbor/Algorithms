@@ -18,7 +18,7 @@ merge(array: list[float], part_one: list[float], part_two: list[float])
 merge_sort(array: list[float], opt: bool = True, batch_size: int = 3)
     -> list[float]
     Sort a list of elements using the Merge Sort algorithm.
-    If optimised version is called uses Insertion Sort for small arrays.
+    Optimised version (opt=True) calls Insertion Sort for small arrays.
 
 merge_sort_parallel(array: list[float], batch_size=None, depth=0)
     -> list[float]

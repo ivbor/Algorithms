@@ -114,9 +114,26 @@ num_range = (-10, 10)
                              size_of_1_dim_range=test_size_range),
                            {}, {}),
 
-                          (quick_sort, [0], {}, {}),
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'no_recursion': True}, {}),
 
-                          (quick_sort, [], {}, {}),
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'clst_avg',
+                            'no_recursion': True}, {}),
+
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'm3',
+                            'no_recursion': True}, {}),
+                          (quick_sort, [0], {}, {}),
 
                           (quick_sort,
                            random_1_dim_array(
@@ -143,6 +160,8 @@ num_range = (-10, 10)
                              elts_range=num_range,
                              size_of_1_dim_range=test_size_range),
                            {'pivot_str': 'mm'}, {}),
+
+                          (quick_sort, [], {}, {}),
 
                           (two_dim_array_count_sort,
                            whole_2_dim_array(
@@ -212,6 +231,14 @@ def test_sorts(function, array, params, sorted_params):
                              size_of_1_dim_range=test_size_range,
                              size_of_2_dim_range=test_size_range),
                           {'keys': ''}),
+
+                          (quick_sort,
+                           random_1_dim_array(
+                             elts_range=num_range,
+                             size_of_1_dim_range=test_size_range),
+                           {'pivot_str': 'mm',
+                            'no_recursion': True}),
+
                           (quick_sort,
                           random_1_dim_array(
                              elts_range=num_range,
