@@ -18,19 +18,34 @@ Contents
   - sort by key inside array (array_count_sort.py)
   - sort by key inside 2-dim array (two_dim_array_count_sort.py)
   - sort by digits (digit_sort.py)
+  ---------------
 - Data Structures
   ---------------
-  - LinkedList (LinkedList.py)
-  - CyclicLinkedList (CyclicLinkedList.py)
-  - HashTables with different collision handling approaches (hashtable.py)
+  - Vector (vector.py)
   - Heap (heap.py)
+  ---------------
   - OneWayNode (Node.py)
   - TwoWayNode (DoubleNode.py)
-  - BloomFilter (bloom_filter.py)
+  - LinkedList (LinkedList.py)
   - Queue (Queue.py)
   - Stack (Stack.py)
   - Deque (Deque.py)
-  - DynamicArray (vector.py)
+  - CyclicLinkedList (CyclicLinkedList.py)
+  ---------------
+  - HashTables with different collision handling approaches (hashtable.py)
+  - BloomFilter (bloom_filter.py)
+  - HyperLogLog (hyperloglog.py)
+  ---------------
+  - BinarySearchTree (bst.py)
+  - AVLTree (avl_tree.py)
+  - RedBlackTree (red_black_tree.py)
+  - SegmentTree (segment_tree.py)
+  - SparseTable (sparse_table.py)
+  ---------------
+  - GraphNodes and Edges (graph_nodes.py)
+  - Graph (graph.py)
+  - WeightedGraph (weighted_graph.py)
+  --------------------
 - Searching Algorithms
   --------------------
   - Binary Search (bin_search.py)
@@ -39,8 +54,11 @@ Contents
   - Search for k-th ascending element in the array without sorting
   (split_find.py)
   - Ternary Search for real function extrema (ternary_search_extremum.py)
-- Some other helpers
   ------------------
+- Some other tools and algorithms
+  ------------------
+  - Dynamic programming solutions to different problems
+  (dynamic_programming.py)
   - Visualization tool for matrixes (matrix_view.py)
-  - Speed testing tool (speed_analysis.py)
+  - Edit distances (edit_distance.py)
 '''
