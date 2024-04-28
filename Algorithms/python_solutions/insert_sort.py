@@ -57,6 +57,33 @@ def insert_sort(array: list[float]) -> list[float]:
 
 def bin_search_fl(array: list[float], value: float,
                   start: int, end: int) -> int:
+    '''
+    A binary search in the array slice consisting of floats.
+
+    It searches for the place where to put the value
+    while preserving an ascending order.
+
+    Parameters
+    ----------
+    array: list[float]
+        An array to search in.
+
+    value: float
+        A value to search a place for.
+
+    start: int
+        An index pointing at the slice's left border inclusively.
+
+    end: int
+        An index pointing at the slice's right border inclusively.
+
+    Returns
+    -------
+    int
+        An index pointing to the place where the value should land.
+
+    '''
+
     while start < end:
         mid = (start + end) // 2
         if array[mid] < value:
