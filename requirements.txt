@@ -1,6 +1,4 @@
-nbsphinx
 docutils==0.18.1
-sphinx
 matplotlib
 notebook
 interrogate
