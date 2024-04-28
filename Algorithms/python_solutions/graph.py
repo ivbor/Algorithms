@@ -1,52 +1,199 @@
 import heapq
-import logging
 
-from collections import deque
+from typing import Any, Generator
 
 from Algorithms.python_solutions.graph_nodes import GraphNode, Edge
+from Algorithms.python_solutions.graph_util \
+    import Graph_util, reconstruct_path
 
 
 class VerticesList(dict):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def append(self, __object) -> None:
         self[len(self)] = __object
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> Any | None:
         if index not in self.keys():
             raise IndexError(f'there is no index {index} in the list')
         return dict.get(self, index)
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[Any, Any, None]:
         for elt in self.values():
             yield elt
 
-    def __delitem__(self, index):
+    def __delitem__(self, index) -> None:
         dict.__delitem__(self, index)
 
 
-class Graph:
+class Graph(Graph_util):
+    """
+    Graph Class
 
-    def __init__(self):
+    Represents a graph structure with basic functionality, as well as advanced
+    methods to manipulate and analyze the graph properties.
+
+    Space complexity of all methods where time complexity specified is O(V)
+    because graph is stored as list of vertices.
+
+    Attributes
+    ----------
+    vertices : VerticesList
+        A list of vertices in the graph.
+
+    has_cycles : bool
+        Switcher to show if the graph contains cycles.
+        Initially it is set to False, but updates after the addition of each
+        edge.
+
+    node_type : type
+        A node class to be used by this graph type.
+        For Graph it is GraphNode.
+
+    Methods
+    -------
+    __init__(self) -> None
+        Initialize the graph.
+
+    all_vertices(self) -> list[str]
+        Method showing all vertices by data they contain.
+
+    add_vertex(self, *args, **kwargs) -> None
+        Adds vertex (node) to the graph.
+
+    remove_vertex(self, **kwargs) -> None
+        Method removing vertex by data or index provided in kwargs.
+
+    add_edge(self, u: int, v: int, *args, **kwargs) -> None
+        Add edge between from the vertex with index u to the vertex with
+        index v.
+
+    remove_edge(self, u: int, v: int) -> None
+        Remove edge from the vertex with index u to the vertex with index v.
+
+    bfs(self, start: int, target: int) -> list[int]
+        Breadth-first search implementation.
+        Returns the path from the start to the target.
+
+    to_adjacency_matrix(self) -> list[list[int]]
+        Returns an adjacency matrix of the graph.
+
+    calculate_element(self, vertex: int, neighbor: int) -> int
+        Calculates an element with coordinates (vertex, neighbor) of
+        adjacency matrix.
+
+    is_cyclic(self) -> bool
+        Method discovering whether the graph contains cycles.
+
+    topological_sort(self) -> list[int]
+        Perform a topological sort of the graph
+        and return a list of vertices in topologically sorted order.
+
+    tarjan_scc(self) -> list[list[int]]
+        Find and return all strongly connected components in the graph
+        using Tarjan's algorithm.
+
+    reverse_graph(self) -> 'Graph'
+        Reverses the direction of all edges in the graph.
+
+    dfs_util(self, reversed_graph: 'Graph', vertex: int,
+             visited: set[int], scc: list[list[int]]) -> None
+        A utility function for DFS traversal that tracks the strongly
+        connected component.
+
+    kosaraju_scc(self) -> list[list[int]]
+        Find and return all strongly connected components in the graph
+        using Kosaraju's algorithm.
+
+    dijkstra(self, start: int) -> tuple[list[float], dict[int, int]]
+        A method to calculate distances from the vertex with index start to
+        all other vertices and shortest paths using provided dictionary
+        using Dijkstra's algorithm.
+
+    bellman_ford(self, start: int) -> tuple[list[float], dict[int, list[int]]]
+        A method to calculate distances from the vertex with index start to
+        all other vertices and shortest paths using provided dictionary
+        using Bellman-Ford algorithm.
+
+    dinics_algorithm(self, source: int, sink: int) -> int:
+        Dinic's algorithm to find the maximum flow
+        from a source to a sink in the graph.
+
+    goldberg_tarjan(self, source: int, sink: int) -> int:
+        Method implementing the Goldberg-Tarjan's algorithm
+        to find the maximum flow from a source to a sink in a flow network.
+
+    color_vertices(self) -> int
+        Color the vertices of the graph using a greedy coloring algorithm.
+
+    all_edges(self) -> list[dict[str, Any]]
+        Return a list of all edges (in dict form) in the graph.
+
+    color_edges(self) -> int
+        Assign colors to edges ensuring no two adjacent edges have
+        the same color.
+
+    """
+
+    def __init__(self) -> None:
+        """
+        Initialize a new Graph object.
+
+        Returns
+        -------
+        None
+        """
         self.vertices = VerticesList()
         self.has_cycles = False
         self.node_type = GraphNode
 
-    def all_vertices(self):
+    def all_vertices(self) -> list[str]:
+        """
+        Returns a list of all vertices in the graph
+        as string representations.
+
+        Returns
+        -------
+        list[str]
+            A list containing string representations of each vertex
+            in the graph.
+        """
         return [str(vertex) for vertex in self.vertices]
 
-    def add_vertex(self, *args, **kwargs):
+    def add_vertex(self, *args, **kwargs) -> None:
+        """
+        Adds a vertex to the graph,
+        automatically handling the indexing and connections
+        based on provided arguments.
 
-        # figure out the index
+        Parameters
+        ----------
+        kwargs['data'] or args[0]: Any
+            Data to be placed into the vertex.
+
+        kwargs['edges'] of args[1]: list[int]
+            List of indexes of vertices
+            with which the vertex will be connected.
+
+        Returns
+        -------
+        None
+        """
+        # figure out and assign the index
         if len(self.vertices) == 0:
             index = len(self.vertices)
+        # something is in the graph already
         else:
+            # find out which indexes are already assigned
             present_indexes = \
                 [i for i in self.vertices.keys()]
+            # find out which ones are missing due to possible deletion
             missing_vals = set(present_indexes).difference(
                             set([i for i in range(max(present_indexes) + 1)]))
+            # if something is missing - reuse missing index
+            # if all filled - use more memory
             if len(missing_vals) != 0:
                 index = min(missing_vals)
             else:
@@ -61,57 +208,123 @@ class Graph:
         edges = \
             self._find_arg([], {1: 'edges'}, *args, **kwargs)
         for nr, edge in enumerate(edges):
+            # pass to kwargs current edge number
             kwargs['nr'] = nr
+            # and sort out the available args and kwargs for
+            # add_edge method
             if 'data' in kwargs and 'edges' in kwargs:
                 self.add_edge(index, edge, *args, **kwargs)
             else:
                 args = args[2:]
                 self.add_edge(index, edge, *args, **kwargs)
 
-    def _find_arg(self, default, arg_dict: dict[int, str], *args, **kwargs):
+    def remove_vertex(self, **kwargs) -> None:
+        """
+        Removes a vertex from the graph based on provided index or data.
 
-        pos = [i for i in arg_dict.keys()][0]
-        string = [i for i in arg_dict.values()][0]
+        Parameters
+        ----------
+        kwargs['index']: int
+            Index of the vertex to remove.
+        or
+        kwargs['data']: Any
+            Data inside the vertex to remove.
 
-        try:
-            if len(args) > pos:
-                arg = args[pos]
-            else:
-                arg = kwargs[string]
-        except KeyError:
-            return default
+        Returns
+        -------
+        None
+        """
 
-        return arg
-
-    def _find_index(self, **kwargs):
-        if 'data' in kwargs.keys():
-            index = \
-                [vertex.index for vertex in self.vertices
-                 if vertex.data == kwargs['data']][0]
-        elif 'index' in kwargs.keys():
-            index = kwargs['index']
-        else:
-            raise TypeError('no index or data specified to remove')
-        return index
-
-    def remove_vertex(self, **kwargs):
         index = self._find_index(**kwargs)
+        # first, remove edges from other vertices to this vertex
         for vertex in self.vertices:
             if index in vertex.edges.keys():
                 self.remove_edge(vertex.index, index)
         del self.vertices[index]
 
-    def add_edge(self, u: int, v: int, *args, **kwargs):
+    def add_edge(self, u: int, v: int, *args, **kwargs) -> None:
+        """
+        Adds an edge between two vertices, identified by their indices,
+        optionally including properties listed below.
+
+        DO NOT USE args FOR PASSING THESE PROPERTIES!
+        Args are passed just to make potential future changes
+        (additional functionality) easier.
+
+        Parameters
+        ----------
+        u : int
+            The index of the source vertex.
+
+        v : int
+            The index of the destination vertex.
+
+        kwargs['capacity']: int
+            The capacity of the edge, used in flow algorithms.
+
+        kwargs['flow']: int
+            Current flow through the edge, used in flow algorithms.
+
+        kwargs['color']: int
+            The number depicting color of the edge.
+
+        Returns
+        -------
+        None
+        """
         if v not in self.vertices[u].edges.keys():
             self.vertices[u].edges[v] = Edge(u, v, *args, **kwargs)
             capacity = self._find_arg(0, {10: 'capacity'}, *args, **kwargs)
             self.vertices[u].edges[v].capacity = capacity
 
-    def remove_edge(self, u: int, v: int):
+    def remove_edge(self, u: int, v: int) -> None:
+        """
+        Removes an edge from the graph.
+
+        Parameters
+        ----------
+        u : int
+            The index of the source vertex.
+
+        v : int
+            The index of the destination vertex.
+
+        Returns
+        -------
+        None
+        """
         if v in self.vertices[u].edges.keys():
             del self.vertices[u].edges[v]
 
-    def bfs(self, start, target=None):
+    def bfs(self, start: int, target: int) -> list[int]:
+        """
+        Performs a Breadth-First Search (BFS)
+        starting from a specified vertex to a target vertex,
+        returning the path.
+
+        This function utilizes BFS.
+        Time complexity: O(V + E)
+        Space complexity: O(V)
+
+        Parameters
+        ----------
+        start : int
+            The index of the start vertex.
+
+        target : int
+            The index of the target vertex.
+
+        Returns
+        -------
+        list[int]
+            A list of vertex indices representing the path
+            from start to target.
+
+        Raises
+        ------
+        IndexError
+            If no path exists between the start and target vertices.
+        """
 
         to_return = []
         visited = [False] * (
@@ -140,8 +353,15 @@ class Graph:
             raise IndexError(
                 f'there is no path between {start} and {target}')
 
-    def to_adjacency_matrix(self):
+    def to_adjacency_matrix(self) -> list[list[int]]:
+        """
+        Finds an adjacency matrix of the graph.
 
+        Returns
+        -------
+        list[list[int]]
+            The adjacency matrix.
+        """
         matrix_size = len(self.vertices)
         adjacency_matrix = \
             [[0] * matrix_size for _ in range(matrix_size)]
@@ -153,29 +373,77 @@ class Graph:
 
         return adjacency_matrix
 
-    def calculate_element(self, vertex, neighbor):
+    def calculate_element(self, vertex: int, neighbor: int) -> int:
+        """
+        Calculates an element with coordinates (vertex, neighbor) of the
+        adjacency matrix.
+
+        Parameters
+        ----------
+        vertex: int
+            The row of the element.
+
+        neighbor: int
+            The column of the element.
+
+        Returns
+        -------
+        int
+            The element of the adjacency matrix with coordinates
+            (vertex, neighbor).
+        """
         return 1
 
-    def topological_sort_util(self, vertex, visited, stack):
+    def is_cyclic(self) -> bool:
+        """
+        Method discovering whether the graph contains cycles.
 
-        visited[vertex] = True
+        This function utilizes DFS.
+        Time complexity: O(V + E)
 
-        # Recur for all the vertices adjacent to this vertex
-        for neighbor in self.vertices[vertex].edges.keys():
-            if not visited[neighbor]:
-                self.topological_sort_util(neighbor, visited, stack)
+        Returns
+        -------
+        bool
+            Whether the graph contains cycles.
+        """
 
-        # Push current vertex to stack which stores the result
-        stack.insert(0, vertex)
+        # Mark all the vertices as not visited
+        visited = [False] * len(self.vertices)
+        rec_stack = [False] * len(self.vertices)
 
-    def topological_sort(self):
+        # Call the recursive helper function
+        # to detect cycle in different DFS trees
+        for index in [vertex.index for vertex in self.vertices]:
+            if not visited[index]:
+                if self.is_cyclic_util(index, visited, rec_stack):
+                    return True
 
-        # Step 1: Check for cycles
+        return False
+
+    def topological_sort(self) -> list[int]:
+        """
+        Performs a topological sort of the graph if it is acyclic,
+        returning an ordered list of vertex indices.
+
+        This function utilizes DFS.
+        Time complexity: O(V + E)
+
+        Returns
+        -------
+        list[int]
+            A list of vertex indices in topologically sorted order.
+
+        Raises
+        ------
+        RecursionError
+            If the graph contains cycles, making topological sort impossible.
+        """
+        # Check for cycles
         if self.is_cyclic():
             raise RecursionError(
-                "The graph has a cycle. Topological sort not possible.")
+                "The graph has a cycle. Topological sort is not possible.")
 
-        # Step 2: Perform Topological Sort
+        # Perform Topological Sort
         visited = [False] * len(self.vertices)
         stack = []
 
@@ -185,59 +453,20 @@ class Graph:
 
         return stack
 
-    def tarjan_dfs(self, vertex, index, stack, low_link, on_stack, scc):
+    def tarjan_scc(self) -> list[list[int]]:
+        """
+        Finds all strongly connected components in the graph
+        using Tarjan's algorithm.
 
-        # when approach new vertex - assign it the index
-        index[vertex] = self.counter
-        # and the low-link value (the same one)
-        # which will further show node with the lowest index
-        # from which it can be accessible
-        low_link[vertex] = self.counter
-        self.counter += 1
+        This function utilizes DFS.
+        Time complexity: O(V + E)
 
-        # add the current node to the current stack
-        # which limits segment currently studied for connectivity
-        stack.append(vertex)
-        # mark the node to be in the current dfs queue
-        on_stack[vertex] = True
-
-        for neighbor in self.vertices[vertex].edges.keys():
-
-            # if the neighbor has not been visited yet
-            if index[neighbor] == -1:
-                # Recursively call DFS on the neighbor
-                self.tarjan_dfs(
-                    neighbor, index, stack, low_link, on_stack, scc)
-                # after calling dfs to calculate low_link value
-                # for neighbor update low_link value of the current node
-                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
-            # if node is on the stack -
-            # means that it has been visited earlier in the current dfs
-            # but may not be updated as changes may have occurred
-            # to the low_link of its neighbors on the deeper dfs iteration
-            elif on_stack[neighbor]:
-                low_link[vertex] = min(low_link[vertex], low_link[neighbor])
-
-        # now that all nodes which could possibly be visited
-        # on the current dfs have their indexes
-        # and we can start to search for nodes in the current scc segment
-
-        # if for vertex inside current dfs its low_link value equals to
-        # its index - it is the root of the scc segment
-        if low_link[vertex] == index[vertex]:
-            scc_component = []
-            # now - to remove vertices from current stack
-            # until the root vertex is reached
-            # and save them as scc segment
-            while True:
-                last_vertex = stack.pop()
-                on_stack[last_vertex] = False
-                scc_component.append(last_vertex)
-                if last_vertex == vertex:
-                    break
-            scc.append(scc_component)
-
-    def scc(self):
+        Returns
+        -------
+        list[list[int]]
+            A list of lists, where each sublist represents
+            a strongly connected component.
+        """
 
         # counter for indexes
         self.counter = 0
@@ -253,83 +482,27 @@ class Graph:
 
         for vertex in [vertex.index for vertex in self.vertices]:
             if index[vertex] == -1:
-                self.tarjan_dfs(vertex, index, stack, low_link, on_stack, scc)
+                self.tarjan_dfs(vertex, index, stack,
+                                low_link, on_stack, scc)
 
         return scc
 
-    def kosaraju_scc(self):
-        """
-        Finds strongly connected components in the given directed graph
-        using Kosaraju's algorithm.
-
-        Args:
-        - graph (DirectedGraph): The directed graph for which to find SCCs.
-
-        Returns:
-        - List[List[int]]: A list of lists, where each inner list contains
-        the indices of nodes that form a strongly connected component.
-        """
-        stack = []
-        visited = set()
-
-        # Step 1: Fill vertices in stack according to their finishing times
-        for vertex in self.vertices:
-            if vertex.index not in visited:
-                self.fill_order(vertex.index, visited, stack)
-
-        # Step 2: Reverse graph
-        reversed_graph = self.reverse_graph()
-
-        # Step 3: Process all vertices in order defined by Stack
-        visited.clear()
-        sccs = []
-
-        while stack:
-            vertex = stack.pop()
-            if vertex not in visited:
-                scc = []
-                self.dfs_util(reversed_graph, vertex, visited, scc)
-                sccs.append(scc)
-
-        return sccs
-
-    def fill_order(self, vertex, visited, stack):
-        """
-        Utility function for DFS and to fill the stack with vertices
-        based on their finishing times (meaning the time when all not visited
-        vertices accessible from this vertex by transitions with direction 1
-        become visited).
-
-        Args:
-        - graph (DirectedGraph): The graph to perform DFS on.
-        - vertex (int): The starting vertex index for DFS.
-        - visited (set): Set of visited vertices.
-        - stack (list): Stack to push vertices according to their
-        finishing times.
-        """
-
-        visited.add(vertex)
-
-        for neighbor in self.vertices[vertex].edges.keys():
-            if neighbor not in visited:
-                self.fill_order(neighbor, visited, stack)
-        stack.append(vertex)
-
-    def reverse_graph(self):
+    def reverse_graph(self) -> 'Graph':
         """
         Reverses the direction of all edges in the graph.
 
-        Args:
-        - graph (DirectedGraph): The graph to reverse.
+        Time complexity: O(V + E)
 
-        Returns:
-        - DirectedGraph: A new graph with reversed edges.
+        Returns
+        -------
+        Graph
+            A new graph with reversed edges.
         """
         reversed_graph = Graph()
         for vertex in [vertex.index for vertex in self.vertices]:
             reversed_graph.add_vertex(data=self.vertices[vertex].data)
 
-        for vertex in self.vertices:
+        for vertex in [vertex for vertex in self.vertices]:
             for neighbor in vertex.edges.keys():
                 # copy params
                 edge_params = vertex.edges[neighbor].__dict__
@@ -343,16 +516,29 @@ class Graph:
 
         return reversed_graph
 
-    def dfs_util(self, reversed_graph, vertex, visited, scc):
+    def dfs_util(self, reversed_graph: 'Graph', vertex: int,
+                 visited: set[int], scc: list[list[int]]) -> None:
         """
         A utility function for DFS traversal that tracks
         the strongly connected component.
 
-        Args:
-        - graph (DirectedGraph): The graph to perform DFS on.
-        - vertex (int): The starting vertex index for DFS.
-        - visited (set): Set of visited vertices.
-        - scc (list): List to accumulate vertices in the current SCC.
+        This function utilizes DFS.
+        Time complexity: O(V + E)
+
+        Parameters
+        ----------
+        vertex: int
+            The starting vertex index for DFS.
+
+        visited: set
+            Set of visited vertices.
+
+        scc: list[list[int]]
+            List to accumulate vertices in the current SCC.
+
+        Returns
+        -------
+        None
         """
         visited.add(vertex)
         scc.append(vertex)
@@ -361,11 +547,75 @@ class Graph:
             if neighbor not in visited:
                 self.dfs_util(reversed_graph, neighbor, visited, scc)
 
-    def dijkstra(self, start: int):
+    def kosaraju_scc(self) -> list[list[int]]:
+        """
+        Finds strongly connected components in the given directed graph
+        using Kosaraju's algorithm.
+
+        Time complexity: O(V + E)
+
+        Returns
+        -------
+        list[list[int]]
+            A list of lists, where each inner list contains
+            the indices of nodes that form a strongly connected component.
+        """
+
+        stack = []
+        visited = set()
+
+        # Fill vertices in stack according to their finishing times
+        for vertex in self.vertices:
+            if vertex.index not in visited:
+                self.fill_order(vertex.index, visited, stack)
+
+        # Reverse graph
+        reversed_graph = self.reverse_graph()
+
+        # Process all vertices in order defined by Stack
+        visited.clear()
+        sccs = []
+
+        while stack:
+            vertex = stack.pop()
+            if vertex not in visited:
+                scc = []
+                self.dfs_util(reversed_graph, vertex, visited, scc)
+                sccs.append(scc)
+
+        return sccs
+
+    def dijkstra(self, start: int) -> tuple[list[float], dict[int, int]]:
+        """
+        A method to calculate distances from the vertex with index start to
+        all other vertices and shortest paths using provided dictionary
+        using Dijkstra's algorithm.
+
+        Time complexity: O((V + E) * log V)
+
+        Time complexity comes from the following facts:
+            - while acts as for cycle going through all vertices making
+            while-for section O(V + E);
+            - additional heappush operation within while-for performs in
+            log V time.
+
+        Parameters
+        ----------
+        start: int
+            Vertex to calculate distances from.
+
+        Returns
+        -------
+        tuple[list[float], dict[int, int]]
+            Tuple with list and dict inside. In the list to each index, being
+            vertex's index, corresponds the distance between it and start
+            vertex. In the dict to vertices' indexes correspond the closest
+            vertices.
+        """
 
         # Initialize distances to all nodes as infinity
         distances = \
-            [float('inf') for _ in self.vertices]
+            [float('inf') for _ in range(len(self.vertices))]
         # Set distance to start node as 0
         distances[start] = 0
         # Priority queue to store nodes to visit
@@ -393,55 +643,38 @@ class Graph:
 
         return distances, current_distances
 
-    def is_cyclic_util(self, vertex, visited, rec_stack):
+    def bellman_ford(self, start: int) \
+            -> tuple[list[float], dict[int, list[int]]]:
+        """
+        A method to calculate distances from the vertex with index start to
+        all other vertices and shortest paths using provided dictionary
+        using Bellman-Ford algorithm.
 
-        # Mark the current node as visited
-        visited[vertex] = True
-        rec_stack[vertex] = True
+        Time complexity: O(V * E)
 
-        # Recur for all the vertices adjacent to this vertex
-        for neighbor in self.vertices[vertex].edges.keys():
+        Parameters
+        ----------
+        start: int
+            Vertex to calculate distances from.
 
-            # If the node is not visited then recurse on it
-            if not visited[neighbor]:
-                if self.is_cyclic_util(neighbor, visited, rec_stack):
-                    return True
+        Returns
+        -------
+        tuple[list[float], dict[int, list[int]]]
+            Tuple with list and dict inside. In the list to each index, being
+            vertex's index, corresponds the distance between it and start
+            vertex. In the dict to vertices' indexes correspond the shortest
+            paths between these vertices and the starting vertex,
+            both included.
+        """
 
-            # If an adjacent vertex is visited and
-            # not parent of current vertex, then there is a cycle
-            elif rec_stack[neighbor]:
-                return True
-
-        rec_stack[vertex] = False
-        return False
-
-    def is_cyclic(self):
-
-        # Mark all the vertices as not visited
-        visited = [False] * len(self.vertices)
-        rec_stack = [False] * len(self.vertices)
-
-        # Call the recursive helper function
-        # to detect cycle in different DFS trees
-        for index in [vertex.index for vertex in self.vertices]:
-            if not visited[index]:
-                if self.is_cyclic_util(index, visited, rec_stack):
-                    return True
-
-        return False
-
-    def bellman_ford(self, start):
-
-        # Step 1: Initialize distances from start
+        # Initialize distances from start
         # to all other vertices as INFINITE and target to itself as 0.
         # Also, create a parent array to store the shortest path tree
-
         dist = [float("Inf")] * len(self.vertices)
         dist[start] = 0
-        # Parent array to store the path
         parent = [-1] * len(self.vertices)
 
-        # Step 2: Relax all edges |V| - 1 times
+        # Relax all edges |V| - 1 times
         for _ in range(len(self.vertices) - 1):
             for vertex in self.vertices:
                 for neighbor in vertex.edges.keys():
@@ -453,74 +686,41 @@ class Graph:
                             self.calculate_element(vertex.index, neighbor)
                         parent[neighbor] = vertex.index
 
-        # Step 3: Check for negative-weight cycles
-        for vertex in self.vertices:
-            for neighbor in vertex.edges.keys():
-                if dist[vertex.index] != float("Inf") and \
-                        dist[vertex.index] + \
-                        self.calculate_element(vertex.index, neighbor) < \
-                        dist[neighbor]:
-                    print("Graph contains negative weight cycle")
-                    return None, None
-
-        # Function to reconstruct path from source to j using parent array
-        def reconstruct_path(src, j, parent):
-            path = []
-            while j != -1:
-                path.append(j)
-                j = parent[j]
-            path.reverse()
-            return path if path[0] == src else []
-
         # Reconstruct paths from target to all other vertices
         paths = \
             {vertex.index: reconstruct_path(start, vertex.index, parent)
-             for vertex in self.vertices}
+                for vertex in self.vertices}
 
         return dist, paths
 
-    def bfs_level_graph(self, source):
-        levels = [-1] * len(self.vertices)  # Level of nodes
-        levels[source] = 0
-        queue = deque([source])
-        while queue:
-            vertex = queue.popleft()
-            for _, edge in self.vertices[vertex].edges.items():
-                # Check capacity and if the level is set
-                if edge.capacity - edge.flow > 0 and \
-                        levels[edge.second_node] < 0:
-                    levels[edge.second_node] = levels[vertex] + 1
-                    queue.append(edge.second_node)
-        return levels
+    def dinics_algorithm(self, source: int, sink: int) -> int:
+        """
+        Dinic's algorithm to find the maximum flow
+        from a source to a sink in the graph.
 
-    def dfs_blocking_flow(self, source, sink, flow, levels):
-        if source == sink:
-            return flow
-        for _, edge in self.vertices[source].edges.items():
-            remaining_capacity = edge.capacity - edge.flow
-            if remaining_capacity > 0 \
-                    and levels[edge.second_node] == levels[source] + 1:
-                # Min flow in path
-                path_flow = min(flow, remaining_capacity)
-                result_flow = \
-                    self.dfs_blocking_flow(edge.second_node, sink,
-                                           path_flow, levels)
-                if result_flow > 0:
-                    # Update capacities in the direction TO the sink
-                    edge.flow += result_flow
-                    # and FROM the sink
-                    if source in [i for i in self.vertices[edge.second_node]
-                                                 .edges.keys()]:
-                        self.vertices[edge.second_node].edges[source]\
-                            .flow -= result_flow
-                    else:
-                        raise KeyError(
-                            f'no reverse edge from {edge.second_node} to \
-                            {source}')
-                    return result_flow
-        return 0
+        This function uses two major processes in a loop:
+        first, it constructs a level graph using BFS to determine
+        the shortest paths from the source in terms of the number of edges.
+        Then, it attempts to find blocking flows in this level graph
+        using DFS until no more augmenting paths are found
+        in the level graph.
 
-    def dinics_algorithm(self, source, sink):
+        Time complexity: O(V * E ** 2)
+
+        Parameters
+        ----------
+        source : int
+            The index of the source vertex in the graph.
+
+        sink : int
+            The index of the sink vertex in the graph.
+
+        Returns
+        -------
+        int
+            The maximum flow from the source to the sink.
+        """
+
         max_flow = 0
         while True:
             levels = self.bfs_level_graph(source)
@@ -534,58 +734,39 @@ class Graph:
                 max_flow += flow
         return max_flow
 
-    def initialize_preflow(self, source):
-        # Height initialization
-        for vertex in self.vertices.keys():
-            self.vertices[vertex].height = 0
-            self.vertices[vertex].excess_flow = 0
-        self.vertices[source].height = len(self.vertices)
+    def goldberg_tarjan(self, source: int, sink: int) -> int:
+        """
+        Method implementing the Goldberg-Tarjan's algorithm
+        to find the maximum flow from a source to a sink in a flow network.
 
-        # Preflow initialization
-        for edge in self.vertices[source].edges.keys():
-            # Send max flow
-            self.vertices[source].edges[edge].flow = \
-                self.vertices[source].edges[edge].capacity
-            self.vertices[edge].excess_flow += \
-                self.vertices[source].edges[edge].flow
-            self.vertices[source].excess_flow -= \
-                self.vertices[source].edges[edge].flow
+        This method uses the preflow-push (or push-relabel) approach,
+        which initializes a preflow that exceeds the flow demands
+        and then adjusts to find the max flow by moving excess flow
+        from the source towards the sink via allowable paths,
+        modifying vertex heights and relabeling vertices as necessary
+        to maintain feasibility.
+        The function repeatedly processes active vertices
+        (those with excess flow and not equal to the source or sink)
+        by trying to push this excess flow towards the sink.
+        If no flow can be pushed, the function relabels the vertex
+        (increases its height) to create new allowable paths
+        in future iterations.
 
-    def push_flow(self, u, v):
+        Time complexity: O(E * V ** 2)
 
-        edge = self.vertices[u].edges[v]
-        flow = min(self.vertices[u].excess_flow,
-                   edge.capacity - edge.flow)
-        if flow > 0 and \
-                self.vertices[u].height == self.vertices[v].height + 1:
-            self.vertices[u].edges[v].flow += flow
-            self.vertices[u].excess_flow -= flow
-            self.vertices[v].excess_flow += flow
-            return True
-        return False
+        Parameters
+        ----------
+        source: int
+            The index of the source vertex.
 
-    def lift_vertex(self, u):
-        min_height = float('inf')
-        for edge in self.vertices[u].edges.keys():
-            if self.vertices[u].edges[edge].capacity > \
-                    self.vertices[u].edges[edge].flow:
-                min_height = \
-                    min(min_height, self.vertices[edge].height)
-        if min_height < float('inf'):
-            self.vertices[u].height = min_height + 1
+        sink: int
+            The index of the sink vertex.
 
-    def discharge_excess_flow(self, u):
-        while self.vertices[u].excess_flow > 0:
-            for neighbor in self.vertices[u].edges.keys():
-                if self.push_flow(u, neighbor):
-                    break
-            else:
-                # No push occurred, lift the vertex
-                self.lift_vertex(u)
-                # Necessary to prevent infinite loop if no push is possible
-                break
-
-    def goldberg_tarjan(self, source, sink):
+        Returns
+        -------
+        int
+            The maximum flow value from the source to the sink in the network.
+        """
         self.initialize_preflow(source)
 
         active_vertices = \
@@ -603,13 +784,22 @@ class Graph:
             if self.vertices[u].height > old_height:
                 # Re-add to the list if the height was increased
                 active_vertices = [u] + active_vertices
+            # check for vertices left with an excess flow
             excess_vertices = \
                 [u for u in self.vertices.keys() if u != source and u != sink
                     and self.vertices[u].excess_flow != 0]
 
         return self.vertices[sink].excess_flow
 
-    def color_vertices(self):
+    def color_vertices(self) -> int:
+        """
+        Color the vertices of the graph using a greedy coloring algorithm.
+
+        Returns
+        -------
+        int
+            Chromatic number of the graph.
+        """
         # Initialize all vertices as unassigned
         vertex_colors = \
             {vertex.index: -1 for vertex in self.vertices}
@@ -644,15 +834,33 @@ class Graph:
 
         return max([i for i in vertex_colors.values()]) + 1
 
-    def all_edges(self):
+    def all_edges(self) -> list[dict[str, Any]]:
+        """
+        Return a list of all edges in the graph.
+
+        Returns
+        -------
+        list[dict[str, Any]]
+            List containing edges in the form of the dict where key is
+            edge's attribute and the value is the value of that attribute.
+        """
         all_edges = []
         for vertex in self.vertices:
             for _, edge in vertex.edges.items():
                 all_edges.append(edge.__dict__)
         return all_edges
 
-    def color_edges(self):
-        # Initial implementation based on provided descriptions
+    def color_edges(self) -> int:
+        """
+        Assign colors to edges ensuring no two adjacent edges have
+        the same color.
+
+        Returns
+        -------
+        int
+            Chromatic number of the graph but for edges.
+        """
+
         all_edges = self.all_edges()
         available_colors = [True] * len(all_edges)
 

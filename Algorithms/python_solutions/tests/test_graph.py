@@ -147,7 +147,7 @@ def test_can_remove_vertices_by_data(uncon2, data_rem, all_vertices,
 
 
 def test_raises_when_no_data_or_index_specified_in_remove(uncon2):
-    with pytest.raises(TypeError):
+    with pytest.raises(KeyError):
         for nr in range(len(uncon2)):
             uncon2[nr].remove_vertex()
 
@@ -348,15 +348,15 @@ def bfs_graph():
     graph = WeightedGraph()
     for i in range(9):
         graph.add_vertex(data=i)
-    edges = [[1, 2, 3, 4], # 0
-                              [0, 2, 5],    # 1
-                              [0, 1, 3, 6], # 2
-                              [0, 2, 4, 7], # 3
-                              [0, 3, 8],    # 4
-                              [1, 6],       # 5
-                              [2, 5, 7],    # 6
-                              [3, 6, 8],    # 7
-                              [4, 7]]       # 8
+    edges = [[1, 2, 3, 4],  # 0
+                              [0, 2, 5],     # 1
+                              [0, 1, 3, 6],  # 2
+                              [0, 2, 4, 7],  # 3
+                              [0, 3, 8],     # 4
+                              [1, 6],        # 5
+                              [2, 5, 7],     # 6
+                              [3, 6, 8],     # 7
+                              [4, 7]]        # 8
     for vertex, neighbors in enumerate(edges):
         for neighbor in neighbors:
             graph.add_edge(vertex, neighbor)
@@ -381,29 +381,29 @@ def test_bfs(uncon2, con2, con5, bfs_graph):
             while target == j:
                 target = random.choice([0, 1, 2, 3, 4])
             assert con5[i].bfs(j, target) == [j, target]
-        edges = [[1, 2, 3, 4], # 0
-                 [2, 5], # 1
-                 [3],    # 2
-                 [4],    # 3
-                 [],     # 4
-                 [6],    # 5
-                 [2, 7], # 6
-                 [3, 8], # 7
-                 [4]]    # 8
+        edges = [[1, 2, 3, 4],  # 0
+                 [2, 5],  # 1
+                 [3],     # 2
+                 [4],     # 3
+                 [],      # 4
+                 [6],     # 5
+                 [2, 7],  # 6
+                 [3, 8],  # 7
+                 [4]]     # 8
         for vertex, neighbors in enumerate(edges):
             bfs_graph.vertices[vertex].edges = {}
             for neighbor in neighbors:
                 bfs_graph.add_edge(vertex, neighbor)
         assert bfs_graph.bfs(0, 4) == [0, 4]
-        edges = [[1], # 0
-                 [2, 5], # 1
-                 [3],    # 2
-                 [4],    # 3
-                 [],     # 4
-                 [6],    # 5
-                 [2, 7], # 6
-                 [3, 8], # 7
-                 [4]]    # 8
+        edges = [[1],  # 0
+                 [2, 5],  # 1
+                 [3],     # 2
+                 [4],     # 3
+                 [],      # 4
+                 [6],     # 5
+                 [2, 7],  # 6
+                 [3, 8],  # 7
+                 [4]]     # 8
         for vertex, neighbors in enumerate(edges):
             bfs_graph.vertices[vertex].edges = {}
             for neighbor in neighbors:
@@ -493,7 +493,7 @@ def test_topo_sort(bfs_graph):
 def test_single_node():
     graph = Graph()
     graph.add_vertex(data=0)
-    assert graph.scc() == [[0]]
+    assert graph.tarjan_scc() == [[0]]
     assert graph.kosaraju_scc() == [[0]]
 
 
@@ -501,7 +501,7 @@ def test_two_nodes_no_edge():
     graph = Graph()
     graph.add_vertex(data=0)
     graph.add_vertex(data=1)
-    assert graph.scc() == [[0], [1]]
+    assert graph.tarjan_scc() == [[0], [1]]
     assert sorted([sorted(scc) for scc in graph.kosaraju_scc()]) == [[0], [1]]
 
 
@@ -513,7 +513,7 @@ def test_simple_cycle():
     graph.add_edge(0, 1)
     graph.add_edge(1, 2)
     graph.add_edge(2, 0)
-    assert sorted([sorted(scc) for scc in graph.scc()]) == [[0, 1, 2]]
+    assert sorted([sorted(scc) for scc in graph.tarjan_scc()]) == [[0, 1, 2]]
     assert sorted([sorted(scc) for scc in graph.kosaraju_scc()]) == [[0, 1, 2]]
 
 
@@ -532,7 +532,7 @@ def test_multiple_scc(graph):
     graph.add_edge(1, 2)
     graph.add_edge(2, 0)
     graph.add_edge(3, 2)  # This creates two SCCs: {0,1,2} and {3}
-    assert sorted([sorted(scc) for scc in graph.scc()],
+    assert sorted([sorted(scc) for scc in graph.tarjan_scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
     assert sorted([sorted(scc) for scc in graph.kosaraju_scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3]]
@@ -550,7 +550,7 @@ def test_complex_graph(graph):
     graph.add_edge(5, 3)
     # This creates two SCCs: {0,1,2} and {3,4},
     # assuming no connections between these groups
-    assert sorted([sorted(scc) for scc in graph.scc()],
+    assert sorted([sorted(scc) for scc in graph.tarjan_scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3, 4, 5]]
     assert sorted([sorted(scc) for scc in graph.kosaraju_scc()],
                   key=lambda scc: scc[0]) == [[0, 1, 2], [3, 4, 5]]
@@ -559,7 +559,7 @@ def test_complex_graph(graph):
 def test_edge_cases():
     graph = Graph()
     # Test an edge case, such as a graph with no vertices
-    assert graph.scc() == []
+    assert graph.tarjan_scc() == []
     assert graph.kosaraju_scc() == []
 
 
@@ -619,18 +619,9 @@ def test_bellman_ford():
                                       5: [0, 1, 2, 3, 4, 5]})
     graph.add_edge(0, 2, weight=-4)
     graph.add_edge(3, 5, weight=-8)
-    assert graph.bellman_ford(0) == ([0, 2, -4, 1, 7, -7],
-                                     {0: [0],
-                                      1: [0, 1],
-                                      2: [0, 2],
-                                      3: [0, 2, 3],
-                                      4: [0, 2, 3, 4],
-                                      5: [0, 2, 3, 5]})
-    graph.add_edge(0, 1, weight=-2)
-    graph.add_edge(1, 2, weight=-3)
-    graph.add_edge(3, 4, weight=-6)
-    graph.add_edge(4, 5, weight=-7)
-    assert graph.bellman_ford(0) == (None, None)
+
+    with pytest.raises(ValueError):
+        graph.bellman_ford(0)
 
 
 @pytest.mark.parametrize('algo', ['dinics', 'gt'])

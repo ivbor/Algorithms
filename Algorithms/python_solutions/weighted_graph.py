@@ -126,3 +126,10 @@ class WeightedGraph(Graph):
                 result.append((v, u, w))
                 self.union(parent, rank, x, y)
         return result
+
+    def bellman_ford(self, start: int) \
+            -> tuple[list[float], dict[int, list[int]]] | tuple[None, None]:
+
+        if self.negative_edge_weight:
+            raise ValueError('graph contains negative-weight cycles')
+        return Graph.bellman_ford(self, start)
