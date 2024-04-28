@@ -1,18 +1,12 @@
-## Algorithms and Data Structures implemented, tested and explained
+## Algorithms and Data Structures implemented, tested and documented
 
-All documentation and notebooks with some visualizations and experimenting 
-are [here](docs/build/html/index.html') if the repo is on the local machine
-and [here](https://htmlpreview.github.io/?https://github.com/ivbor/Algorithms/blob/master/docs/build/html/index.html) 
-if viewed on the github (notebooks will load raw from htmlpreview, but are still
-accessible from the repo's page, while animations of sorts will not be available
-until cloned).
-
-
-All source code is inside the `./Algorithms/python_solutions/` folder and can be imported with statement
+All source code is inside the `./Algorithms/python_solutions/` folder 
+and can be imported with statement
 ```python
 from Algorithms.python_solutions.... import ...
 ```
-provided you are inside `Algorithms-master/` or this folder is added to your PYTHONPATH by
+provided you are inside `Algorithms-master/` or this folder is added 
+to your PYTHONPATH by
 ```python
 import sys
 
@@ -20,15 +14,29 @@ sys.path.append('path/to/Algorithms-master/')
 ```
 or any other way.
 
-All tests are inside `./Algorithms/tests/`.
+All documentation is within the source code so that it automatically loads by 
+any decent IDE. In Vim works perfectly :)
 
-The dashboard for what is done and what has to be done is 
-[here](https://ivbor.atlassian.net/jira/software/projects/KAN/boards/1) and
-works only if you have a Jira account.
+All tests are inside `Algorithms/tests/`, for examples you can also go 
+there.
+
+For sorts and some interesting data types performance tuning and comparing
+to python standard ones can be found in 
+`Algorithms/python_solutions/speed_tuning`
+
+## What is planned:
+
+* Translations to C, for this purpose folder `Algorithms/C_solutions` 
+was created.
+Objective is to try to increase performance even further.
+
+* Beautiful documentation, inside `Algorithms/python_solutions/docs`.
+More information is in [README](Algorithms/python_solutions/docs/README.md).
 
 ## Workflows are set up as following:
 
-Virtual environment made by venv with requirements for python listed in `./requirements.txt`
+Virtual environment made by venv with requirements for python listed in 
+`./requirements.txt`
 
 Tests performed by pytest with all configs in `./pytest.ini`
 
@@ -53,9 +61,8 @@ Docstrings coverage checked by
 interrogate ./Algorithms/python_solutions -vv
 ```
 
-Documentation was prepared by Sphinx and build in html format.
-
-Precommits are set using Github Actions with `./.github/workflows/python-app.yml` file
+Precommits are set using Github Actions with 
+`./.github/workflows/python-app.yml` file
 
 ## Contact: 
 

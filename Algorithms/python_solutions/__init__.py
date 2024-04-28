@@ -1,6 +1,6 @@
 '''
 python_solutions
-----------------
+================
 
 This module contains implementations of various sorting algorithms,
 basic data structures and tests providing not only coverage for code,
@@ -21,9 +21,13 @@ Contents
   ---------------
 - Data Structures
   ---------------
+  Array-like
+  ---------------
   - Vector (vector.py)
   - Heap (heap.py)
-  ---------------
+  ----------------------
+  Nodes and Linked Lists
+  ----------------------
   - OneWayNode (Node.py)
   - TwoWayNode (DoubleNode.py)
   - LinkedList (LinkedList.py)
@@ -31,17 +35,23 @@ Contents
   - Stack (Stack.py)
   - Deque (Deque.py)
   - CyclicLinkedList (CyclicLinkedList.py)
-  ---------------
+  -------------
+  Probabilistic
+  -------------
   - HashTables with different collision handling approaches (hashtable.py)
   - BloomFilter (bloom_filter.py)
   - HyperLogLog (hyperloglog.py)
-  ---------------
+  -----
+  Trees
+  -----
   - BinarySearchTree (bst.py)
   - AVLTree (avl_tree.py)
   - RedBlackTree (red_black_tree.py)
   - SegmentTree (segment_tree.py)
   - SparseTable (sparse_table.py)
-  ---------------
+  ----------------------
+  Graphs and Graph Nodes
+  ----------------------
   - GraphNodes and Edges (graph_nodes.py)
   - Graph (graph.py)
   - WeightedGraph (weighted_graph.py)
