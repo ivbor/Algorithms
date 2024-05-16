@@ -1,106 +1,256 @@
+import ast
 import os
-import re
-# added hashtags to lines 395-405 of numpydoc/docscrape.py
-# to remove value error caused by
-
-from pathlib import Path
-from pydoc_markdown.interfaces import Context
-# file python.py changed: line 76, to ignore_when_discovered added "docs"
-from pydoc_markdown.contrib.loaders.python import PythonLoader
-from pydoc_markdown.contrib.renderers.markdown import MarkdownRenderer
-from pydoc_markdown.contrib.processors.numpy import NumpyProcessor
 
 
-directory = ''
-for i in os.path.abspath(os.curdir).split('/')[:-3]:
-    directory += '/' + i
-directory = directory[1:]
-print(directory)
-
-context = Context(directory=directory)
-loader = PythonLoader(search_path=['Algorithms'])
-renderer = MarkdownRenderer(render_module_header=False)
-
-loader.init(context)
-renderer.init(context)
-
-modules = loader.load()
-string = renderer.render_to_string(modules)
-
-assert 'two_dim_array_count_sort' in string
-
-
-def format_section_title(title):
-    """Formats section titles to Markdown headers."""
-    return f'## {title}\n'
-
-
-def format_items(section):
-    """Format items within sections to list or table format if applicable."""
-    items_pattern = re.compile(r'^(\s*\w+[\s\w]*?)\s*:\s*(.*)$', re.MULTILINE)
-    def replace(match):
-        item = match.group(1).strip()
-        description = match.group(2).strip()
-        return f'- **{item}**: {description}\n'
-    return items_pattern.sub(replace, section)
-
-
-def process_docstring(docstring):
-    """Convert docstring sections to Markdown format."""
-    # Define sections to convert to markdown headers
-    sections = ["Parameters", "Returns", "Attributes", "Methods",
-                "Raises", "Examples", "Notes", "See Also"]
-    for section in sections:
-        pattern = re.compile(rf'(?m)^\s*({section})\s*$\n(?:-+\s*$)?', re.MULTILINE)
-        docstring = pattern.sub(lambda match: format_section_title(
-            match.group(1)), docstring)
-        # Format section content
-        docstring = re.sub(rf'(?m)(## {section}\n)(.*?)^\s*##',
-                           lambda match: match.group(1) +
-                           format_items(match.group(2)), docstring,
-                           flags=re.DOTALL)
-
-    # Ensure we capture the end of the document for the last section
-    if '##' in docstring:
-        split_docs = re.split(r'(## .+?\n)', docstring)
-        new_doc = []
-        capture = False
-        for part in split_docs:
-            if capture:
-                part = format_items(part)
-            if part.startswith('##'):
-                capture = True
-            new_doc.append(part)
-            capture = True if part.startswith('##') else False
-        docstring = ''.join(new_doc)
-    else:
-        docstring = format_items(docstring)
-
+def remove_title(docstring):
+    docstring = docstring[docstring.find('\n') + len('\n'):]
+    docstring = docstring[docstring.find('\n') + len('\n'):]
     return docstring
 
 
-def render_markdown(file_content):
-    """Converts entire file of plain docstrings to Markdown format."""
-    # Assuming docstrings are separated by a consistent pattern or
-    # are in a continuous block
-    docstrings = re.split(r'\n{2,}', file_content)
-    # Adjust based on your file's structure
-    markdown_output = [process_docstring(doc) for doc in docstrings if doc.strip()]
-    return '\n\n'.join(markdown_output)
+def parse_params(docstring, output):
+    docstring = remove_title(docstring)
+    output.append('<ul>')
+    for entry in docstring.strip().split('\n\n'):
+        print(entry)
+        param_name = entry.split(':')[0].strip()
+        param_type = entry.split('\n')[0].split(':')[1].strip()
+        param_desc = ' '.join(entry.split('\n    ')[1:])
+        output.append(f'<li> <strong>{param_name}</strong>: ' +
+                      f'<em>{param_type}</em> <br>')
+        output.append(f'&nbsp;&nbsp;&nbsp;&nbsp;{param_desc} <br></li>')
+    output.append('</ul>')
 
-string = render_markdown(string)
 
-with open('docs.md', 'w') as f:
-    f.write(string)
+def parse_funcs(docstring, output):
+    docstring = remove_title(docstring)
+    output.append('<ul>')
+    for entry in docstring.strip().split('\n\n'):
+        end_of_func_title = entry.find('\n', entry.find('->'))
+        func_title = entry[:end_of_func_title]\
+            .replace('    ', ' ') if end_of_func_title != -1 else entry
+        func_name = func_title[:entry.find('(')]
+        try:
+            func_desc = entry[end_of_func_title:] \
+                if end_of_func_title != -1 else ''
+        except:
+            func_desc = ''
+        if 'Setter' in func_desc or 'Property' in func_desc:
+            continue
+        output.append(f"<li> <a href='#function-{func_name}'><code>")
+        output.append(f'{func_title}')
+        if func_desc == '':
+            output.append('</code></a> <br> </li>')
+        else:
+            output.append('</code></a> <br>')
+            output.append('&nbsp;&nbsp;&nbsp;&nbsp;')
+            output.append(f'{func_desc}')
+            output.append('<br></li>')
+    output.append('</ul>\n')
 
-module_pattern = re.compile(r'(?P<name>^[A-Za-z0-9_ ]+)\n=+\n(?P<description>(?:.|\n)+?)(?=\n[A-Za-z0-9_ ]+\n=+|\Z)', re.MULTILINE)
-modules = module_pattern.finditer(string)
-output_dir = Path(directory + '/Algorithms/python_solutions/docs')
-output_dir.mkdir(exist_ok=True)
-for module in modules:
-    module_name = module.group('name').strip().replace(' ', '_').lower()
-    module_description = module.group('description').strip()
-    filename = module_name.lower().replace(' ', '_')
-    output_file_path = output_dir / f'{filename}.md'
-    with open(output_file_path, 'w', encoding='utf-8') as output_file:
-        output_file.write(f'# {module_name}\n\n{module_description}')
+
+def parse_returns(docstring, output):
+    docstring = remove_title(docstring)
+    return_type = docstring.split('\n')[0]
+    return_desc = ' '.join(docstring.split('\n')[1:]).replace('    ', '')
+    output.append(f'<em>{return_type}</em> <br>')
+    output.append(f'&nbsp;&nbsp;&nbsp;&nbsp;{return_desc} <br>')
+
+
+def parse_raises(docstring, output):
+    docstring = remove_title(docstring)
+    error_type = docstring.split('\n')[0]
+    error_desc = ' '.join(docstring.split('\n')[1:]).replace('    ', '')
+    output.append(f'<strong>{error_type}</strong> <br>')
+    output.append(f'&nbsp;&nbsp;&nbsp;&nbsp;{error_desc} <br>')
+
+
+def parse_classes(docstring, output):
+    docstring = remove_title(docstring)
+    output.append('<ul>')
+    for entry in docstring.strip().split('\n\n'):
+        class_title = entry.split('\n')[0]
+        class_params_start = class_title.find('(')
+        if class_params_start == -1:
+            class_name = class_title
+        else:
+            class_name = class_title[:class_params_start]
+        try:
+            class_desc = ''.join(entry.split('\n')[1:])
+        except:
+            class_desc = ''
+        output.append(f"<li> <a href='#class-{class_name}'><code>")
+        output.append(f'{class_title}')
+        if class_desc == '':
+            output.append('</code></a> <br> </li>')
+        else:
+            output.append('</code></a> <br>')
+            output.append('&nbsp;&nbsp;&nbsp;&nbsp;')
+            output.append(f'{class_desc}')
+            output.append('<br></li>')
+    output.append('</ul>')
+
+
+
+parsing_funcs = {'Constants': parse_params,
+                 'Attributes': parse_params,
+                 'Parameters': parse_params,
+                 'Returns': parse_returns,
+                 'Yields': parse_returns,
+                 'Raises': parse_raises,
+                 'Functions': parse_funcs,
+                 'Methods': parse_funcs,
+                 'Classes': parse_classes}
+
+
+def parse_module_doc(module_doc, output):
+    module_name = module_doc.split('\n')[0]
+    output.append(f'<h1>{module_name}</h1>')
+    present_sections = {module_doc.find(i): i
+                        for i in ['Constants', 'Functions', 'Classes']}
+    positions = sorted([i for i in present_sections.keys()])
+    module_desc = module_doc[module_doc.find('\n',
+                                             module_doc.find('\n') + 1):min(
+                                    [i for i in positions if i != -1])]
+    output.append(' '.join(module_desc.split('\n')))
+    for position, section in present_sections.items():
+        # the section is not present
+        if position == -1:
+            continue
+        output.append(f'<h2>{section}</h2>')
+        # the section is the last
+        if position == max(positions):
+            parsing_funcs[section](module_doc[position:], output)
+        else:
+            parsing_funcs[section](
+                # isolate and parse the piece of module_doc from the start
+                # of the current section (position) to the end of it
+                # (positions[positions.index(position) + 1])
+                module_doc[position:positions[positions.index(position) + 1]],
+                output)
+    output.append('---')
+
+
+def parse_func_doc(node, output):
+
+    docstring = ast.get_docstring(node)
+    if docstring is None:
+        return
+
+    output.append(
+        '<div style="page-break-after: always; visibility: hidden">' +
+        '</div>')
+    output.append('<br>')
+    output.append(f'<h1 id="function-{node.name}">')
+    print(node.name)
+    output.append('<strong>Function</strong>')
+    output.append(f'<code>{node.name}</code></h1>')
+
+    present_sections = {docstring.find(i): i
+                        for i in ['Parameters', 'Returns',
+                                  'Raises', 'Yields']}
+    positions = sorted([i for i in present_sections.keys()])
+    func_desc = docstring[:min(
+        [i for i in positions if i != -1])]
+    output.append(func_desc)
+    for position, section in present_sections.items():
+        # the section is not present
+        if position == -1:
+            continue
+        output.append(f'<h2>{section}</h2>')
+        # the section is the last
+        if position == max(positions):
+            parsing_funcs[section](docstring[position:], output)
+        else:
+            parsing_funcs[section](
+                # isolate and parse the piece of module_doc from the start
+                # of the current section (position) to the end of it
+                # (positions[positions.index(position) + 1])
+                docstring[position:positions[positions.index(position) + 1]],
+                output)
+    output.append('\n---')
+
+
+
+def parse_class_doc(node, output):
+
+    docstring = ast.get_docstring(node)
+    if docstring is None:
+        return
+
+    output.append(
+        '<div style="page-break-after: always; visibility: hidden">' +
+        '</div>')
+    output.append('<br>')
+    output.append(f'<h1 id="class-{node.name}">')
+    print(node.name)
+    output.append('<strong>Class</strong>')
+    output.append(f'<code>{node.name}</code></h1>')
+
+    present_sections = {docstring.find(i): i
+                        for i in ['Attributes', 'Methods']}
+    positions = sorted([i for i in present_sections.keys()])
+    func_desc = docstring[:min(
+        [i for i in positions if i != -1])]
+    output.append(func_desc)
+    for position, section in present_sections.items():
+        # the section is not present
+        if position == -1:
+            continue
+        output.append(f'<h2>{section}</h2>')
+        # the section is the last
+        if position == max(positions):
+            parsing_funcs[section](docstring[position:], output)
+        else:
+            parsing_funcs[section](
+                # isolate and parse the piece of module_doc from the start
+                # of the current section (position) to the end of it
+                # (positions[positions.index(position) + 1])
+                docstring[position:positions[positions.index(position) + 1]],
+                output)
+    output.append('\n---')
+
+    for nr, node in enumerate(ast.iter_child_nodes(node)):
+        if nr == 0 or not (isinstance(node, ast.FunctionDef) or
+                           isinstance(node, ast.ClassDef)):
+            continue
+        if isinstance(node, ast.FunctionDef):
+            parse_func_doc(node, output)
+
+
+def parse_docstrings(file_docstrings, output_file):
+    tree = ast.parse(file_docstrings)
+    output = []
+    module_doc = ast.get_docstring(tree)
+    parse_module_doc(module_doc, output)
+    for nr, node in enumerate(ast.iter_child_nodes(tree)):
+        if nr == 0 or not (isinstance(node, ast.FunctionDef) or
+                           isinstance(node, ast.ClassDef)):
+            continue
+        if isinstance(node, ast.FunctionDef):
+            parse_func_doc(node, output)
+        if isinstance(node, ast.ClassDef):
+            parse_class_doc(node, output)
+    with open(output_file, 'w') as out:
+        out.write('\n'.join(output))
+
+
+exclude_patterns = ['__init__', 'tests', 'docs', '__pycache__']
+out = open('Table of contents.md', 'w').close()
+
+
+for root, dirs, files in os.walk('../'):
+    for name in files:
+        if '.py' in name and not any([(i in root or i in name)
+                                      for i in exclude_patterns]):
+            file = open(os.path.join(root, name), 'r')
+            print(f'Currently parsing {name}')
+            parse_docstrings(file.read(), f'{name[:-3]}.md')
+            print('Success')
+            # __init__.py parsing
+        if name == '__init__.py':
+            print(os.path.join(root, name))
+            file = open(os.path.join(root, name), 'r').read()
+            out = open('Table of contents.md', 'a')
+            out.write(ast.get_docstring(ast.parse(file)) + '\n')
+            out.close()
