@@ -3,9 +3,7 @@ Merge Sort Module
 =================
 
 A module containing Merge Sort algorithms and a helper function for merging
-arrays.
-
-This module specializes in various implementations of the Merge Sort
+arrays. This module specializes in various implementations of the Merge Sort
 algorithm and a helper function for merging two sorted arrays into a single
 sorted array.
 
@@ -41,7 +39,9 @@ MAX_DEPTH: int
     Recursion control constant. Determines the depth after which parallel
     merge sort implementation will not call recursion any longer.
     Default is set to cpu_count.
+
 """
+
 import logging
 
 

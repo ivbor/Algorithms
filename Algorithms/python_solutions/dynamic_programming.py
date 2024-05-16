@@ -1,10 +1,44 @@
+"""
+Dynamic Programming Module
+==========================
+
+In this module are outlined solutions to some DP problems utilizing
+objective-oriented approach.
+
+Classes
+-------
+DynamicProgrammingProblem
+    Base class for dynamic programming problems. Other classes in this file
+    inherit from it. It has a solution() method to actually solve the
+    problem.
+
+KnapsackProblem
+    Class for KnapsackProblem solution.
+
+LongestCommonSubsequence
+    Class for searching for LongestCommonSubsequence in the string.
+
+DamerauLevensteinDistance
+    Class for calculating edit distance between strings using
+    Damerau-Levenstein approach.
+
+LongestIncreasingSubsequence
+    Class for searching for LongestIncreasingSubsequence in the string.
+
+maxSubarraySum
+    Class for finding the maximum sum in the array among provided queries.
+
+TravellingSalesmanProblem
+    Class for solving TSP using weighted_graph and bitmask approach.
+
+"""
+
 from Algorithms.python_solutions.weighted_graph import WeightedGraph
 
 
 class DynamicProgrammingProblem:
     """
     Base class for dynamic programming problems.
-
 
     Attributes
     ----------
@@ -642,8 +676,8 @@ class TravellingSalesmanProblem(DynamicProgrammingProblem):
                     for k in range(self.n):
                         # if city `k` gets to be visited in this subset -
                         # add its weight to the appropriate dp cell
-                        if prev_mask & (1 << k) \
-                            and last in self.graph.vertices[k].edges.keys():
+                        if prev_mask & (1 << k) and \
+                                last in self.graph.vertices[k].edges.keys():
                             weight = self.graph.vertices[k]\
                                 .edges[last].weight
                             self.dp[mask][last] = \

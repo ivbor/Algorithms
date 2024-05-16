@@ -1,5 +1,6 @@
 """
 AVL Tree Module
+===============
 
 This module implements an AVL tree, a self-balancing binary search tree.
 This tree has very fixed height, which is smaller than that of RedBlackTree,
@@ -15,6 +16,8 @@ AVLTree
     extending RedBlackTree and BinarySearchTree.
 
 """
+
+
 from Algorithms.python_solutions.bst import BinarySearchTree, TreeNode
 from Algorithms.python_solutions.red_black_tree import RedBlackTree
 

@@ -8,7 +8,6 @@ distance, Jaro similarity, and uses the Longest Common Subsequence and
 Damerau-Levenshtein distance algorithms for more complex edit distance
 calculations.
 
-
 Functions
 ---------
 edit_distance(str1: str, str2: str, distance: str = 'dl') -> float

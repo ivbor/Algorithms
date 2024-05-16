@@ -3,9 +3,8 @@ Linked List Module
 ======================
 
 A module for implementing a one-way linked list data structure.
-
-This module contains the `LinkedList` class, which represents a one-way
-linked list data structure. The `LinkedList` class allows for the creation
+This module contains the LinkedList class, which represents a one-way
+linked list data structure. The LinkedList class allows for the creation
 and manipulation of a linked list, including appending, inserting, erasing,
 and searching for elements.
 

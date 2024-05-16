@@ -10,6 +10,7 @@ Classes
 Queue
     A class representing a queue data structure with enqueue and dequeue
     operations.
+
 """
 
 
@@ -25,10 +26,6 @@ class Queue(Stack):  # (FIFO) -(in)> Queue -(out)>
     with a first-in-first-out (FIFO) ordering of elements.
     Elements are added to the back (enqueued) and
     removed from the front (dequeued) of the queue.
-
-    Attributes
-    ----------
-    Inherits attributes from the Stack class.
 
     Methods
     -------

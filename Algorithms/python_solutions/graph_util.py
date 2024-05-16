@@ -1,3 +1,23 @@
+"""
+Graph Utility
+=============
+
+This module defines Graph_util class which has all utility methods for Graph
+class methods.
+
+Functions
+---------
+reconstruct_path(src: int, target: int, parent: list[int]) -> list[int]
+    A function to reconstruct path from source to target using parent array.
+
+Classes
+-------
+Graph_util
+    A class storing utility methods for the main graph class.
+
+"""
+
+
 from typing import Any
 from collections import deque
 

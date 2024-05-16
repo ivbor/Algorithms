@@ -17,6 +17,7 @@ BinarySearchTree
 
 """
 
+
 from Algorithms.python_solutions.Node import Node
 
 
@@ -27,10 +28,10 @@ class TreeNode(Node):
 
     Attributes
     ----------
-    left: TreeNode | None, optional
+    left: TreeNode | None
         The left child of the node if present, else - None. Default is None.
 
-    right: TreeNode | None, optional
+    right: TreeNode | None
         The right child of the node if present, else - None. Default is None.
 
     """
@@ -547,7 +548,7 @@ class BinarySearchTree:
     def local_tree(self, node: TreeNode, b: int = 2, deepness: int = 1) \
             -> list[int | float]:
         """
-        Returns the local tree with the node being root and the required
+        Makes the local tree with the node being root and the required
         deepness. Nodes' data is loaded into the list down from root from
         the left to the right. Deepness 1 equals root and its children.
         b is the order of the tree, for binary it is 2.

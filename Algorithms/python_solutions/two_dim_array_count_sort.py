@@ -1,5 +1,6 @@
 """
 Two-Dimensional Array Count Sort Module
+========================================
 
 This module provides a function, `two_dim_array_count_sort`, for sorting a
 2-dimensional array consisting of whole numbers. The function can sort the

@@ -1,5 +1,6 @@
 """
 Stack Module
+============
 
 This module provides a Python implementation of a stack data structure. The
 stack follows the Last-In-First-Out (LIFO) principle, where the last element
@@ -10,6 +11,7 @@ Classes
 -------
 Stack
     A stack data structure implemented using a doubly-linked list.
+
 """
 
 
@@ -58,9 +60,14 @@ class Stack:  # (LIFO)   <(out)-(in)> Stack |
         Returns the number of elements currently in the stack.
 
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes an empty stack.
+
+        Returns
+        -------
+        None
+
         """
         self.head = None
         self.tail = None

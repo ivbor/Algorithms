@@ -1,6 +1,7 @@
 """
 Sparse table module
 ===================
+
 This module defines a SparseTable class for efficient range queries on an
 array. It allows you to quickly compute the minimum, maximum, and sum of
 values within a specified range. The data structure is built on a tuple for

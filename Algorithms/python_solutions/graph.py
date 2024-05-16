@@ -1,3 +1,21 @@
+"""
+Graph Module
+============
+
+This module contains the main Graph class with basic and some advanced
+methods.
+
+Classes
+-------
+VerticesList
+    Advanced dict to be used for storing vertices in the graph.
+
+Graph
+    The main graph structure.
+
+"""
+
+
 import heapq
 
 from typing import Any, Generator

@@ -10,18 +10,23 @@ returns the index of the last encounter.
 
 Functions
 ---------
-lower_bound(array, value_to_search)
+_lower_bound(array: list[int], left_edge: int, right_edge: int,
+        value_to_search: int) -> int:
+    This is lower bound search helper.
+
+lower_bound(array: list[int], value_to_search: int) -> int
     Determines the index of the first encounter of the whole-numbered value
     in a sorted array.
 
-upper_bound(array, value_to_search)
+upper_bound(array: list[int], value_to_search: int) -> int
     Determines the index of the last encounter of the whole-numbered value
     in a sorted array.
 
 """
 
 
-def _lower_bound(array, left_edge, right_edge, value_to_search):
+def _lower_bound(array: list[int], left_edge: int, right_edge: int,
+                 value_to_search: int) -> int:
     '''
         This is lower bound search helper.
 
@@ -75,7 +80,7 @@ def _lower_bound(array, left_edge, right_edge, value_to_search):
         return _lower_bound(array, middle, right_edge, value_to_search)
 
 
-def lower_bound(array, value_to_search):
+def lower_bound(array: list[int], value_to_search: int) -> int:
     '''
         This function determines where is first encounter of the whole-
         numbered value.
@@ -107,7 +112,7 @@ def lower_bound(array, value_to_search):
         value_to_search=value_to_search)
 
 
-def upper_bound(array, value_to_search):
+def upper_bound(array: list[int], value_to_search: int) -> int:
     '''
         This function determines where is the last encounter of the whole-
         numbered value.

@@ -34,19 +34,20 @@ gen_primes()
     Generate an infinite sequence of prime numbers for use as hash table
     capacity.
 
-gen_prime(stop=30)
+gen_prime(stop: int = 30) -> int
     Generate prime numbers up to a specified stop value.
 
-poly_hash(x)
+poly_hash(x: Any) -> int
     Calculate a polynomial hash value for a given input.
 
 """
+
 
 import hashlib
 import logging
 
 from collections import deque
-from typing import Any, NamedTuple
+from typing import Any, Callable, Generator, NamedTuple, Hashable
 
 from Algorithms.python_solutions.vector import Vector
 
@@ -63,8 +64,9 @@ class Pair(NamedTuple):
 # http://code.activestate.com/recipes/117119/
 
 
-def gen_primes():
-    """ Generate an infinite sequence of prime numbers."""
+def gen_primes() -> Generator[int, None, None]:
+    # Generate an infinite sequence of prime numbers.
+
     # Maps composites to primes witnessing their compositeness.
     # This is memory efficient, as the sieve is not "run forward"
     # indefinitely, but only as long as required by the current
@@ -96,39 +98,58 @@ def gen_primes():
         q += 1
 
 
-def gen_prime(stop=30):  # 31 is a nice start as a capacity
+def gen_prime(stop: int = 30) -> int:  # 31 is a nice start as a capacity
     gen = gen_primes()
-    for i in gen:
-        if i > stop:
-            return i
+    i = next(gen)
+    while i <= stop:
+        i = next(gen)
+        continue
+    return i
 
 
-def poly_hash(x):
+def poly_hash(x: Any) -> int:
     return sum([ord(character) ** power
                 for power, character in
                 enumerate(str.__repr__(str(x)).lstrip("'"), 1)])
 
 
-def simple_hash(x):
+def simple_hash(x) -> int:
     return sum(ord(c) for c in str(x))
 
 
 class PairsVector(Vector):
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         raise NotImplementedError(
             'can only store elements inside ' +
             'hashtable with closed chaining ' +
             f'using HashTable_closed_name[{key}] = {value}')
 
 
-class HashTable_closed():
+# Something that can be reduced to the Mapping without information loss
+# Defined for using in the __eq__ method of the hash table
+class Mappable():
+
+    def __init__(self) -> None:
+        pass
+
+    def to_dict(self) -> dict | None:
+        if hasattr(self, '__dict__'):
+            return self.__dict__
+
+    def from_dict(cls, dictionary: dict) -> None:
+        pass
+
+
+class HashTable_closed(Mappable):
     """
     A hash table implementation using closed addressing
     for collision resolution.
 
     This class represents a hash table that uses closed addressing
     (separate chaining) to handle collisions.
+    It means that multiple key-value pairs with the same hash value
+    are stored in linked lists within the hash table.
     It provides methods for adding, retrieving, and removing key-value pairs.
 
     Attributes
@@ -146,22 +167,28 @@ class HashTable_closed():
 
     Methods
     -------
-    __setitem__(self, key, value) -> None
+    __init__(self, capacity: int = 30,
+            hashfunc: str or callable = simple_hash,
+            load_factor_threshold: float = 0.75) -> None
+        Initializes a HashTable_closed object with specified capacity
+        and hash function.
+
+    __setitem__(self, key: Hashable, value: Any) -> None
         Adds a key-value pair to the hash table.
 
-    __getitem__(self, key) -> Any
+    __getitem__(self, key: Hashable) -> Any
         Retrieves the value associated with a given key.
 
-    __delitem__(self, key) -> None
+    __delitem__(self, key: Hashable) -> None
         Removes a key-value pair from the hash table.
 
     to_dict(self) -> dict
         Returns a dictionary representation of the hash table.
 
-    __contains__(self, key) -> bool
+    __contains__(self, key: Hashable) -> bool
         Checks if a key exists in the hash table.
 
-    from_dict(cls, dictionary) -> HashTable_closed
+    from_dict(cls, dictionary: dict) -> HashTable_closed
         Creates a new hash table from a dictionary.
 
     __str__(self) -> str
@@ -170,19 +197,14 @@ class HashTable_closed():
     __repr__(self) -> str
         Used for printing the contents of the hash table.
 
-    __eq__(self, other) -> bool
+    __eq__(self, other: HashTable_closed) -> bool
         Checks if two hash tables are equal.
-
-    Notes
-    -----
-    This hash table uses closed addressing to resolve collisions,
-    which means that multiple key-value pairs with the same hash value
-    are stored in linked lists within the hash table.
 
     """
 
-    def __init__(self, capacity=30, hashfunc=simple_hash,
-                 load_factor_threshold=0.75):
+    def __init__(self, capacity: int = 30,
+                 hashfunc: str | Callable = simple_hash,
+                 load_factor_threshold: float = 0.75) -> None:
         """
         Initializes a HashTable_closed object with specified capacity
         and hash function.
@@ -208,6 +230,7 @@ class HashTable_closed():
         -------
         None
         """
+        super().__init__()
         self._capacity = gen_prime(capacity)
         self._pairs = PairsVector(elements=[deque()
                                             for _ in range(self._capacity)])
@@ -219,20 +242,26 @@ class HashTable_closed():
         self._load_factor_threshold = load_factor_threshold
         self._hashfunc = hashfunc
 
-    def get_hash(self, x):
+    def get_hash(self, x: Hashable) -> int:
         """
         Calculates the hash value for a given key
         using the selected hash function.
 
         Parameters
         ----------
-        x: any
+        x: Hashable
             The key to be hashed.
 
         Returns
         -------
         int
             The calculated hash value.
+
+        Raises
+        ------
+        TypeError
+            If hash function provided during init is not acceptable.
+
         """
         if self._hashfunc == 'poly':
             # polynomial hash
@@ -247,6 +276,9 @@ class HashTable_closed():
                 % self._capacity
         elif callable(self._hashfunc):
             return self._hashfunc(x) % self._capacity
+        else:
+            raise TypeError('hash function provided neither is acceptable ' +
+                            'nor is a callable')
 
     @property
     def pairs(self):
@@ -263,7 +295,7 @@ class HashTable_closed():
         return ret
 
     @pairs.setter
-    def pairs(self, value):
+    def pairs(self, value: Any) -> None:
         """
         Setter method for the pairs attribute.
         Raises an error as the pairs attribute is read-only.
@@ -288,7 +320,7 @@ class HashTable_closed():
                 'to append or set value use setitem')
 
     @property
-    def size(self):
+    def size(self) -> int:
         """
         Property getter method for retrieving the size attribute of the
         hash table.
@@ -301,7 +333,7 @@ class HashTable_closed():
         return self._size
 
     @size.setter
-    def size(self, size):
+    def size(self, size: int) -> None:
         """
         Setter method for the size attribute.
         Raises an error as the size attribute is read-only.
@@ -325,7 +357,7 @@ class HashTable_closed():
                 'cannot set value to protected property')
 
     @property
-    def capacity(self):
+    def capacity(self) -> int:
         """
         Property getter method for retrieving the capacity attribute
         of the hash table.
@@ -338,7 +370,7 @@ class HashTable_closed():
         return self._capacity
 
     @capacity.setter
-    def capacity(self, capacity):
+    def capacity(self, capacity: int) -> None:
         """
         Setter method for the capacity attribute.
         Raises an error as the capacity attribute is read-only.
@@ -361,10 +393,9 @@ class HashTable_closed():
             raise NotImplementedError(
                 'cannot set value to protected property')
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
-        Returns the number of key-value pairs currently
-        stored in the hash table.
+        The number of key-value pairs currently stored in the hash table.
 
         Returns
         -------
@@ -373,16 +404,22 @@ class HashTable_closed():
         """
         return self._size
 
-    def __setitem__(self, key, x):
+    def __setitem__(self, key: Hashable, x: Any) -> None:
         """
-        Adds or updates (if already taken) a key-value pair to the hash table.
+        Adds or updates (if already taken)
+        a key-value pair to the hash table.
 
         Parameters
         ----------
-        key: any
+        key: Hashable
             The key to be added.
+
         x: any
             The value associated with the key.
+
+        Returns
+        -------
+        None
         """
         # update by delete and reset
         hashed_key = self.get_hash(key)
@@ -396,7 +433,7 @@ class HashTable_closed():
                 self._load_factor_threshold:
             self.increase_capacity()
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: int) -> Any:
         """
         Retrieves the value associated with a given key from the hash table.
 
@@ -422,7 +459,7 @@ class HashTable_closed():
                 return value
         raise KeyError('no value for corresponding key present')
 
-    def increase_capacity(self):
+    def increase_capacity(self) -> None:
         """
         Increases the capacity of the hash table.
 
@@ -443,7 +480,7 @@ class HashTable_closed():
         else:
             self.recapacitate_and_rehash()
 
-    def recapacitate_and_rehash(self, old_capacity):
+    def recapacitate_and_rehash(self, old_capacity: int) -> None:
         """
         Recalculates the hash values and rehashes the key-value pairs.
 
@@ -470,22 +507,26 @@ class HashTable_closed():
         self._pairs = newVector
         del newVector
 
-    def decrease_capacity(self):
+    def decrease_capacity(self) -> None:
         """
         Decreases the capacity of the hash table.
+
+        Returns
+        -------
+        None
         """
         old_capacity = self._capacity
         self._capacity = self._capacity // 2 if self._capacity != 1 else 1
         self.recapacitate_and_rehash(old_capacity)
 
-    def search(self, key):
+    def search(self, key: Hashable) -> int | bool:
         """
         Searches for a key in the hash table and returns the index if found,
         or False if not found.
 
         Parameters
         ----------
-        key: any
+        key: Hashable
             The key to search for.
 
         Returns
@@ -502,13 +543,13 @@ class HashTable_closed():
                 return index
         return False
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: Hashable) -> None:
         """
         Removes a key-value pair from the hash table.
 
         Parameters
         ----------
-        key: any
+        key: Hashable
             The key to be removed.
 
         Returns
@@ -524,13 +565,13 @@ class HashTable_closed():
                     self._load_factor_threshold / 4 and self.capacity > 31:
                 self.decrease_capacity()
 
-    def to_dict(self):
+    def to_dict(self) -> dict[Hashable, Any]:
         """
         Returns a dictionary representation of the hash table.
 
         Returns
         -------
-        dict
+        dict[Hashable, Any]
             A dictionary containing the key-value pairs from the hash table.
         """
         result = dict()
@@ -539,13 +580,13 @@ class HashTable_closed():
                 result[j.key] = j.value
         return result
 
-    def __contains__(self, key):
+    def __contains__(self, key: Hashable) -> bool:
         """
         Checks if a key exists in the hash table.
 
         Parameters
         ----------
-        key: any
+        key: Hashable
             The key to check for existence.
 
         Returns
@@ -559,7 +600,7 @@ class HashTable_closed():
             return True
 
     @classmethod
-    def from_dict(cls, dictionary):
+    def from_dict(cls, dictionary: dict) -> 'HashTable_closed':
         """
         Creates a new HashTable_closed object from a dictionary.
 
@@ -579,7 +620,7 @@ class HashTable_closed():
             result[key] = value
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Returns a string representation of the hash table.
 
@@ -590,7 +631,7 @@ class HashTable_closed():
         """
         return dict.__str__(self.to_dict())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the hash table used for printing.
 
@@ -601,15 +642,15 @@ class HashTable_closed():
         """
         return dict.__repr__(self.to_dict())
 
-    def __eq__(self, other):
+    def __eq__(self, other: Mappable) -> bool:
         """
         Checks if two hash tables are equal by comparing their
         dictionary representations.
 
         Parameters
         ----------
-        other: object with defined to_dict method
-            Another hash table to compare.
+        other: Mappable
+            Another object to compare.
 
         Returns
         -------
@@ -632,39 +673,48 @@ class HashTable_open(HashTable_closed):
     """
     A hash table implementation using open addressing
     for collision resolution.
-
-    This class represents a hash table that uses open addressing
-    (multiple and cuckoo hashing) to handle collisions.
     It provides methods for adding, retrieving, and removing key-value pairs.
+    This hash table uses open addressing (multiple and cuckoo hashing)
+    to resolve collisions, which means that when a collision occurs,
+    it looks for alternative positions within the table using multiple
+    hash functions.
+    Supported hash functions include 'md5', 'sha1', 'poly' (polynomial hash),
+    and custom callable functions.
 
     Attributes
     ----------
     capacity : int
         The initial capacity of the hash table.
 
-    hashfuncs : list of str or callable
+    hashfuncs : list[str | Callable]
         A list of hash functions used to determine the index for storing keys.
         Supported values: 'md5', 'sha1', 'poly' (polynomial hash),
         or custom callable functions.
 
     Methods
     -------
-    __setitem__(self, key, value) -> None
+    __init__(self, capacity: int = 30,
+             hashfuncs: list[str | Callable] = [hash, simple_hash],
+             max_displasements: int = 16) -> None:
+        Initializes a HashTable_open instance with the given capacity
+        and hash functions.
+
+    __setitem__(self, key: Hashable, value: Any) -> None
         Adds a key-value pair to the hash table.
 
-    __getitem__(self, key) -> Any
+    __getitem__(self, key: Hashable) -> Any
         Retrieves the value associated with a given key.
 
-    __delitem__(self, key) -> None
+    __delitem__(self, key: Hashable) -> None
         Removes a key-value pair from the hash table.
 
-    to_dict(self) -> dict
+    to_dict(self) -> dict[Hashable, Any]
         Returns a dictionary representation of the hash table.
 
-    update(self, key, value) -> None
+    update(self, key: Hashable, value: Any) -> None
         Updates the value associated with a given key in the hash table.
 
-    search(self, key) -> tuple(int, int) or False
+    search(self, key: Hashable) -> tuple[int, int] | bool
         Searches for a key in the hash table and returns
         the table index and hashed key index if found, or False if not found.
 
@@ -678,40 +728,31 @@ class HashTable_open(HashTable_closed):
         Calculates the capacity of each individual
         hash table within the open addressing scheme.
 
-    get_hashes(self, key) -> generator
+    get_hashes(self, key: Hashable) -> Generator[int, None, None]
         Generates hash values for a key using the specified hash functions.
 
-    current_hashed_key(self, key, table_index) -> int
+    current_hashed_key(self, key: Hashable, table_index: int) -> int
         Computes the hashed key index for a key based on
         the current table index.
 
     recapacitate_and_rehash(self) -> None
         Recapacitates and rehashes hashtable.
 
-    Notes
-    -----
-    This hash table uses open addressing (multiple and cuckoo hashing)
-    to resolve collisions, which means that when a collision occurs,
-    it looks for alternative positions within the table using multiple
-    hash functions.
-
-    Supported hash functions include 'md5', 'sha1', 'poly' (polynomial hash),
-    and custom callable functions.
-
     """
 
-    def __init__(self, capacity=30, hashfuncs=[hash, simple_hash],
-                 max_displasements=16):
+    def __init__(self, capacity: int = 30,
+                 hashfuncs: list[str | Callable] = [hash, simple_hash],
+                 max_displasements: int = 16) -> None:
         """
         Initializes a HashTable_open instance with the given capacity
         and hash functions.
 
         Parameters
         ----------
-        capacity : int, optional
+        capacity : int
             The initial capacity of the hash table, by default 30.
 
-        hashfuncs : list of str or callables, optional
+        hashfuncs : list[str | Callable]
             A list of hash functions used to determine the index
             for storing keys, by default ['md5', 'sha1'].
 
@@ -735,7 +776,7 @@ class HashTable_open(HashTable_closed):
         self._size = 0
         self._max_displacements = max_displasements
 
-    def one_table_capacity(self):
+    def one_table_capacity(self) -> int:
         """
         Calculates the capacity of each individual hash table
         within the open addressing scheme.
@@ -748,13 +789,13 @@ class HashTable_open(HashTable_closed):
         """
         return self._capacity // len(self._hashfuncs)
 
-    def get_hashes(self, key):
+    def get_hashes(self, key: Hashable) -> Generator[int, None, None]:
         """
         Generates hash values for a key using the specified hash functions.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key for which hash values are generated.
 
         Yields
@@ -767,14 +808,14 @@ class HashTable_open(HashTable_closed):
             self._hashfunc = i
             yield super().get_hash(key) % self.one_table_capacity()
 
-    def current_hashed_key(self, key, table_index):
+    def current_hashed_key(self, key: Hashable, table_index: int) -> int:
         """
         Computes the hashed key index for a key based on the
         current table index.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key for which the hashed key index is computed.
 
         table_index : int
@@ -792,7 +833,7 @@ class HashTable_open(HashTable_closed):
                 return hashed_key
 
     @property
-    def elements(self):
+    def elements(self) -> list:
         """
         Defensive copying of the elements array.
 
@@ -805,13 +846,13 @@ class HashTable_open(HashTable_closed):
         ret = self._elements.copy()
         return ret
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Hashable, value: Any) -> None:
         """
         Adds a key-value pair to the hash table.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key to be added.
 
         value : Any
@@ -865,13 +906,13 @@ class HashTable_open(HashTable_closed):
         super().increase_capacity()
         self.__setitem__(key, value)
 
-    def update(self, key, value):
+    def update(self, key: Hashable, value: Any) -> None:
         """
         Updates the value associated with a given key in the hash table.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key for which the value should be updated.
 
         value : Any
@@ -894,13 +935,13 @@ class HashTable_open(HashTable_closed):
                 self._elements[table_index][hashed_key] = Pair(key, value)
                 return
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: Hashable) -> None:
         """
         Removes a key-value pair from the hash table.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key to be removed.
 
         Returns
@@ -915,13 +956,13 @@ class HashTable_open(HashTable_closed):
         self._elements[table_index][hashed_key] = None
         self._size -= 1
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Hashable) -> Any:
         """
         Retrieves the value associated with a given key in the hash table.
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key for which the value is retrieved.
 
         Returns
@@ -941,7 +982,7 @@ class HashTable_open(HashTable_closed):
         table_index, hashed_key = result
         return self._elements[table_index][hashed_key].value
 
-    def search(self, key):
+    def search(self, key: Hashable) -> tuple[int, int] | bool:
         """
         Searches for a key in the hash table and returns
         the table index and hashed key index if found,
@@ -949,12 +990,12 @@ class HashTable_open(HashTable_closed):
 
         Parameters
         ----------
-        key : Any
+        key : Hashable
             The key to be searched for.
 
         Returns
         -------
-        tuple(int, int) or False
+        tuple[int, int] or False
             A tuple containing the table index and hashed key index if found,
             or False if the key is not present in the hash table.
 
@@ -966,14 +1007,9 @@ class HashTable_open(HashTable_closed):
                 return table_index, hashed_key
         return False
 
-    def recapacitate_and_rehash(self):
+    def recapacitate_and_rehash(self) -> None:
         """
         Recapacitates the hash table and rehashes its contents.
-
-        Parameters
-        ----------
-        old_capacity : int
-            The old capacity of the hash table.
 
         Returns
         -------
@@ -990,7 +1026,7 @@ class HashTable_open(HashTable_closed):
         for pair in [pair for pair in old_elements[0] if pair is not None]:
             self[pair[0]] = pair[1]
 
-    def to_dict(self):
+    def to_dict(self) -> dict[Hashable, Any]:
         """
         Returns a dictionary representation of the hash table.
 

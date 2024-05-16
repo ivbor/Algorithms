@@ -253,17 +253,13 @@ def _quick_sort(array: list[float], left_edge: int, right_edge: int,
 
     pivot_str: 'random', 'clst_avg', 'm3' or 'mm'
         A strategy to choose pivot element.
-
         'random' for random selection among the elements, works well for
         random or uniformly distributed data.
-
         'clst_avg' for selection of element close to the average of the
         array,  works well for data with known distribution.
-
         'm3' or median of three provides some resistance against worst
         cases, works well on data with some outliers or some degree of
         ordering but not fully sorted.
-
         'mm' of median of medians or introselect performs well consistently
         regardless of the input data
 
@@ -351,19 +347,15 @@ def quick_sort(array: list[float], pivot_str: str = 'random',
 
     pivot_str: 'random', 'clst_avg', 'm3' or 'mm'
         A strategy to choose pivot element.
-
         'random' for random selection among the elements, works well for
         random or uniformly distributed data.
-
         'clst_avg' for selection of element close to the average of the
-        array,  works well for data with known distribution.
-
+        array, works well for data with known distribution.
         'm3' or median of three provides some resistance against worst
         cases, works well on data with some outliers or some degree of
         ordering but not fully sorted.
-
         'mm' of median of medians or introselect performs well consistently
-        regardless of the input data
+        regardless of the input data.
 
     no_recursion: bool
         Switcher between recursive and non-recursive algorithms.

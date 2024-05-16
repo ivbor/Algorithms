@@ -10,15 +10,15 @@ requirements for space efficiency and time complexity.
 
 Functions
 ---------
-bin_search(array: list[int], value_to_search: int, no_recursion=False)
+bin_search(array: list[int], value_to_search: int, no_recursion=False) -> bool
     Binary search in a sorted array.
 
-_bin_search(array, left_edge, right_edge, value_to_search)
+_bin_search(array, left_edge, right_edge, value_to_search) -> bool
     Helper function for binary search with recursion.
 """
 
 
-def _bin_search(array, left_edge, right_edge, value_to_search):
+def _bin_search(array, left_edge, right_edge, value_to_search) -> bool:
     '''
         This is the binary search with recursion implementation helper.
 
@@ -81,7 +81,8 @@ def _bin_search(array, left_edge, right_edge, value_to_search):
         return _bin_search(array, middle, right_edge, value_to_search)
 
 
-def bin_search(array: list[int], value_to_search: int, no_recursion=False):
+def bin_search(array: list[int], value_to_search: int, no_recursion=False) \
+        -> bool:
     '''
         This function performs a binary search inside sorted array
         consisting of whole numbers.
@@ -91,8 +92,10 @@ def bin_search(array: list[int], value_to_search: int, no_recursion=False):
         ----------
         array: list[int]
             One-dimensional array consisting of whole numbers
+
         value_to_search: int
             Value to be searched inside the array
+
         no_recursion: bool
             Since binary search in general has two implementations,
             with or without recursion, this is the switcher between them.

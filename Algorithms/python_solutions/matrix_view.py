@@ -3,8 +3,7 @@ Matrix2dim Module
 ======================
 
 A module for creating and displaying 2-Dimensional matrices.
-
-This module contains the `Matrix2dim` class, which provides a convenient way
+This module contains the Matrix2dim class, which provides a convenient way
 to create and display 2-Dimensional matrices.
 
 Classes

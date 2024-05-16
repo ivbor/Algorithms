@@ -3,12 +3,11 @@ Binary Heap and Sort
 ====================
 
 A module for implementing a binary tree-based min-heap data structure and
-heap sort algorithm.
-
-This module contains classes and functions for working with binary tree-based
-min-heaps and performing heap sort. A binary tree-based min-heap is a data
-structure where the minimum value is stored at the root, and each parent node
-contains elements smaller than its children.
+heap sort algorithm. This module contains classes and functions for working
+with binary tree-based min-heaps and performing heap sort.
+A binary tree-based min-heap is a data structure where the minimum value is
+stored at the root, and each parent node contains elements smaller than
+its children.
 
 Classes
 -------
@@ -349,7 +348,6 @@ def sift_down(a: list[float], i: int, size: int) -> None:
 def heap_sort(array: list[float]) -> list[float]:
     """
     Sort an array in ascending order using the heap sort algorithm.
-
     Heap sort is a comparison-based sorting algorithm that builds a binary
     heap data structure and repeatedly extracts the minimum element from the
     heap. The sorted elements are stored in the original array. This algorithm

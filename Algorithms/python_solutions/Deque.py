@@ -26,10 +26,6 @@ class Deque(Queue, Stack):  # <(out)-(in)> Deck <(out)-(in)>
     which is a data structure that allows elements
     to be added or removed from both ends.
 
-    Attributes
-    ----------
-    Inherits attributes from Queue and Stack classes.
-
     Methods
     -------
     push_back(self, value)

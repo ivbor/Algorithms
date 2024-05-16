@@ -4,7 +4,7 @@ Array Counting Sort Module
 
 Functions
 ---------
-array_count_sort(arr: list[list[int]], key: int = 0)
+array_count_sort(arr: list[list[int]], key: int = 0) -> list[list[int]]
     Sort a 2-dimensional array of integers based on a key index.
 
 """

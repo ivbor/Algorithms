@@ -14,26 +14,28 @@ DoubleNode
 
 Functions
 ---------
-prev(obj: object with defined prev() method) -> any
+prev(obj: object with defined prev() method) -> Any
     Retrieve the previous object connected to the given DoubleNode object or
     return None if there is no previous object.
 """
 
+
+from typing import Any
 from Algorithms.python_solutions.Node import Node
+
 
 # import this too if you want to have the same syntax
 # for prev as for built-in next():
 # prev(DoubleNode()) instead of DoubleNode().prev()
 
 
-def prev(obj):
+def prev(obj) -> Any:
     """
     Function-helper for easier calling for previous DoubleNode.
 
     Works as analog for built-in function next().
     This function retrieves the previous node connected
-    to the given DoubleNode object or returns None if
-    there is no previous node.
+    to the given DoubleNode object or None if there is no previous node.
 
     Parameters
     ----------
@@ -42,7 +44,7 @@ def prev(obj):
 
     Returns
     -------
-    any
+    Any
         The previous object or None if no previous object exists.
 
     """
@@ -58,10 +60,6 @@ class DoubleNode(Node):
     It has the same functionality as a regular Node, but it can also
     access the previous node stored into the added attribute
     using the prev() method.
-
-    Attributes
-    ----------
-    Inherits attributes from the Node class.
 
     Methods
     -------

@@ -1,7 +1,7 @@
-"""
+'''
 Bloom Filter Module
+===================
 
-====================
 This module provides an implementation of a Bloom filter, a probabilistic
 data structure used to check whether an item is a member of a set with a
 certain probability of false positives. The Bloom filter is used
@@ -9,11 +9,15 @@ for efficient membership testing.
 
 Functions
 ---------
-hashlittle2(data, initval=0, initval2=0)
-rot(x)
-mix(a, b, c)
-final(a, b, c)
-hashlittle(data, initval=0)
+rot(x) -> int
+
+mix(a, b, c) -> tuple[int, int, int]
+
+final(a, b, c) -> tuple[int, int, int]
+
+hashlittle2(data, initval=0, initval2=0) -> int
+
+hashlittle(data, initval=0) -> int
     All functions above participate in calculating Jenkins hash of data
     using an optional seed.
 
@@ -22,18 +26,21 @@ Classes
 Bloom_filter(items_count=1000000, fp_prob=0.05, hashfunc='mmh3')
     Implements a Bloom filter data structure for efficient membership testing.
 
-"""
+'''
+
 
 import math
 import mmh3
 from bitarray import bitarray
 
 
+'''
+For functions from hashlittle2 to hashlittle:
+
 # Need to constrain U32 to only 32 bits using the & 0xffffffff
 # since Python has no native notion of integers limited to 32 bit
 # http://docs.python.org/library/stdtypes.html#numeric-types-int-float-long-complex
 
-'''
     Original copyright notice:
     By Bob Jenkins, 1996.  bob_jenkins@burtleburtle.net.  You may use this
     code any way you wish, private, educational, or commercial.  Its free.
@@ -43,11 +50,11 @@ from bitarray import bitarray
 '''
 
 
-def rot(x, k):
+def rot(x, k) -> int:
     return (((x) << (k)) | ((x) >> (32-(k))))
 
 
-def mix(a, b, c):
+def mix(a, b, c) -> tuple[int, int, int]:
     a &= 0xffffffff
     b &= 0xffffffff
     c &= 0xffffffff
@@ -90,7 +97,7 @@ def mix(a, b, c):
     return a, b, c
 
 
-def final(a, b, c):
+def final(a, b, c) -> tuple[int, int, int]:
     a &= 0xffffffff
     b &= 0xffffffff
     c &= 0xffffffff
@@ -125,7 +132,7 @@ def final(a, b, c):
     return a, b, c
 
 
-def hashlittle2(data, initval=0, initval2=0):
+def hashlittle2(data, initval=0, initval2=0) -> int:
     length = lenpos = len(data)
 
     a = b = c = (0xdeadbeef + (length) + initval)
@@ -210,27 +217,28 @@ def hashlittle2(data, initval=0, initval2=0):
     return c
 
 
-def hashlittle(data, initval=0):
+def hashlittle(data, initval=0) -> int:
     '''
-        This function calculates Jenkins hash of data using initval as seed.
+    This function calculates Jenkins hash of data using initval as seed.
 
-        It utilises rot(), mix(), final(), hashlittle() functions to
-        calculate Jenkins hash as a python translation of the author's
-        original C++ algorithm.
+    It utilises rot(), mix(), final(), hashlittle() functions to
+    calculate Jenkins hash as a python translation of the author's
+    original C++ algorithm.
 
-        Parameters
-        ----------
-        data: any
-            Object of class with defined __getitem__ method consisting
-            of characters (which could be passed to ord() function)
-        initval: int
-            Seed for calculating hash
-            Default value = 0
+    Parameters
+    ----------
+    data: Any
+        Object of class with defined __getitem__ method consisting
+        of characters (which could be passed to ord() function)
 
-        Returns
-        -------
-        int
-            Jenkins hash of data
+    initval: int
+        Seed for calculating hash
+        Default value = 0
+
+    Returns
+    -------
+    int
+        Jenkins hash of data
     '''
 
     c = hashlittle2(data, initval, 0)
@@ -240,89 +248,89 @@ def hashlittle(data, initval=0):
 class Bloom_filter():
 
     '''
-        This is an implementation of the Bloom filter data structure.
+    This is an implementation of the Bloom filter data structure.
 
-        Bloom filter is used to determine whether passed object has
-        already been passed to it. It has a false positive outcome
-        probability which depends on the expected items count to be passed
-        and amount of hash functions available.
-        This particular implementation requires expected false positives
-        probability and items to be passed count and determines its size
-        and creates all hash functions on its own provided the algorithm
-        for function family.
+    Bloom filter is used to determine whether passed object has
+    already been passed to it. It has a false positive outcome
+    probability which depends on the expected items count to be passed
+    and amount of hash functions available.
+    This particular implementation requires expected false positives
+    probability and items to be passed count and determines its size
+    and creates all hash functions on its own provided the algorithm
+    for function family.
 
-        Attributes
-        ----------
-        fp_prob: float
-            False positives probability.
-            Default value = 0.05
+    Attributes
+    ----------
+    fp_prob: float
+        False positives probability.
+        Default value = 0.05
 
-        size: int
-            Real size of the structure, is calculated automatically
+    size: int
+        Real size of the structure, is calculated automatically
 
-        hash_count: int
-            Amount of hashes needed to redeem fp_prob given items_count,
-            is calculated automatically provided with hashfunc family
+    hash_count: int
+        Amount of hashes needed to redeem fp_prob given items_count,
+        is calculated automatically provided with hashfunc family
 
-        bit_array: bitarray
-            Special structure imported from bitarray module, allows usage
-            of only one byte per bucket, compared to unlimited memory for
-            integer values inside lists, hence taking much less memory.
-            Consists of either 0's or 1's and has a size of self.size.
-            It is the main storage and the filter itself.
-            Cannot be modified directly, modifies itself when new values
-            pass through filter.
+    bit_array: bitarray
+        Special structure imported from bitarray module, allows usage
+        of only one byte per bucket, compared to unlimited memory for
+        integer values inside lists, hence taking much less memory.
+        Consists of either 0's or 1's and has a size of self.size.
+        It is the main storage and the filter itself.
+        Cannot be modified directly, modifies itself when new values
+        pass through filter.
 
-        hashfunc: string
-            Family of algorithms for generating hash functions.
-            Default value = 'mmh3' (murmur3 hash), possible value = 'jenkins'
-            for Jenkins hash
+    hashfunc: string
+        Family of algorithms for generating hash functions.
+        Default value = 'mmh3' (murmur3 hash), possible value = 'jenkins'
+        for Jenkins hash
 
-        Methods
-        -------
-        __init__(self, items_count: int = 1000000,
-            fp_prob: float = 0.05, hashfunc: string = 'mmh3') -> None
-            Creates an instance of Bloom filter.
+    Methods
+    -------
+    __init__(self, items_count: int = 1000000,
+       fp_prob: float = 0.05, hashfunc: string = 'mmh3') -> None
+       Creates an instance of Bloom filter.
 
-        add(self, item: any) -> None
-            Passes through the Bloom filter given item.
+    add(self, item: any) -> None
+        Passes through the Bloom filter given item.
 
-        check(self, item: any) -> Bloom_filter
-            Checks whether the item was passed through Bloom filter.
+    check(self, item: any) -> Bloom_filter
+        Checks whether the item was passed through Bloom filter.
 
-        get_size(self, items_count: int, fp_prob: float) -> int
-            Calculates full size of the Bloom filter.
+    get_size(self, items_count: int, fp_prob: float) -> int
+        Calculates full size of the Bloom filter.
 
-        get_hash_count(self, size: int, items_count: int) -> int:
-            Calculates the necessary amount of hash functions to ensure
-            false positives probability with expected
-            items to be passed count.
+    get_hash_count(self, size: int, items_count: int) -> int:
+        Calculates the necessary amount of hash functions to ensure
+        false positives probability with expected
+        items to be passed count.
 
     '''
 
-    def __init__(
-            self, items_count=1000000, fp_prob=0.05, hashfunc='mmh3'):
+    def __init__(self, items_count: int = 1000000, fp_prob: float = 0.05,
+                 hashfunc: str = 'mmh3') -> None:
         '''
-            Creates an instance of Bloom filter
+        Creates an instance of Bloom filter
 
-            Parameters
-            ----------
-            items_count: int
-                Expected amount of items to be passed through filter.
-                Default value = 1000000
+        Parameters
+        ----------
+        items_count: int
+            Expected amount of items to be passed through filter.
+            Default value = 1000000
 
-            fp_prob: float
-                Expected false positive outcome probability.
-                Default value = 0.05
+        fp_prob: float
+            Expected false positive outcome probability.
+            Default value = 0.05
 
-            hashfunc: 'mmh3' or 'jenkins'
-                Name of the family of functions to use for hash functions
-                generation.
-                Default value = 'mmh3'
+        hashfunc: 'mmh3' or 'jenkins'
+            Name of the family of functions to use for hash functions
+            generation.
+            Default value = 'mmh3'
 
-            Returns
-            -------
-            None
+        Returns
+        -------
+        None
 
         '''
         self.fp_prob = fp_prob
@@ -338,34 +346,34 @@ class Bloom_filter():
             raise ValueError(
                 'available are only murmur (mmh3) and jenkins hashes')
 
-    def add(self, item):
+    def add(self, item: str) -> None:
         '''
-            Passes given item through Bloom filter.
+        Passes given item through Bloom filter.
 
-            Parameters
-            ----------
-            item: str or byte-like
+        Parameters
+        ----------
+        item: str or byte-like
 
-            Returns
-            -------
-            None
+        Returns
+        -------
+        None
         '''
         for i in range(self.hash_count):
             hashed_index = self.hashfunc(str(item), i) % self.size
             self.bit_array[hashed_index] = 1
 
-    def check(self, item):
+    def check(self, item: str) -> bool:
         '''
-            Checks whether the item was passed through the Bloom filter.
+        Checks whether the item was passed through the Bloom filter.
 
-            Parameters
-            ----------
-            item: str or byte-like
+        Parameters
+        ----------
+        item: str or byte-like
 
-            Returns
-            -------
-            bool
-                True if the item was passed through, False if it was not.
+        Returns
+        -------
+        bool
+            True if the item was passed through, False if it was not.
         '''
         for i in range(self.hash_count):
             hashed_index = self.hashfunc(str(item), i) % self.size
@@ -373,43 +381,43 @@ class Bloom_filter():
                 return False
         return True
 
-    def get_size(self, items_count, fp_prob):
+    def get_size(self, items_count: int, fp_prob: float) -> int:
         '''
-            Calculates the size of bloom filter for its initialization.
+        Calculates the size of bloom filter for its initialization.
 
-            Parameters
-            ----------
-            items_count: int
-                Amount of items expected to be passed through.
+        Parameters
+        ----------
+        items_count: int
+            Amount of items expected to be passed through.
 
-            fp_prob: float
-                False positive case probability
+        fp_prob: float
+            False positive case probability
 
-            Returns
-            -------
-            int
-                Size of the bloom filter.
+        Returns
+        -------
+        int
+            Size of the bloom filter.
         '''
         m = - (items_count * math.log(fp_prob)) / (math.log(2) ** 2)
         return int(m)
 
-    def get_hash_count(self, size, items_count):
+    def get_hash_count(self, size: int, items_count: int) -> int:
         '''
-            Calculates amount of hash functions necessary to assure
-            required false probability.
+        Calculates amount of hash functions necessary to assure
+        required false probability.
 
-            Parameters
-            ----------
-            size: int
-                Calculated size of the bloom filter.
+        Parameters
+        ----------
+        size: int
+            Calculated size of the bloom filter.
 
-            items_count: int
-                Amount of items expected to be passed through the filter.
+        items_count: int
+            Amount of items expected to be passed through the filter.
 
-            Returns
-            -------
-            int
-                Amount of hash functions to generate different hashes.
+        Returns
+        -------
+        int
+            Amount of hash functions to generate different hashes.
         '''
         k = (size / items_count) * math.log(2)
         return int(k)

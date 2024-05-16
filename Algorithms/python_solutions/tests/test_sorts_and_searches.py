@@ -260,33 +260,13 @@ def test_errors_in_sorts(function, array, params):
                           ])
 def test_bin_search(array):
 
-    array_copy = array.copy()
-    # binary search works on sorted arrays
     array = sorted(array)
 
-    with pytest.raises(ValueError):
-        array.index(3)
-
-    developed_no_rec = bin_search(array, 3)
-
-    developed_rec = bin_search(array, 3, True)
-
-    assert developed_no_rec is False
-    assert developed_no_rec == developed_rec
-
-    # manually append desired element
-    array_copy.append(3)
-    array_copy = sorted(array_copy)
-
-    built_in = array_copy.index(3)
-
-    developed_no_rec = bin_search(array_copy, 3)
-
-    developed_rec = bin_search(array_copy, 3, True)
-
-    assert isinstance(built_in, int)
-    assert developed_no_rec is True
-    assert developed_no_rec == developed_rec
+    for i in range(-100, 100):
+        assert bin_search(array, i) == (i in array), \
+            f'existence of {i} inside array is determined wrong'
+        assert bin_search(array, i, True) == (i in array), \
+            f'existence of {i} inside array is determined wrong'
 
 
 def func(x):

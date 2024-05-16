@@ -2,7 +2,7 @@
 Segment Tree Module
 ===================
 
-This module defines two classes, `SegmentTree` and `SegmentTreeOptimized`,
+This module defines two classes, SegmentTree and SegmentTreeOptimized,
 that implement a segment tree data structure.
 A segment tree is a versatile data structure that allows for efficient
 querying and updating of segments of an array.
@@ -683,7 +683,7 @@ class SegmentTreeOptimized:
         func: Callable
             The new action to add to the segment tree.
 
-        neutral
+        neutral: float
             The neutral element associated with the new action.
 
         Returns
