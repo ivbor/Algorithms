@@ -2,7 +2,7 @@
 
 All source code is inside the `./Algorithms/python_solutions/` folder 
 with table of contents being 
-[here](Algorithms/python_solutions/docs/Table of contents.md)
+[here](./Algorithms/python_solutions/docs/Table of contents.md)
 and can be imported with statement
 ```python
 from Algorithms.python_solutions.... import ...
