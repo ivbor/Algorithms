@@ -1,8 +1,6 @@
 ## Algorithms and Data Structures implemented, tested and documented
 
 All source code is inside the `./Algorithms/python_solutions/` folder 
-with table of contents being 
-[here](./Algorithms/python_solutions/docs/Table of contents.md)
 and can be imported with statement
 ```python
 from Algorithms.python_solutions.... import ...
@@ -16,6 +14,9 @@ sys.path.append('path/to/Algorithms-master/')
 ```
 or any other way.
 
+Table of contents is 
+[here](Algorithms/python_solutions/docs/Table_of_contents.md).
+
 All documentation is within the source code so that it automatically loads by 
 any decent IDE. In Vim works perfectly :)
 
@@ -23,7 +24,7 @@ All tests are inside `Algorithms/tests/`, examples of usage are also there.
 
 For sorts and some interesting data types performance tuning and comparing
 to python standard ones can be found in 
-`Algorithms/python_solutions/speed_tuning`.
+[here](Algorithms/python_solutions/speed_tuning/README.md).
 
 ## What is planned:
 

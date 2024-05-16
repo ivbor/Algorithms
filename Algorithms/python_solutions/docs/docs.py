@@ -91,7 +91,6 @@ def parse_classes(docstring, output):
     output.append('</ul>')
 
 
-
 parsing_funcs = {'Constants': parse_params,
                  'Attributes': parse_params,
                  'Parameters': parse_params,
@@ -169,7 +168,6 @@ def parse_func_doc(node, output):
                 docstring[position:positions[positions.index(position) + 1]],
                 output)
     output.append('\n---')
-
 
 
 def parse_class_doc(node, output):
@@ -251,6 +249,6 @@ for root, dirs, files in os.walk('../'):
         if name == '__init__.py':
             print(os.path.join(root, name))
             file = open(os.path.join(root, name), 'r').read()
-            out = open('Table of contents.md', 'a')
+            out = open('Table_of_contents.md', 'a')
             out.write(ast.get_docstring(ast.parse(file)) + '\n')
             out.close()
