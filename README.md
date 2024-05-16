@@ -1,6 +1,8 @@
 ## Algorithms and Data Structures implemented, tested and documented
 
 All source code is inside the `./Algorithms/python_solutions/` folder 
+with table of contents being 
+[here](Algorithms/python_solutions/docs/Table of contents.md)
 and can be imported with statement
 ```python
 from Algorithms.python_solutions.... import ...
@@ -17,21 +19,28 @@ or any other way.
 All documentation is within the source code so that it automatically loads by 
 any decent IDE. In Vim works perfectly :)
 
-All tests are inside `Algorithms/tests/`, for examples you can also go 
-there.
+All tests are inside `Algorithms/tests/`, examples of usage are also there.
 
 For sorts and some interesting data types performance tuning and comparing
 to python standard ones can be found in 
-`Algorithms/python_solutions/speed_tuning`
+`Algorithms/python_solutions/speed_tuning`.
 
 ## What is planned:
 
 * Translations to C, for this purpose folder `Algorithms/C_solutions` 
 was created.
-Objective is to try to increase performance even further.
+Objective is to try to increase performance even further
 
-* Beautiful documentation, inside `Algorithms/python_solutions/docs`.
-More information is in [README](Algorithms/python_solutions/docs/README.md).
+* Performance studies for these pairs or special structures
+(implementation here/well-known implementation if I happen to know one):
+heap/heapq, hashtable/dict, bloom_filter/-, hyperloglog/-, 
+sparse_table/slice, segment_tree/slice, trees between themselves/-,
+graphs/-, bs within array/index, bs for different functions/-, 
+split_find/sorted+index, ternary search for different functions/-
+
+* Animations for dp solutions
+
+* Example of work of matrix visualizer
 
 ## Workflows are set up as following:
 
@@ -56,7 +65,7 @@ Baseline for bandit was generated using
 bandit -r ./Algorithms/python_solutions -f json -o bandit.json
 ```
 
-Docstrings coverage checked by 
+Documentation coverage is checked by 
 ```bash
 interrogate ./Algorithms/python_solutions -vv
 ```
