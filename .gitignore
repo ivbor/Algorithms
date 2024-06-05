@@ -15,3 +15,5 @@ include/*
 pyvenv.cfg
 pytest.log
 Algorithms/C_solutions/test.in
+**venv**
+C_solutions/**bin**
