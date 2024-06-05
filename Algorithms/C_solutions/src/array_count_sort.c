@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "../include/array_count_sort.h"
 #include <stdlib.h>
 #include <limits.h>
 
@@ -69,31 +69,3 @@ void array_count_sort(int **arr, int rows, int cols, int key) {
     free(result);
     free(count);
 }
-
-// Example of usage
-int main() {
-    int rows = 4;
-    int cols = 3;
-    int key = 0;
-    int **arr = (int**)malloc(rows * sizeof(int*));
-    for (int i = 0; i < rows; i++) {
-        arr[i] = (int*)malloc(cols * sizeof(int));
-        // Example initialization, replace with actual data
-        for (int j = 0; j < cols; j++) {
-            arr[i][j] = i * cols + j; // Replace with actual data
-        }
-    }
-    // Assume arr is initialized with your data before sorting
-    array_count_sort(arr, rows, cols, key);
-    // Print sorted array
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            printf("%d ", arr[i][j]);
-        }
-        printf("\n");
-        free(arr[i]);
-    }
-    free(arr);
-    return 0;
-}
- 
