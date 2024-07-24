@@ -234,7 +234,7 @@ def parse_docstrings(file_docstrings, output_file):
 
 
 exclude_patterns = ['__init__', 'tests', 'docs', '__pycache__']
-out = open('Table of contents.md', 'w').close()
+open('Table_of_contents.md', 'w').close()
 
 
 for root, dirs, files in os.walk('../'):
