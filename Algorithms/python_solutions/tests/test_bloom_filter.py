@@ -13,6 +13,12 @@ def bf():
     return bf
 
 
+@pytest.fixture
+def bf_jenkins():
+    bf = Bloom_filter(hashfunc='jenkins')
+    return bf
+
+
 def test_can_add_to_bloom_filter(bf):
     fails_count = 0
     for i in range(1000):
@@ -22,12 +28,11 @@ def test_can_add_to_bloom_filter(bf):
     assert fails_count < 60, 'fails_count does not converge to 50'
 
 
-def test_can_create_bloom_filter_jenkins():
-    bf = Bloom_filter(hashfunc='jenkins')
+def test_can_create_bloom_filter_jenkins(bf_jenkins):
     fails_count = 0
     for i in range(1000):
-        bf.add(i)
-        if not bf.check(i):
+        bf_jenkins.add(i)
+        if not bf_jenkins.check(i):
             fails_count += 1
     assert fails_count < 60, 'fails_count does not converge to 50'
 
@@ -55,15 +60,14 @@ def test_bloom_filter_stress():
     assert fails_count < 50
 
 
-def test_long_strings_for_advanced_jenkins():
-    bf = Bloom_filter(hashfunc='jenkins')
+def test_long_strings_for_advanced_jenkins(bf_jenkins):
     for i in range(1000):
         str_to_add = ''
         fails_count = 0
         for ch in range(i):
             str_to_add += chr(ch)
-        bf.add(str_to_add)
-        if not bf.check(str_to_add):
+        bf_jenkins.add(str_to_add)
+        if not bf_jenkins.check(str_to_add):
             fails_count += 1
     assert fails_count < 60, 'fails_count does not converge to 50'
 
