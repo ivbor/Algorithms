@@ -25,7 +25,7 @@ jobs:
       run: pip install flake8
     - name: Lint with flake8
       run: |
-        flake8 --config=./.config ./Algorithms/python_solutions
+        flake8 --config=./setup.cfg ./Algorithms/python_solutions
 
   test:
     runs-on: ubuntu-latest
