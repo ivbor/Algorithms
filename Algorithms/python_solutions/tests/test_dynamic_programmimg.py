@@ -75,14 +75,14 @@ def generate_test_cases(function, amount=20):
     return res
 
 
-@ pytest.mark.parametrize("test_input, test_output",
-                          generate_test_cases(
-                             generate_test_cases_with_output_for_knapsack,
-                             20) + [
-                                 # bounds
-                                 (([], [], 0), 0),
-                                 (([12], [1], 0), 0),
-                                 (([15, 1, 12], [10000, 1, 0], 14), 1)
+@pytest.mark.parametrize("test_input, test_output",
+                         generate_test_cases(
+                            generate_test_cases_with_output_for_knapsack,
+                            20) + [
+                                # bounds
+                                (([], [], 0), 0),
+                                (([12], [1], 0), 0),
+                                (([15, 1, 12], [10000, 1, 0], 14), 1)
                              ])
 def test_knapsack_problem(test_input, test_output):
     # test_input = (weights, values, capacity)
@@ -161,16 +161,16 @@ def test_lcs_symmetry():
 
 # test cases are from here:
 # https://workat.tech/problem-solving/practice/longest-common-subsequence
-@ pytest.mark.parametrize('test_input, test_output',
-                          [(('workattech', 'branch'), 4),
-                           (('helloworld', 'playword'), 5),
-                           (('hello', 'hello'), 5),
-                           (('abc', 'def'), 0),
-                           # bounds
-                           (('', ''), 0),
-                           (('abc', ''), 0),
-                           (('', 'abc'), 0),
-                           (('abc', 'abc'), 3)])
+@pytest.mark.parametrize('test_input, test_output',
+                         [(('workattech', 'branch'), 4),
+                          (('helloworld', 'playword'), 5),
+                          (('hello', 'hello'), 5),
+                          (('abc', 'def'), 0),
+                          # bounds
+                          (('', ''), 0),
+                          (('abc', ''), 0),
+                          (('', 'abc'), 0),
+                          (('abc', 'abc'), 3)])
 def test_some_lcs_test_cases(test_input, test_output):
     assert LongestCommonSubsequence(*test_input).solve() == test_output
 
@@ -180,19 +180,19 @@ def test_some_lcs_test_cases(test_input, test_output):
 # longest-increasing-subsequence-1587115620/1
 # https://workat.tech/problem-solving/practice/
 # longest-increasing-subsequence
-@ pytest.mark.parametrize('test_input, test_output',
-                          [(([10, 20, 2, 5, 3, 8, 8, 25, 6]), 4),
-                           (([10, -63, 7, -50, 32, -9, -3]), 4),
-                           (([71, 0, 4, 42, -31, 4, -42]), 3),
-                           (([77, 0, -2, 25, 1, 70]), 3),
-                           (([2, 2, 1, 5, 7, -50, 80]), 4),
-                           (([0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11,
-                              7, 15]), 6),
-                           (([5, 8, 3, 7, 9, 1]), 3),
-                           (([]), 0),
-                           (([random.randint(0, 100)]), 1),
-                           (([1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 10),
-                           ((1, 0, 2, 3, 4, 5, 6, 7, 8, 10, 9), 9)])
+@pytest.mark.parametrize('test_input, test_output',
+                         [(([10, 20, 2, 5, 3, 8, 8, 25, 6]), 4),
+                          (([10, -63, 7, -50, 32, -9, -3]), 4),
+                          (([71, 0, 4, 42, -31, 4, -42]), 3),
+                          (([77, 0, -2, 25, 1, 70]), 3),
+                          (([2, 2, 1, 5, 7, -50, 80]), 4),
+                          (([0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11,
+                             7, 15]), 6),
+                          (([5, 8, 3, 7, 9, 1]), 3),
+                          (([]), 0),
+                          (([random.randint(0, 100)]), 1),
+                          (([1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 10),
+                          ((1, 0, 2, 3, 4, 5, 6, 7, 8, 10, 9), 9)])
 def test_some_lis_test_cases(test_input, test_output):
     instance = LongestIncreasingSubsequence(test_input)
     assert instance.solve() == test_output

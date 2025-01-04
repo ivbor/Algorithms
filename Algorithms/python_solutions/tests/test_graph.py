@@ -1,6 +1,5 @@
 import pytest
 import copy
-import logging
 import random
 
 from Algorithms.python_solutions.graph_nodes \
@@ -95,7 +94,7 @@ def test_find_kwarg_with_edges(graphs, nodes):
         graph_instance[nr].add_vertex(**nodes2[nr])
         assert graph_instance[nr].all_vertices() == ['3', '4']
         assert [i for i in graph_instance[nr].vertices[1].edges.keys()] == [0]
-        if type(graph_instance[nr]) == WeightedGraph:
+        if graph_instance[nr] is WeightedGraph:
             assert graph_instance[nr].vertices[1].edges[0].weight == 5
 
 
@@ -258,13 +257,13 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     for graph in graphs:
         for vertex_nr, vertex in enumerate(edges):
             for edge_nr, edge in enumerate(vertex):
-                if type(graph) == WeightedGraph:
+                if graph is WeightedGraph:
                     graph.add_edge(vertex_nr, edge,
                                    weight=weights[vertex_nr][edge_nr])
                     assert edge in graph.vertices[vertex_nr].edges
                     assert graph.vertices[vertex_nr].edges[edge]\
                         .weight == weights[vertex_nr][edge_nr]
-                if type(graph) == Graph:
+                if graph is Graph:
                     graph.add_edge(vertex_nr, edge)
                     assert edge in graph.vertices[vertex_nr].edges
     undir.remove_edge(0, 4)
@@ -328,10 +327,10 @@ def con5():
     for graph in graphs:
         for vertex_nr, vertex in enumerate(edges):
             for edge_nr, edge in enumerate(vertex):
-                if type(graph) == WeightedGraph:
+                if graph is WeightedGraph:
                     graph.add_edge(vertex_nr, edge,
                                    weight=weights[vertex_nr][edge_nr])
-                if type(graph) == Graph:
+                if graph is Graph:
                     graph.add_edge(vertex_nr, edge)
     return graphs
 
@@ -349,14 +348,14 @@ def bfs_graph():
     for i in range(9):
         graph.add_vertex(data=i)
     edges = [[1, 2, 3, 4],  # 0
-                              [0, 2, 5],     # 1
-                              [0, 1, 3, 6],  # 2
-                              [0, 2, 4, 7],  # 3
-                              [0, 3, 8],     # 4
-                              [1, 6],        # 5
-                              [2, 5, 7],     # 6
-                              [3, 6, 8],     # 7
-                              [4, 7]]        # 8
+             [0, 2, 5],     # 1
+             [0, 1, 3, 6],  # 2
+             [0, 2, 4, 7],  # 3
+             [0, 3, 8],     # 4
+             [1, 6],        # 5
+             [2, 5, 7],     # 6
+             [3, 6, 8],     # 7
+             [4, 7]]        # 8
     for vertex, neighbors in enumerate(edges):
         for neighbor in neighbors:
             graph.add_edge(vertex, neighbor)
@@ -414,13 +413,13 @@ def test_bfs(uncon2, con2, con5, bfs_graph):
 def test_adjancency_matrix(con5):
     global weights
     for i in range(2):
-        if type(con5[i]) == Graph:
+        if con5[i] is Graph:
             assert con5[i].to_adjacency_matrix() == [[0, 1, 1, 1, 1],
                                                      [1, 0, 1, 1, 1],
                                                      [1, 1, 0, 1, 1],
                                                      [1, 1, 1, 0, 1],
                                                      [1, 1, 1, 1, 0]]
-        if type(con5[i]) == WeightedGraph:
+        if con5[i] is WeightedGraph:
             adj_mtx = con5[i].to_adjacency_matrix()
             for row_nr in range(len(adj_mtx)):
                 for col_nr in range(len(con5[i].vertices)):
@@ -440,15 +439,15 @@ def test_cycles_detector(uncon2, con5, bfs_graph):
 
     assert bfs_graph.is_cyclic() is True
 
-    edges = [[1], # 0
-             [5], # 1
-             [],  # 2
-             [2], # 3
-             [3], # 4
-             [6], # 5
-             [7], # 6
-             [8], # 7
-             [4]] # 8
+    edges = [[1],  # 0
+             [5],  # 1
+             [],   # 2
+             [2],  # 3
+             [3],  # 4
+             [6],  # 5
+             [7],  # 6
+             [8],  # 7
+             [4]]  # 8
     for vertex, neighbors in enumerate(edges):
         bfs_graph.vertices[vertex].edges = {}
         for neighbor in neighbors:
@@ -468,15 +467,15 @@ def test_topo_sort(bfs_graph):
     #     ^ |
     #     4<8
 
-    edges = [[1], # 0
-             [5], # 1
-             [1], # 2
-             [2], # 3
-             [3], # 4
-             [6], # 5
-             [7], # 6
-             [8], # 7
-             [4]] # 8
+    edges = [[1],  # 0
+             [5],  # 1
+             [1],  # 2
+             [2],  # 3
+             [3],  # 4
+             [6],  # 5
+             [7],  # 6
+             [8],  # 7
+             [4]]  # 8
 
     for vertex, neighbors in enumerate(edges):
         bfs_graph.vertices[vertex].edges = {}
@@ -863,9 +862,9 @@ def test_complex_graph_coloring():
     # Initialize the complex graph
     vertices = [i for i in range(8)]  # 8 vertices
     edges = [(0, 1), (1, 2), (2, 3), (3, 0),
-             (1, 0), (2, 1), (3, 2), (0, 3), # Cycle
+             (1, 0), (2, 1), (3, 2), (0, 3),  # Cycle
              (4, 5), (5, 6), (6, 4),
-             (5, 4), (6, 5), (4, 6), # Clique
+             (5, 4), (6, 5), (4, 6),  # Clique
              (7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6),
              (0, 7), (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7),
              # Additional connections

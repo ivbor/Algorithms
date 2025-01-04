@@ -5,13 +5,13 @@ from Algorithms.python_solutions.hyperloglog import HyperLogLog
 
 def test_can_create_hyperloglog():
     hll = HyperLogLog()
-    assert type(hll) == HyperLogLog
+    assert hll is HyperLogLog
 
 
 @pytest.mark.parametrize('precision, length',
                          [(14, 10),
-                          (18, 50000)#,
-                          #(25, 5000000)
+                          (18, 50000)  # ,
+                          # (25, 5000000)
                           ])
 def test_cardinality(precision, length):
     hyperloglog = HyperLogLog(precision=precision)

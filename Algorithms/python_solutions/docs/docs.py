@@ -33,7 +33,7 @@ def parse_funcs(docstring, output):
         try:
             func_desc = entry[end_of_func_title:] \
                 if end_of_func_title != -1 else ''
-        except:
+        except Exception:
             func_desc = ''
         if 'Setter' in func_desc or 'Property' in func_desc:
             continue
@@ -77,7 +77,7 @@ def parse_classes(docstring, output):
             class_name = class_title[:class_params_start]
         try:
             class_desc = ''.join(entry.split('\n')[1:])
-        except:
+        except Exception:
             class_desc = ''
         output.append(f"<li> <a href='#class-{class_name}'><code>")
         output.append(f'{class_title}')
