@@ -13,58 +13,61 @@ permissions:
   contents: read
 
 jobs:
-  setup:
+  lint:
     runs-on: ubuntu-latest
-    outputs:
-      python-path: ${{ steps.set-python-path.outputs.python-path }}
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
-      id: python-setup
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest coverage
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-  lint:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
+    - name: Install flake8
+      run: pip install flake8
     - name: Lint with flake8
       run: |
-        source ./venv/bin/activate
         flake8 --config=./config ./Algorithms/python_solutions
 
   test:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install pytest and coverage
+      run: pip install pytest coverage
     - name: Run tests with coverage
       run: |
-        coverage run
+        coverage run -m pytest
     - name: Check tests coverage
       run: |
         coverage report -m
 
-  docs:
-    needs: setup
+  docs-coverage:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install interrogate
+      run: pip install interrogate
     - name: Check docs coverage
       run: |
-        interrogate ./Algorithms/python_solutions
+        interrogate -v --fail-under 80 ./Algorithms/python_solutions -e ./Algorithms/python_solutions/tests -e ./Algorithms/python_solutions/docs
 
   security:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install bandit
+      run: pip install bandit
     - name: Check issues with bandit
       run: |
-        bandit ./Algorithms/python_solutions/* -b bandit.json -ll
+        bandit ./Algorithms/python_solutions/* -o bandit.json -ll
