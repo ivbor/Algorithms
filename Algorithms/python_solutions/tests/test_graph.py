@@ -94,7 +94,7 @@ def test_find_kwarg_with_edges(graphs, nodes):
         graph_instance[nr].add_vertex(**nodes2[nr])
         assert graph_instance[nr].all_vertices() == ['3', '4']
         assert [i for i in graph_instance[nr].vertices[1].edges.keys()] == [0]
-        if graph_instance[nr] is WeightedGraph:
+        if type(graph_instance[nr]) == WeightedGraph:
             assert graph_instance[nr].vertices[1].edges[0].weight == 5
 
 
@@ -257,13 +257,13 @@ def test_add_vertices_manipulate_edges_remove_vertices():
     for graph in graphs:
         for vertex_nr, vertex in enumerate(edges):
             for edge_nr, edge in enumerate(vertex):
-                if graph is WeightedGraph:
+                if type(graph) == WeightedGraph:
                     graph.add_edge(vertex_nr, edge,
                                    weight=weights[vertex_nr][edge_nr])
                     assert edge in graph.vertices[vertex_nr].edges
                     assert graph.vertices[vertex_nr].edges[edge]\
                         .weight == weights[vertex_nr][edge_nr]
-                if graph is Graph:
+                if type(graph) == Graph:
                     graph.add_edge(vertex_nr, edge)
                     assert edge in graph.vertices[vertex_nr].edges
     undir.remove_edge(0, 4)
@@ -327,10 +327,10 @@ def con5():
     for graph in graphs:
         for vertex_nr, vertex in enumerate(edges):
             for edge_nr, edge in enumerate(vertex):
-                if graph is WeightedGraph:
+                if type(graph) == WeightedGraph:
                     graph.add_edge(vertex_nr, edge,
                                    weight=weights[vertex_nr][edge_nr])
-                if graph is Graph:
+                if type(graph) == Graph:
                     graph.add_edge(vertex_nr, edge)
     return graphs
 
@@ -394,7 +394,7 @@ def test_bfs(uncon2, con2, con5, bfs_graph):
             for neighbor in neighbors:
                 bfs_graph.add_edge(vertex, neighbor)
         assert bfs_graph.bfs(0, 4) == [0, 4]
-        edges = [[1],  # 0
+        edges = [[1],     # 0
                  [2, 5],  # 1
                  [3],     # 2
                  [4],     # 3
@@ -413,13 +413,13 @@ def test_bfs(uncon2, con2, con5, bfs_graph):
 def test_adjancency_matrix(con5):
     global weights
     for i in range(2):
-        if con5[i] is Graph:
+        if type(con5[i]) == Graph:
             assert con5[i].to_adjacency_matrix() == [[0, 1, 1, 1, 1],
                                                      [1, 0, 1, 1, 1],
                                                      [1, 1, 0, 1, 1],
                                                      [1, 1, 1, 0, 1],
                                                      [1, 1, 1, 1, 0]]
-        if con5[i] is WeightedGraph:
+        if type(con5[i]) == WeightedGraph:
             adj_mtx = con5[i].to_adjacency_matrix()
             for row_nr in range(len(adj_mtx)):
                 for col_nr in range(len(con5[i].vertices)):

@@ -5,7 +5,7 @@ from Algorithms.python_solutions.hyperloglog import HyperLogLog
 
 def test_can_create_hyperloglog():
     hll = HyperLogLog()
-    assert hll is HyperLogLog
+    assert type(hll) == HyperLogLog
 
 
 @pytest.mark.parametrize('precision, length',
