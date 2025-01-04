@@ -13,13 +13,15 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      python-path: ${{ steps.set-python-path.outputs.python-path }}
 
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
+      id: python-setup
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
@@ -28,19 +30,40 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: Lint with flake8
       run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=20 --max-line-length=80 --statistics --extend-ignore=E731
+        flake8 --config=./config ./Algorithms/python_solutions
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: Run tests with coverage
       run: |
         coverage run
     - name: Check tests coverage
       run: |
         coverage report -m
+
+  docs:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
     - name: Check docs coverage
       run: |
-        interrogate ./Algorithms/python_solutions -e ./Algorithms/python_solutions/tests -e ./Algorithms/python_solutions/docs -vv --fail-under 80
+        interrogate ./Algorithms/python_solutions
+
+  security:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
     - name: Check issues with bandit
       run: |
         bandit ./Algorithms/python_solutions/* -b bandit.json -ll

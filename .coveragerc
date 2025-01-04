@@ -1,4 +1,0 @@
-[run]
-command_line = -m pytest --pdb
-source = ./Algorithms/python_solutions/ 
-omit = */tests/*
