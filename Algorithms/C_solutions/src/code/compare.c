@@ -1,6 +1,6 @@
 #include <math.h>
 
-int compareArraysdouble(double* a, double* b, int n) {
+int compareArraysdouble(const double* a, const double* b, int n) {
   int ii;
   for(ii = 0; ii < n; ii++) {
     if(fabs(a[ii]-b[ii]) < 1e-10 * (fabs(a[ii]) + fabs(b[ii]))) return 0;
@@ -8,7 +8,7 @@ int compareArraysdouble(double* a, double* b, int n) {
   return 1;
 };
 
-int compareArraysint(int* a, int* b, int n) {
+int compareArraysint(const int* a, const int* b, int n) {
   int ii;
   for(ii = 0; ii < n; ii++) {
     if (a[ii] != b[ii]) return 0;
