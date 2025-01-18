@@ -1,5 +1,6 @@
 python_solutions
 ================
+
 ---
 
 This module contains python implementations of various sorting algorithms,
@@ -8,6 +9,7 @@ for the code, but also examples of usage.
 
 Contents
 --------
+
 - Sorting Algorithms
   - insertion_sorts:
 [docs](./insert_sort.md),
@@ -73,8 +75,7 @@ Contents
     - Heap:
 [docs](./heap.md),
 [source code](../heap.py),
-[tests](../tests/test_heap.py),
-[performance]()
+[tests](../tests/test_heap.py)
 
   - Nodes and Linked Lists
     - OneWayNode:
@@ -116,51 +117,43 @@ Contents
     - HashTables with different collision handling approaches:
 [docs](./hashtable.md),
 [source code](../hashtable.py),
-[tests](../tests/test_hashtable.py),
-[performance]()
+[tests](../tests/test_hashtable.py)
 
     - BloomFilter:
 [docs](./bloom_filter.md),
 [source code](../bloom_filter.py),
-[tests](../tests/test_bloom_filter.py),
-[performance]()
+[tests](../tests/test_bloom_filter.py)
 
     - HyperLogLog:
 [docs](./hyperloglog.md),
 [source code](../hyperloglog.py),
-[tests](../tests/test_hyperloglog.py),
-[performance]()
+[tests](../tests/test_hyperloglog.py)
 
   - Trees
     - BinarySearchTree:
 [docs](./bst.md),
 [source code](../bst.py),
-[tests](../tests/test_bst.py),
-[performance]()
+[tests](../tests/test_bst.py)
 
     - AVLTree:
 [docs](./avl_tree.md),
 [source code](../avl_tree.py),
-[tests](../tests/test_avl_tree.py),
-[performance]()
+[tests](../tests/test_avl_tree.py)
 
     - RedBlackTree:
 [docs](./red_black_tree.md),
 [source code](../red_black_tree.py),
 [tests](../tests/test_red_black_tree.py),
-[performance]()
 
     - SegmentTree:
 [docs](./segment_tree.md),
 [source code](../segment_tree.py),
 [tests](../tests/test_segment_tree.py),
-[performance]()
 
     - SparseTable:
 [docs](./sparse_table.md),
 [source code](../sparse_table.py),
-[tests](../tests/test_sparse_table.py),
-[performance]()
+[tests](../tests/test_sparse_table.py)
 
   - Graphs and Graph Nodes
     - GraphNodes and Edges:
@@ -171,58 +164,51 @@ Contents
     - Graph:
 [docs](./graph.md),
 [source code](../graph.py),
-[tests](../tests/test_graph.py),
-[performance]()
+[tests](../tests/test_graph.py)
 
     - WeightedGraph:
 [docs](./weighted_graph.md),
 [source code](../weighted_graph.py),
-[tests](../tests/test_graph.py),
-[performance]()
+[tests](../tests/test_graph.py)
 
 - Searching Algorithms
   - Binary Search:
 [docs](./bin_search.md),
 [source code](../bin_search.py),
-[tests](../tests/test_sorts_and_searches.py),
-[performance]()
+[tests](../tests/test_sorts_and_searches.py)
 
   - Binary Search for upper and lower bounds:
 [docs](./bounds.md),
 [source code](../bounds.py),
-[tests](../tests/test_sorts_and_searches.py),
-[performance]()
+[tests](../tests/test_sorts_and_searches.py)
 
   - Binary Search for functions on the real domain:
 [docs](./real_bin_search.md),
 [source code](../real_bin_search.py),
-[tests](../tests/test_sorts_and_searches.py),
-[performance]()
+[tests](../tests/test_sorts_and_searches.py)
 
   - Search for k-th ascending element in the array without sorting:
 [docs](./split_find.md),
 [source code](../split_find.py),
-[tests](../tests/test_sorts_and_searches.py),
-[performance]()
+[tests](../tests/test_sorts_and_searches.py)
 
   - Ternary Search for real function extrema:
 [docs](./ternary_search_extremum.md),
 [source code](../ternary_search_extremum.py),
-[tests](../tests/test_sorts_and_searches.py),
-[performance]()
+[tests](../tests/test_sorts_and_searches.py)
 
 - Some other tools and algorithms
   - Dynamic programming solutions to different problems:
 [docs](./dynamic_programming.md),
 [source code](../dynamic_programming.py),
 [tests](../tests/test_dynamic_programming.py),
-[animations]()
+[animation for lcs](../animations/dp_lcs.py),
+[animation for tsp](../animations/dp_tsp.py)
 
   - Visualization tool for matrices:
 [docs](./matrix_view.md),
 [source code](../matrix_view.py),
-[tests](../tests/test_sorts_and_searches.py),
-[example]()
+[tests](../tests/test_sorts_and_searches.py)
 
   - Edit distances:
 [docs](./edit_distance.md),
