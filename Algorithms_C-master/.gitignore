@@ -1,0 +1,8 @@
+**_sources**
+.fuse*
+bin/
+!bin/.gitkeep
+include/*
+Algorithms_Python/C_solutions/logs/**
+Algorithms_Python/C_solutions/test.in
+C_solutions/**bin**
