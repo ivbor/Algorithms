@@ -21,3 +21,13 @@ Also there is a Makefile in this folder where you can find everything you need
 to know about the compilation process for this repo.
 
 All tests are run by `make` command in this directory.
+
+## TODOs
+
+- setup CI/CD
+  - clang-tidy
+  - clang-format
+  - markdownlint
+  - python scripts to parse setup.cfg into appropriate configs
+- continue writing test cases
+  - translate tests for array_count_sort from python to C
