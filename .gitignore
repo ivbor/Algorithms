@@ -8,7 +8,8 @@ etc/**
 Lectures
 **__pycache__**
 pyrightconfig.json
-bin*
+bin/
+!bin/.gitkeep
 lib*
 lib64*
 include/*
