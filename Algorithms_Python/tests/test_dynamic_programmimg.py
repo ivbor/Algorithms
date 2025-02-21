@@ -13,6 +13,7 @@ from Algorithms_Python.dynamic_programming \
 
 C_SOLUTIONS_FOLDER = './Algorithms_Python/C_solutions'
 
+
 def test_dp_class_solve_raises():
     with pytest.raises(Exception):
         DynamicProgrammingProblem().solve()
