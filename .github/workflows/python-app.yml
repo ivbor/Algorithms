@@ -25,7 +25,7 @@ jobs:
       run: pip install flake8
     - name: Lint with flake8
       run: |
-        flake8 --config=./setup.cfg ./Algorithms/python_solutions
+        flake8 --config=./setup.cfg ./Algorithms_Python
 
   test:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
       run: pip install interrogate
     - name: Check docs coverage
       run: |
-        interrogate -v --fail-under 80 ./Algorithms/python_solutions -e ./Algorithms/python_solutions/tests -e ./Algorithms/python_solutions/docs
+        interrogate -v --fail-under 80 ./Algorithms_Python -e ./Algorithms_Python/tests -e ./Algorithms_Python/docs
 
   security:
     runs-on: ubuntu-latest
@@ -70,4 +70,4 @@ jobs:
       run: pip install bandit
     - name: Check issues with bandit
       run: |
-        bandit ./Algorithms/python_solutions/* -o bandit.json -ll
+        bandit ./Algorithms_Python/* -o bandit.json -ll
