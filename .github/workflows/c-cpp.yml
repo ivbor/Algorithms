@@ -8,21 +8,34 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    # - name: configure
-    #   run: ./configure
-    - name: make
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y gcc make
+
+    - name: Verify Makefile exists
+      run: |
+        ls -lah Algorithms/C_solutions
+        cat Algorithms/C_solutions/Makefile
+
+    - name: Build and Run Tests
       run: |
         cd Algorithms/C_solutions
+        make
         if make | grep -q 'Tests Failed: 0'; then
-          echo "Success"
+          echo "All tests passed!"
+        else
+          echo "Some tests failed!"
+          exit 1
         fi
 
-    # - name: make check
-    #   run: make check
-    # - name: make distcheck
-    #   run: make distcheck
+    - name: Check for errors in build
+      run: |
+        if [ $? -ne 0 ]; then
+          echo "❌ Error in the build process"
+          exit 1
+        fi
